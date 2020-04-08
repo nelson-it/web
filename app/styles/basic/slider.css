@@ -1,0 +1,165 @@
+/* ================================================================== */
+/* VSlider                                                            */
+/* ================================================================== */
+div.sliderV div.sliderframe0 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    z-index: 2;
+}
+
+div.sliderV div.sliderframe1 {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    z-index: 1;
+}
+
+div.sliderV >  div.sliderframe > div:first-child {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+div.sliderV > div.sliderframe0 > div:first-child {
+	right: 2px;
+}
+
+div.sliderV > div.sliderframe0 > div:last-child {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+	width: 0px;
+
+	border-color: var(--slider_border_color);
+	cursor: col-resize;
+	z-index: 10; 
+}
+
+div.sliderV > div.sliderframe0 > div:last-child.slideractive {
+	box-shadow: var(--slider_active_boxshadow);
+}
+
+/* ================================================================== */
+/* Move                                                               */
+/* ================================================================== */
+
+div.sliderV.slidermove > div.sliderframe0 > div:first-child {
+	overflow: auto;
+}
+
+div.sliderV.slidermove > div.sliderframe0 > div:last-child {
+	border-right-width: 2px;
+	border-right-style: ridge;
+}
+
+/* ================================================================== */
+/* Fix                                                                */
+/* ================================================================== */
+
+div.sliderV.sliderfix > div.sliderframe0 > div:first-child {
+	right: 1px;
+	overflow: auto;
+}
+div.sliderV.sliderfix > div.sliderframe0 > div:last-child {
+	border-right-width: 1px;
+	border-right-style: solid;
+}
+/* ================================================================== */
+/* Invis                                                              */
+/* ================================================================== */
+
+div.sliderV.sliderinvis > div.sliderframe0 > div:first-child {
+	right: 0px;
+	overflow: auto;
+}
+div.sliderV.sliderinvis > div.sliderframe0 > div:last-child {
+	border-right-width: 0px;
+}
+/* ================================================================== */
+/* HSlider                                                            */
+/* ================================================================== */
+div.sliderH div.sliderframe0 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    z-index: 2;
+}
+
+div.sliderH div.sliderframe1 {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 1;
+}
+
+div.sliderH > div.sliderframe > div:first-child {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+div.sliderH > div.sliderframe0 > div:first-child {
+	bottom: 2px;
+}
+
+div.sliderH > div.sliderframe0 > div:last-child {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	height: 0px;
+
+	border-color: var(--slider_border_color);
+	cursor: row-resize;
+	z-index: 10; 
+}
+
+div.sliderH > div.sliderframe0 > div:last-child.slideractive {
+	box-shadow: var(--slider_active_boxshadow);
+}
+
+/* ================================================================== */
+/* Move                                                               */
+/* ================================================================== */
+
+div.sliderH.slidermove > div.sliderframe0 > div:last-child {
+	border-bottom-width: 2px;
+	border-bottom-style: ridge;
+}
+
+div.sliderH.slidermove > div.sliderframe0 > div:first-child {
+	overflow: auto;
+}
+
+
+/* ================================================================== */
+/* Fix                                                                */
+/* ================================================================== */
+
+div.sliderH.sliderfix > div.sliderframe0 > div:first-child {
+	bottom: 1px;
+	overflow: auto;
+}
+div.sliderH.sliderfix > div.sliderframe0 > div:last-child {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+/* ================================================================== */
+/* Invis                                                              */
+/* ================================================================== */
+
+div.sliderH.sliderinvis > div.sliderframe0 > div:first-child {
+	right: 0px;
+	overflow: auto;
+}
+div.sliderH.sliderinvis > div.sliderframe0 > div:last-child {
+	border-right-width: 0px;
+}

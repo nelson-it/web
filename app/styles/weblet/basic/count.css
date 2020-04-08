@@ -1,0 +1,22 @@
+#versionContainer, #countContainer {
+	display: inline-block;
+}
+
+#versionContainer {
+	display: none;
+     color : red;
+}
+
+#versionContainer.versionshow {
+	display: inline-block;
+}
+
+@keyframes versionhide { 
+	0% { color : red; }
+  100% { color: transparent; }
+}
+
+#versionContainer.versionhide {
+	animation: versionhide;
+	animation-duration: 4s;
+}

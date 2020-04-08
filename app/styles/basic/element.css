@@ -1,0 +1,36 @@
+.modifyno {
+}
+
+.modifyok, div.input-wrapper.modifyok input, div.input-wrapper.modifyok select {
+    background-color: var(--modifyokbackgroundcolor);
+    color: var(--modifyokcolor);
+}
+.modifywrong, div.input-wrapper.modifywrong input, div.input-wrapper.modifywrong select, select:invalid, input:invalid {
+    background-color: var(--modifywrongbackgroundcolor);
+    color: var(--modifywrongcolor);
+}
+
+.modifywarning, div.input-wrapper.modifywarning input, div.input-wrapper.modifywarning select {
+    background-color: var(--modifywarningbackgroundcolor);
+    color: var(--modifywarningcolor);
+}
+
+.modifywait, div.input-wrapper.modifywait input, .modifywait div.input-wrapper.modifywait select {
+    background-color: var(--modifywaitbackgroundcolor);
+    color: var(--modifywaitcolor);
+ 
+}
+
+.hint {
+	background: #fff;
+	background-color: rgba(255,255,255,0.75);
+	border: 1px solid #000000;
+	border-radius: 4px;
+	padding: 2px;
+	white-space: nowrap;
+}
+
+div.ele-wrapper {
+	display: inline-block;
+}
+

@@ -1,0 +1,23 @@
+.framebutton-button  {
+    font-family: SymbolFont1;
+    font-size: var(--iconsize);
+    color: var(--lightcolor1);
+   padding-left: var(--dmargin);
+	
+}
+
+.framebutton-button::before {
+    content: '\f0c9';
+}
+
+.framebutton-frame > div {
+	animation-duration: 0.5s;
+}
+
+.framebuttonhide > div:first-child {
+	display: none;
+}
+
+.framebuttonhide > div:last-child  {
+	left:  0px !important;
+}

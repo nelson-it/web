@@ -1,0 +1,241 @@
+div.weblet div.weblettitle {
+    position: sticky;
+    top: 0px;
+    left: 0px;
+    font-size: x-large;
+	line-height: var(--titleheight);
+    background: linear-gradient(to bottom, var(--background), var(--lightcolor1));
+    padding: 0px var(--dmargin);
+    white-space: nowrap;
+    z-index: 10;
+}
+div.weblet div.weblettitlearea {
+	display: inline;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+div.weblet div.weblettitleleft {
+    padding-left: var(--dmargin);
+}
+
+div.weblet div.weblettitleright {
+    position: absolute;
+    display: inline-flex;
+	right: 0px;
+	height: var(--titleheight);
+    background: linear-gradient(to bottom, var(--background), var(--lightcolor1));
+}
+
+div.weblet div#buttonContainer, div.weblet div#contentContainer {
+	display: inline-block;
+	vertical-align: top;
+	margin: var(--dmargin);
+}
+
+div.weblet div#buttonContainer {
+	position: sticky;
+	left: var(--dmargin);
+	top: var(--dmargin);
+	background: var(--background_transparent);
+	padding-bottom: var(--dmargin);
+	min-width: max-content;
+	z-index: 1;
+}
+
+div.weblet div#buttonContainer:empty {
+    display: none;
+}
+
+div.weblet div#buttonContainer input[type="button"].mobile {
+    display: none;
+}
+
+div.weblet div#buttonContainer .select {
+	font-family: SymbolFont1;
+}
+
+
+div.weblet .notitle + div.webletmain {
+    top: 0px;
+}
+
+div.weblet .notitle div.weblettitleleft {
+    display: none;
+}
+
+div.weblet .notitle div.weblettitlemiddle {
+    display: none;
+}
+
+div.weblet .notitle div.weblettitleright {
+	line-height: var(--iconpicsize);
+	background: transparent;
+	margin: 0px;
+	z-index: 10;
+}
+
+div.weblet .notitle.scroll div.weblettitleright {
+	right: 16px;
+}
+
+.popupcontent div.weblet .notitle div.weblettitleright {
+	display: none;
+}
+
+div.weblet div.weblettitleright > div {
+    font-family: SymbolFont1;
+    font-size: var(--iconfontsize);
+    padding-right: var(--qmargin);
+    color: var(--darkcolor1)
+}	
+
+div.weblet .notitle div.weblettitleright > div {
+    padding-right: var(--dmargin);
+    color: var(--lightcolor1)
+}
+
+div.weblet div#buttonContainer input[type='button'], div#buttonContainer button {
+	display: block;
+	position: relative;
+	width: 100%;
+	min-width: max-content;
+	margin-bottom: var(--margin);
+}
+
+div.weblet div.buttonContainer .ele-wrapper span {
+    line-height: var(--lineheight_normal);
+    padding-right: var(--dmargin);
+}
+
+div.weblet .weblettitle div.button {
+    box-shadow: none;
+    background: none;
+    border: 0px;
+    color: var(--darkcolor1);
+    font-size: var(--iconfontsize);
+    line-height: var(--titleheight);
+    width: auto;
+}
+
+div.weblet div#buttonContainer div.webletbutton {
+	position: relative;
+	height: 2ex;
+}
+
+div.weblet div.webletfullscreen {
+	position : absolute;
+	top: 0px;
+	left: 0px;
+	height : 100%;
+	width : 100%;
+	background-color: var(--background);
+	z-index : 300;
+}
+
+div.weblet .inputarea {
+	display: flex;
+}
+
+div.weblet .inputarea + .inputarea {
+	margin-top: var(--qmargin);
+}
+
+div.weblet .inputgroup {
+    display: inline-table;
+    border-collapse: collapse;
+}
+
+div.weblet .inputsingle {
+    display: table-row;
+	border: var(--border);
+    border-collapse: collapse;
+
+    line-height: var(--lineheight_normal);
+    white-space: nowrap;
+}
+
+div.weblet .inputsinglehead {
+    display: table-caption;
+	border: var(--border);
+	border-bottom: 0px;
+    border-collapse: collapse;
+
+    line-height: var(--lineheight_normal);
+    white-space: nowrap;
+    padding-left: var(--qmargin);
+    font-weight: bold;
+}
+
+div.weblet .inputarea.table .inputsingle > .ele-wrapper {
+    border: var(--border);
+    padding-left: var(--dmargin);
+    padding-right: var(--dmargin);
+}
+
+div.weblet .inputarea.table .inputsingle::after {
+    content: initial;
+}
+
+div.weblet .inputarea.table .inputgroup > .inputsingle:first-child {
+    font-weight: bold;
+}
+
+
+div.weblet .label {
+	text-align: right;
+    padding-left: var(--qmargin);
+}
+
+div.weblet div.label .label {
+	text-align: unset;
+	padding-left: unset;
+}
+
+div.weblet .label::after {
+	content: ':';
+    padding-right: var(--qmargin);
+}
+
+div.weblet .label:empty:after, div.label .label::after {
+    display: none;
+}
+
+div.weblet .inputgroup + .inputgroup > .inputsingle, .inputgroup + .inputgroup > .inputsinglehead  {
+    border-left: 0px;
+}
+
+div.weblet .inputsingle > .ele-wrapper {
+	display: table-cell;
+}
+
+div.weblet .inputsingle > .contain-textarea  {
+    width : 100%;
+    height: 100%;
+}
+
+div.weblet .inputsingle .ele-wrapper + button, .inputsingle .ele-wrapper + input[type="button"] {
+	margin-left: var(--qmargin);
+}
+
+div.weblet .inputsingle .multiheight {
+	vertical-align: top;
+	padding-top: var(--margin);
+}
+
+div.weblet .inputsingle::after {
+    content: '';
+    padding-right: var(--qmargin);
+}
+
+div.weblet .inputsingle.nomargin::after {
+    content: none;
+}
+
+div.weblet .inputsingle.size100 > .input-wrapper input {
+	width: 100%;
+}
+
+div.weblet .inputsingle.size100 > .selectlists {
+	padding-right: var(--selectlistmargin);
+}
