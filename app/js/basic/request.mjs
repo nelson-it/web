@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: js/basic/mne_request.js
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/basic/request.mjs
 //================================================================================
 import MneText       from '/js/basic/text.mjs'
 import MneLog        from '/js/basic/log.mjs'
@@ -44,6 +44,9 @@ class MneRequest
   static async fetch( request, parameter)
   {
     var data;
+    
+    //console.info('request: ' + request + " : " + JSON.stringify(parameter));
+
     var res = await fetch(request, {
       method: 'POST',
       headers : MneRequest.mkHeader(),
@@ -71,7 +74,7 @@ class MneRequest
         throw e;
       }
 
-      if ( data.meldungen )
+      if ( data.meldungen || ( data.result && data.result == 'error') )
       {
         var i;
         var error_found = false;
@@ -97,24 +100,31 @@ class MneRequest
         if ( str )
           MneLog[data.meldungen[0][0]]( str );
 
-        if ( error_found )
+        if ( error_found || ( data.result && data.result == 'error') )
           throw new Error();
       }
 
 
       if ( data.ids )
       {
-        var i;
         data.rids = {};
-        for ( i in data.ids )
-          data.rids[data.ids[i]] = i;
+        data.ids.forEach( (item,index) => { data.rids[item] = index; })
+      }
+      else
+      {
+        data.ids = [ 'result' ];
+        data.rids = { 'result' : 0 };
+        data.labels = [ 'result' ];
+        data.typs = [ '2' ];
+        data.formats = [ '' ];
+        data.values = [[ data.result ]];
       }
 
       if ( data.regexps )
       {
         var i;
         for ( i = 0; i < data.regexps.length; i++ )
-          data.regexps[i] = { reg :new RegExp(( data.regexps[i][0] ) ? data.regexps[i][0] : '.+|^$', data.regexps[i][1]), help : data.regexps[i][2] };
+          data.regexps[i] = { reg :new RegExp(( data.regexps[i][0] ) ? data.regexps[i][0] : '(?:.|\n)+|^$', data.regexps[i][1]), help : data.regexps[i][2] };
       }
     }
     return data;
@@ -122,17 +132,33 @@ class MneRequest
   
   static async import(request)
   {
-     try
-     {
-       
-     var result = await import(request);
-     return result;
-     }
-     catch(e)
-     {
-       await MneRequest.fetch(request);
-       throw e;
-     }
+    try
+    {
+      var result = await import(request);
+      return result;
+    }
+    catch(e)
+    {
+      await MneRequest.fetch(request);
+      throw e;
+    }
+  }
+
+  static async loadscript(uri)
+  {
+    var head = document.getElementsByTagName('head')[0];
+    if ( head.querySelector('script[src="' + uri + '"]') == null )
+    {
+      return new Promise((resolve, reject) =>
+      {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = uri;
+        script.onload = () => { resolve() };
+        script.onerror = () => { reject('Script <' + uri + '> konnte nicht geladen werden') };
+        head.appendChild(script);
+      });
+    }
   }
 }
 

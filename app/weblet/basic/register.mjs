@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: weblet/weblet/register.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/basic/register.mjs
 //================================================================================
 'use strict';
 
@@ -17,7 +17,7 @@ import { MneHSlider } from '/js/geometrie/slider.mjs'
 
 import MneWeblet           from './weblet.mjs'
 
-export class MneRegisterWeblet extends MneWeblet
+export class MneRegister extends MneWeblet
 {
     constructor(parent, frame, id, initpar = {}, config = {})
     {
@@ -27,93 +27,115 @@ export class MneRegisterWeblet extends MneWeblet
     reset()
     {
       super.reset();
-      this.obj  = Object.assign(this.obj, { webletdata : {} } );
+      this.obj  = Object.assign(this.obj, { webletdata : {}, container : {} } );
     }
     
     getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
 
-    async loadview(data)
+    set newvalues(val)
+    {
+      MneLog.warning("Geometrieweblet set newvalue");
+      super.newvalues = val;
+    }
+
+    async check_values()
+    {
+      if ( this.newvalues ) MneLog.warning("Geometrieweblet hat newvalue");
+    }
+    
+    async load()
     {
       var i;
       var bf;
       var self = this;
-      
-      this.obj.slider.s0 = new MneHSlider(this.frame, 'auto', 'fix');
-      bf = this.obj.slider.s0.container0;
-      bf.className = 'registermain';
-      
-      for ( i = 0; i<data.length; i++)
+
+      await super.load();
+
+      if ( ! this.initpar.menuframe )
       {
-        this.obj.webletdata[data[i]['id']] = data[i];
-        
+        this.obj.slider.s0 = new MneHSlider(this.frame, 'auto', 'fix');
+        this.obj.container.menu  = this.obj.slider.s0.container0;
+        this.obj.container.frame = this.obj.slider.s0.container1;
+      }
+      else
+      {
+        this.obj.container.menu  = this.initpar.menuframe;
+        this.obj.container.frame = this.frame
+      }
+
+      bf = this.obj.container.menu
+      bf.className = 'registermain';
+
+      for ( i = 0; i<this.config.register.length; i++)
+      {
+        this.obj.webletdata[this.config.register[i]['id']] = this.config.register[i];
+
+        if ( this.config.register[i].initpar.loaddirect )
+        {
+          if ( this.obj.loaddirect ) MneLog.warning('zweiten loaddirect gefunden ' + this.config.register[i].id  + ':' + this.obj.loaddirect );
+          this.obj.loaddirect = this.config.register[i].id
+        }
+
         bf.appendChild(document.createElement('div'));
         bf.lastChild.className = 'register registerlink'
-        bf.lastChild.innerText = data[i]['label'];
-        bf.lastChild.id = data[i]['id'];
-        
+          bf.lastChild.innerText = this.config.register[i]['label'];
+        bf.lastChild.id = this.config.register[i]['id'];
+
         bf.lastChild.addEventListener('click', async function(evt) { await self.btnClick('register', this.id); })
       }
-      
-      this.obj.container.frame = this.obj.slider.s0.container1
+
+      var mwidth = 10;
+      for ( i = 0; i<bf.children.length; ++i)
+        mwidth = ( bf.children[i].offsetWidth > mwidth ) ? bf.children[i].offsetWidth : mwidth;
+
+        for ( i = 0; i<bf.children.length; ++i)
+          bf.children[i].style.minWidth = mwidth + "px";
+
     }
 
     async register( id )
     {
-      if ( this.obj.weblets[id] == undefined )
+      if ( this.config.composeparent.obj.weblets[id] == undefined )
       {
           var data = this.obj.webletdata[id];
-          var frame = document.createElement('div');
+          var composeparent = this.config.composeparent;
+          var self = this;
+
+          var weblet;
+          var config;
           
-          var config = Object.assign({}, data);
-          config.depend = (config.depend ) ? config.depend.split(',') : [];
-          config.depend.push(this);
-          config.dependweblet = this.config.dependweblet;
-
-          console.log(config)
-           let { default: Weblet } =  await MneRequest.import(data['path'] + '.mjs');
-          this.obj.weblets[id] = new Weblet(this, frame, id, data['initpar'], config )
-          this.obj.weblets[id].obj.run.newvalues = true;
+          config = Object.assign({ dependweblet : this.config.dependweblet }, data);
+          config.depend.forEach((item, index) => { config.depend[index] = composeparent.obj.weblets[item]; });
+          
+          let { default: Weblet } =  await MneRequest.import(data['path'] + '.mjs');
+          weblet = this.config.composeparent.obj.weblets[id] = new Weblet(this.config.composeparent, document.createElement('div'), id, data['initpar'], config );
+          
+          config.depend.forEach((item,index) => { item.config.dependweblet = weblet; });
+          if ( this.config.dependweblet ) this.config.dependweblet.config.depend.push(weblet);
+          
+          await weblet.load();
+          weblet.newvalues = true;
       }
 
-      if ( this.obj.container.frame.firstChild ) this.obj.container.frame.removeChild(this.obj.container.frame.firstChild);
-      this.obj.container.frame.appendChild(this.obj.weblets[id].frame);
-      await this.show();
+      Array.from(this.obj.container.menu.children).forEach((item) => { MneElement.mkClass(item, 'registeractive', item.id == id )})
       
+      var weblet = this.config.composeparent.obj.weblets[id];
+      weblet.config.depend.forEach((item) => { item.config.dependweblet = weblet; })
+      
+      if ( this.obj.container.frame.firstChild ) this.obj.container.frame.removeChild(this.obj.container.frame.firstChild);
+      this.obj.container.frame.appendChild(this.config.composeparent.obj.weblets[id].frame);
+
     }
-    
-    async load( data )
+
+    async show()
     {
-      await super.load();
-      await this.loadview(data);
-    }
-    
-    async show( )
-    {
-      var i;
-      for ( i in this.obj.weblets )
-      {
-        if ( this.obj.weblets[i].frame && this.obj.weblets[i].frame.parentNode != null )
-        {
-          await this.obj.weblets[i].show()
-          await this.obj.weblets[i].values()
-        }
-      }
-    }
-    
-    async check_values()
-    {
-      this.parent.check_values();
+      if ( this.obj.loaddirect )
+        return this.register(this.obj.loaddirect)
     }
 
     async values( )
     {
-      var i;
-      for ( i in this.obj.weblets )
-      {
-        if ( this.obj.weblets[i].frame && this.obj.weblets[i].frame.parentNode != null && this.obj.weblets[i].obj.run.newvalues )
-          await this.obj.weblets[i].values()
-      }
     }
  }
  
-export default MneRegisterWeblet;
+export default MneRegister;

@@ -1,9 +1,10 @@
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//datei: js/geometrie/fullscreen.js
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/geometrie/fullscreen.mjs
 //================================================================================
 'use strict';
 import MneElement          from '/js/basic/element.mjs'
@@ -12,7 +13,7 @@ export class MneFullscreen
 {
   static isfullscreen(ele)
   {
-     return MneElement.hasClass(ele, 'fullscreen_active') || MneElement.hasClass(ele.parentNode, 'fullscreen')
+     return ( ele ) ?  MneElement.hasClass(ele, 'fullscreen_active') || MneElement.hasClass(ele.parentNode, 'fullscreen') : false;
   }
   
   static fullscreen(button, frame )
@@ -23,21 +24,26 @@ export class MneFullscreen
       {
           parentNode : frame.parentNode,
           node       : frame.nextSibling,
-          position   : frame.style.postion,
-          left       : frame.style.left,
-          top        : frame.style.top,
-          height     : frame.style.height,
-          width      : frame.style.width,
-          zIndex     : frame.style.zIndex
+          style      : 
+          {
+            position   : frame.style.postion,
+            left       : frame.style.left,
+            top        : frame.style.top,
+            height     : frame.style.height,
+            width      : frame.style.width,
+            zIndex     : frame.style.zIndex
+          }
       };
       frame.stylesave.back = window.document.createElement("div");
       frame.stylesave.back.className = "fullscreen";
       frame.stylesave.back.id = "fullscreen";
-      frame.style.positon = 'absolute';
+      frame.style.position = 'absolute';
       frame.style.top  = "0px";
       frame.style.left = "0px";
       frame.style.width = "100%";
       frame.style.height = "100%";
+      frame.style.background = "var(--background)";
+      frame.style.zIndex = 1000000;
 
       document.body.appendChild(frame.stylesave.back);
       frame.stylesave.back.appendChild(frame);
@@ -47,6 +53,8 @@ export class MneFullscreen
     else
     {
       var save = frame.stylesave;
+      var i;
+      
       try{ document.body.removeChild(frame.stylesave.back); } catch(e) {};
 
       if ( save.node == null )
@@ -54,11 +62,7 @@ export class MneFullscreen
       else
         save.parentNode.insertBefore(frame, save.node);
 
-      frame.style.positon = save.position;
-      frame.style.top  = save.top;
-      frame.style.left = save.left;
-      frame.style.width = save.width;
-      frame.style.height = save.height;
+      for ( i in save.style ) frame.style[i] = save.style[i];
 
       MneElement.clearClass(button, "fullscreen_active" );
     }

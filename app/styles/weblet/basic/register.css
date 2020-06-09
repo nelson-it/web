@@ -40,7 +40,7 @@ div.registerlink {
     overflow: hidden;
 }
 
-div.registeractive div.registerlink {
+div.registeractive {
     box-shadow: var(--button_boxshadow_active);
     border: var(--button_border_active);
     background-color: var(--button_background_active);

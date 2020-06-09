@@ -1,5 +1,33 @@
-div.webletmain {
+div.slidercontentframe > div.weblet {
+	display: flex;
+    flex-direction: column;
+
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+}
+
+div.weblet div.webletmain {
 	white-space: nowrap;
+}
+
+div.weblet > div {
+	flex-grow: 0;
+}
+
+div.slidercontentframe > div.weblet > div.webletmain {
+    white-space: nowrap;
+    display: flex;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+div.slidercontentframe > div.weblet.sliderauto {
+	overflow: visible;
+	bottom: unset;
+	right: unset;
 }
 
 .draginfo div.webletmain {
@@ -33,136 +61,3 @@ div.waitframe div {
 div.waitframe.show {
 	display: block;
 }
-
-.treeselect #webletcontent {
-    border: var(--border);
-}
-
-.treeselect .path {
-	font-weight: bold;
-	margin-bottom: var(--dmargin);
-	border-bottom: var(--border);
-	padding: var(--dmargin);
-}
-
-.treeselect .pathbottom {
-	font-weight: bold;
-	margin-top: var(--dmargin);
-	border-top: var(--border);
-	padding: var(--dmargin);
-}
-
-	
-body[aria-view-mode="mobile"] .nomobile {
-	display: none !important;
-}
-
-body[aria-view-mode="mobile"] #mainwindow {
-	
-}
-
-body[aria-view-mode="mobile"] #sltop0 {
-	border-bottom: 0px;
-}
-body[aria-view-mode="mobile"] div.webletmain {
-	border-bottom: 10px solid var(--darkcolor1);
-	margin-bottom: 48px;
-}
-
-body[aria-view-mode="mobile"] .popupcontent div.webletmain {
-	border-bottom: 0px;
-}
-
-body[aria-view-mode="mobile"] div#webletbutton input[type="button"].mobile {
-    display: inline-block;
-}
-
-body[aria-view-mode="mobile"] div#webletcontent {
-	position: relative;
-	display: block;
-	z-index: 1;
-}
-
-body[aria-view-mode="mobile"] div#webletbutton {
-	display: block;
-	z-index: 10;
-	white-space: initial;
-}
-
-body[aria-view-mode="mobile"] div#webletbutton span {
-	padding-left: var(--qmargin);
-}
-
-body[aria-view-mode="mobile"] div.weblettitle, body[aria-view-mode="mobile"] div.webletmain {
-	position: relative;
-	top: 0px;
-}
-
-body[aria-view-mode="mobile"] div#webletbutton input, body[aria-view-mode="mobile"] div#webletbutton button, body[aria-view-mode="mobile"] div.webletbutton, body[aria-view-mode="mobile"] #webletbutton > div  {
-	display: inline-block;
-	width: initial;
-	margin-right: var(--dmargin);
-	overflow: visible;
-}
-
-body[aria-view-mode="mobile"] div#webletbutton div.webletbutton:empty  {
-	display: none;
-}
-
-body[aria-view-mode="mobile"] .inputgroup, body[aria-view-mode="mobile"] .inputsingle, body[aria-view-mode="mobile"] .inputsingle > .ele-wrapper   {
-	display: block;
-}
-
-body[aria-view-mode="mobile"] .inputsingle + .inputsingle {
-	border-top: 0px;
-}
-
-body[aria-view-mode="mobile"] .label {
-	text-align: left;
-    padding-left: var(--qmargin);
-}
-	
-body[aria-view-mode="mobile"] .inputsingle .ele-wrapper + button, body[aria-view-mode="mobile"] .inputsingle .ele-wrapper + input[type="button"] {
-	margin-left: 0px;
-	margin-top: var(--qmargin);
-}
-
-body[aria-view-mode="mobile"] .inputarea {
-	display: block;
-}
-
-body[aria-view-mode="mobile"] .inputgroup {
-    display: block;
-    margin-bottom: var(--qmargin);
-}
-
-body[aria-view-mode="mobile"] .inputgroup + .inputgroup > .inputsingle {
-    border-left: var(--border); 
-}
-
-body[aria-view-mode="mobile"] .inputsingle::after {
-	content: unset;
-}
-
-body[aria-view-mode="mobile"] .inputsingle > .ele-wrapper {
-	padding-left: var(--qmargin);
-	line-height: initial;
-    margin-bottom: var(--qmargin);
-}
-
-body[aria-view-mode="mobile"] div.ele-wrapper > div.ele-wrapper {
-    display: inline-block;
-}
-
-body[aria-view-mode="mobile"] div.input-wrapper {
-	display: block;
-}
-
-body[aria-view-mode="mobile"] div.checkbox-wrapper {
-	vertical-align: top;
-}
-
-body[aria-view-mode="mobile"] .inputsingle > .label {
-	margin-bottom: var(--margin);
-}
-	

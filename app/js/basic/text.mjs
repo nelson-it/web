@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: js/basic/text.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/basic/text.mjs
 //================================================================================
 'use strict';
 import MneConfig from '/js/basic/config.mjs'
@@ -45,8 +45,8 @@ export class MneText
     return v; 
   };
 
-  
   static getTimestamp() { return MneText.toDateTime((new Date()).getTime() / 1000); };
+
   static toDate(value)
   {
     if ( value == '' || value == 0 ) return '';
@@ -146,6 +146,35 @@ export class MneText
       value = value.replace(new RegExp("\\" + MneConfig.locale.decimal_point, "g"), ".");
 
     return value;
+  };
+
+  static mascarade_single (str, c, mc)
+  {
+    var m = ( typeof mc == 'undefined' ) ? m = '\\' + c : m = mc;
+    var i;
+    var alt,neu;
+
+    neu = "";
+    alt = str;
+    while ( ( i= alt.indexOf(c)) != -1 )
+    {
+      neu += alt.substring(0,i) + m;
+      alt = alt.substr(i+1);
+    }
+    neu += alt;
+    return neu;
+  }
+
+  static mascarade(str)
+  {
+    var neu;
+    
+    neu = MneText.mascarade_single(str, '\\', '\\\\');
+    neu = MneText.mascarade_single(neu, "'",  "\\'");
+    neu = MneText.mascarade_single(neu, '\n', '\\n');
+
+    return neu;
+
   };
 
 }

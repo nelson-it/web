@@ -1,0 +1,4 @@
+.weblet-dbadmin-query-jointree div.modifyok {
+	background-color: var(--modifyokbackgroundcolor);
+    color: var(--modifyokcolor);
+}

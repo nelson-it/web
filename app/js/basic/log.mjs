@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: js/basic/text.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/basic/log.mjs
 //================================================================================
 'use strict';
 
@@ -39,12 +39,12 @@ export class MneLog
     if ( MneLog._messageClient != null ) MneLog._messageClient.error(e);
   }
 
-  static exception(e)
+  static exception(info, e)
   {
-    if ( e.message != '')
+    if ( e.message != '' )
     {
-      console.error(e);
-      if ( MneLog._messageClient != null ) MneLog._messageClient.exception(e);
+      console.error(info + '\n' + e.message + '\n' + e.stack);
+      if ( MneLog._messageClient != null ) MneLog._messageClient.exception(info, e);
     }
   }
 }

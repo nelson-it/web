@@ -1,19 +1,19 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: weblet/allg/message.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/basic/message.mjs
 //================================================================================
 'use strict';
 
-import MneText       from '/js/basic/text.mjs'
-import MneLog        from '/js/basic/log.mjs'
-import MneElement    from '/js/basic/element.mjs'
-import MneViewWeblet from './view.mjs'
+import MneText    from '/js/basic/text.mjs'
+import MneLog     from '/js/basic/log.mjs'
+import MneElement from '/js/basic/element.mjs'
+import MneView    from './view.mjs'
 
-class MneMessageWeblet extends MneViewWeblet
+class MneMessage extends MneView
 {
     constructor(parent, frame, id, initpar = {}, config = {} )
     {
@@ -31,20 +31,21 @@ class MneMessageWeblet extends MneViewWeblet
       this.obj.mkbuttons = [];
     }
 
-    async loadview()
+    async load()
     {
       var self = this;
       
-      await super.loadview();
+      await super.load();
       this.obj.buttons.clear.value = MneText.getText('#mne_lang#Löschen');
 
       MneLog.setMessageClient(this);
-      document.addEventListener('keyup', (evt) => { if ( evt.key == 'Escape') self.clear(); self.close(); })
+      document.addEventListener('keyup', (evt) => { if ( evt.key == 'Escape') { self.clear(); self.close();} })
     }
 
     async clear(evt)
     {
       this.obj.container.meldungen.innerHTML = '';
+      return false;
     }
     
     print(typ, str, notimestamp)
@@ -86,12 +87,13 @@ class MneMessageWeblet extends MneViewWeblet
     warning(str) { this.print('warning', str)} 
     error(str)   { this.print('error', str) }
 
-    exception(e)
+    exception(info, e)
     {
-      var message = ( typeof e == 'string' ) ? e : e.message;
+      var message = info + ': ';
+      message += ( typeof e == 'string' ) ? e : e.message;
       if ( e != undefined && e.stack != undefined ) message += "\n" + e.stack;
       this.error(message);
     }
  }
 
-export default MneMessageWeblet;
+export default MneMessage;

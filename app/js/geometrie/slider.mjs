@@ -1,14 +1,13 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: js/geometrie/slider.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/geometrie/slider.mjs
 //================================================================================
 'use strict';
 
-import MneDocEvents from '/js/basic/docevents.mjs'
 import MneElement   from '/js/basic/element.mjs'
 import MneTheme     from '/js/basic/theme.mjs'
 
@@ -20,26 +19,30 @@ class MneSlider
     
     MneTheme.loadCss('slider.css');
     
-    this.frame = ( typeof frame == 'string' ) ? document.getElementById(frame) : frame;
+    frame = ( typeof frame == 'string' ) ? document.getElementById(frame) : frame;
     this.typ = ( typ ) ? typ : "move";
     
-    this.num = MneSlider.slidercount
+    this.num = MneSlider.slidercount++;
     this.istouch = ('ontouchstart' in document.documentElement);
     
     this.tmove = function(evt) { return self.touchmove(evt); };
     this.tend  = function(evt) { return self.touchend(evt);  };
     
-    MneElement.mkClass(this.frame, 'slider' + direction, true)
-    MneElement.mkClass(this.frame, 'slider' + this.typ,  true)
+    this.mmove = function(evt) { return self.mousemove(evt); };
+    this.mup   = function(evt) { return self.mouseup(evt);  };
+    
+    frame.innerHTML = '<div class="slidermain"><div class="sliderframe sliderframe0"><div class="slidercontentframe"></div><div id="slider' + this.num + '"></div></div><div class="sliderframe sliderframe1"><div class="slidercontentframe"></div></div></div>';
 
-    this.frame.innerHTML = '<div class="sliderframe sliderframe0"><div></div><div id="slider' + this.num + '"></div></div><div class="sliderframe sliderframe1"><div></div></div>';
-
+    this.frame = frame.firstChild;
     this.slider = this.frame.firstChild.lastChild;
     this.frame0 = this.frame.firstChild
     this.frame1 = this.frame.lastChild
     
     this.container0 = this.frame0.firstChild;
     this.container1 = this.frame1.firstChild;
+
+    MneElement.mkClass(this.frame, 'slider' + direction, true)
+    MneElement.mkClass(this.frame, 'slider' + this.typ,  true)
 
     if ( this.typ == 'move' )
     {
@@ -60,6 +63,7 @@ class MneSlider
       this.container0.appendChild(document.createElement("div"));
       this.container0 = this.container0.firstChild;
       this.container0.style.position = "absolute";
+      this.container0.className = 'sliderauto';
     }
 
   }
@@ -113,8 +117,8 @@ MneVSlider.prototype.startmove = function(evt)
 
   MneElement.mkClass(this.slider, 'slideractive', true);
 
-  MneDocEvents.addInterest('mousemove', this );
-  MneDocEvents.addInterest('mouseup', this );
+  document.addEventListener('mousemove', this.mmove );
+  document.addEventListener('mouseup',   this.mup  );
 };
 
 MneVSlider.prototype.starttouch = function(evt)
@@ -166,8 +170,8 @@ MneVSlider.prototype.touchmove = function(evt)
 
 MneVSlider.prototype.mouseup = function(evt)
 {
-  MneDocEvents.removeInterest('mousemove', this );
-  MneDocEvents.removeInterest('mouseup', this );
+  document.removeEventListener('mousemove', this.mmove );
+  document.removeEventListener('mouseup',   this.mup  );
 
   MneElement.mkClass(this.slider, 'slideractive', false);
 
@@ -226,9 +230,9 @@ MneHSlider.prototype.startmove = function(evt)
 
   MneElement.mkClass(this.slider, 'slideractive', true);
 
-  MneDocEvents.addInterest('mousemove', this );
-  MneDocEvents.addInterest('mouseup', this );
-};
+  document.addEventListener('mousemove', this.mmove );
+  document.addEventListener('mouseup',   this.mup  );
+ };
 
 MneVSlider.prototype.starttouch = function(evt)
 {
@@ -279,8 +283,8 @@ MneHSlider.prototype.touchmove = function(evt)
 
 MneHSlider.prototype.mouseup = function(evt)
 {
-  MneDocEvents.removeInterest('mousemove', this );
-  MneDocEvents.removeInterest('mouseup', this );
+  document.removeEventListener('mousemove', this.mmove );
+  document.removeEventListener('mouseup',   this.mup  );
 
   MneElement.mkClass(this.slider, 'slideractive', false);
 

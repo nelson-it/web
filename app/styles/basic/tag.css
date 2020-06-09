@@ -49,6 +49,8 @@ input, button {
 	
 	-webkit-appearance: none;
 	-moz-appearance: none;
+	
+	min-width: 5em;
 }
 
 div.container {
@@ -82,23 +84,6 @@ div.input-wrapper {
 	margin-right: var(--margin);
 }
 
-div.selectlisti::after, span.selectlisti::after {
-	content: '\f002';
-	font-family: SymbolFont1;
-	color: var(--lightcolor1);
-	margin-left: var(--dmargin);
-	cursor: pointer;
-	line-height: 0px;
-}
-
-div.selectlists::after, span.selectlists::after {
-	content: '\f07c';
-	font-family: SymbolFont1;
-	color: var(--lightcolor1);
-	margin-left: var(--dmargin);
-	cursor: pointer;
-	line-height: 0px;
-}
 
 input[type=text], input[type=password], div.ehtml {
     border-radius: var(--borderradius);
@@ -115,7 +100,6 @@ input[type="text"][disabled].disablehide {
     background-color: transparent;
 }
 input[type="text"][readonly] {
-    background-color: var(--rdonlybackground);
     color : var(--rdonlycolor);
 }
 
@@ -250,6 +234,9 @@ div.button.reload:after {
 div.button.fullscreen:after {
     content: '\f2d0';
 }
+div.button.query:after {
+    content: '\f1c0';
+}
 div.button.fullscreen_active::after {
     content: '\f2d2';
 }
@@ -263,44 +250,25 @@ div.button.dirsymbol::after {
     content: '\f009';
 }
 
-input[type=text].input1, textarea.input1, td.input1 select, td.input1 > div.ehtml, td.input1 > div.shtml, tbody > tr > td.input1 > span {
-    width: 1em;
+input[size="1"] {
+    min-width: 1em;
+    max-width: 1em;
 }
-input[type=text].input2, textarea.input2, td.input2 select, td.input2 > div.ehtml, td.input2 > div.shtml, tbody > tr > td.input2 > span {
-    width: 2em;
+input[size="2"] {
+    min-width: 2em;
+    max-width: 2em;
 }
-input[type=text].input3, textarea.input3, td.input3 select, td.input3 > div.ehtml, td.input3 > div.shtml, tbody > tr > td.input3 > span {
-    width: 3em;
+input[size="3"] {
+    min-width: 3em;
+    max-width: 3em;
 }
-input[type=text].input4, textarea.input4, td.input4 select, td.input4 > div.ehtml, td.input4 > div.shtml, tbody > tr > td.input4 > span {
-    width: 4em;
+input[size="4"] {
+    min-width: 4em;
+    max-width: 4em;
 }
-input[type=text].input5, textarea.input5, td.input5 select, td.input5 > div.ehtml, td.input5 > div.shtml, tbody > tr > td.input5 > span {
-    width: 5em;
-}
-input[type=text].input6, textarea.input6, td.input6 select, td.input6 > div.ehtml, td.input6 > div.shtml, tbody > tr > td.input6 > span {
-    width: 6em;
-}
-input[type=text].input7, textarea.input7, td.input7 select, td.input7 > div.ehtml, td.input7 > div.shtml, tbody > tr > td.input7 > span {
-    width: 7em;
-}
-input[type=text].input8, textarea.input8, td.input8 select, td.input8 > div.ehtml, td.input8 > div.shtml, tbody > tr > td.input8 > span {
-    width: 8em;
-}
-input[type=text].input9, textarea.input9, td.input9 select, td.input9 > div.ehtml, td.input9 > div.shtml, tbody > tr > td.input9 > span {
-    width: 9em;
-}
-input[type=text].input10, textarea.input10, td.input10 select, td.input10 > div.ehtml, td.input10 > div.shtml, tbody > tr > td.input10 > span {
-    width: 10em;
-}
-input[type=text].input15, textarea.input15, td.input15 select, td.input15 > div.ehtml, td.input15 > div.shtml, tbody > tr > td.input15 > span {
-    width: 15em;
-}
-input[type=text].input20, textarea.input20, td.input20 select, td.input20 > div.ehtml, td.input20 > div.shtml, tbody > tr > td.input20 > span {
-    width: 20em;
-}
-input[type=text].input30, textarea.input30, td.input30 select, td.input30 > div.ehtml, td.input30 > div.shtml, tbody > tr > td.input30 > span {
-    width: 30em;
+input[size="5"] {
+    min-width: 5em;
+    max-width: 5em;
 }
 
 tbody > tr > td[class*="input"] > span {
@@ -343,7 +311,6 @@ div.input-wrapper.contain-select {
     position: relative;
 	margin-left: var(--margin);
     margin-right: var(--margin);
-    line-height: var(--select_lineheight);
 }
 
 div.input-wrapper.contain-select:after {

@@ -1,20 +1,20 @@
 //================================================================================
-
-//Copyright: M.Nelson - technische Informatik
-//Die Software darf unter den Bedingungen 
-//der APGL ( Affero Gnu Public Licence ) genutzt werden
-
-//datei: allg/weblet.mjs
+//
+// Copyright: M.Nelson - technische Informatik
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/basic/geometrie.mjs
 //================================================================================
 'use strict';
 
 import MneText    from '/js/basic/text.mjs'
 import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
-import MnePopup   from '/js/geometrie/popup.mjs'
 
-import MneWeblet         from './weblet.mjs'
-import MneRegisterWeblet from './register.mjs'
+import MneWeblet   from './weblet.mjs'
+import MnePopup    from './popup.mjs'
+import MneRegister from './register.mjs'
 
 class MneGeometrieWeblet extends MneWeblet
 {
@@ -26,6 +26,40 @@ class MneGeometrieWeblet extends MneWeblet
   reset()
   {
     super.reset();
+    Object.assign(this.obj, { container : {} });
+  }
+
+  async getSlider()
+  {
+    var i;
+    var res;
+    var htmlcomposeid = '';
+    
+    if ( MneGeometrieWeblet.slider == undefined )
+    {
+      var p = 
+      {
+          schema : 'mne_application',
+          table  : 'htmlcomposetabslider',
+          cols   : 'htmlcomposeid,slidername,sliderpos',
+          scols  : 'htmlcomposeid'
+      }
+      res = await MneRequest.fetch('/db/utils/table/data.json', p );
+
+      MneGeometrieWeblet.slider = {};
+
+      for ( i=0; i < res.values.length; ++i )
+      {
+        if ( htmlcomposeid != res.values[i][res.rids['htmlcomposeid']] )
+      {
+          htmlcomposeid = res.values[i][res.rids['htmlcomposeid']];
+          MneGeometrieWeblet.slider[htmlcomposeid] = {};
+      }
+        MneGeometrieWeblet.slider[htmlcomposeid][res.values[i][res.rids['slidername']]] = res.values[i][res.rids['sliderpos']];
+      }
+    }
+    
+    return ( MneGeometrieWeblet.slider[this.obj.run.config.htmlcomposeid] ) ? MneGeometrieWeblet.slider[this.obj.run.config.htmlcomposeid] : [];
   }
 
   async getTemplate()
@@ -37,27 +71,28 @@ class MneGeometrieWeblet extends MneWeblet
     if ( res.values.length != 1 )
       throw new Error(MneText.sprintf('#mne_lang#Kein Weblet <$1> gefunden', this.obj.name ))
 
+    this.obj.run.config = [];
     for ( i in res.ids )
-      this.config[res.ids[i]] = res.values[0][i];
+      this.obj.run.config[res.ids[i]] = res.values[0][i];
   }
 
   async mkTemplate()
   {
-    let { default: templ } = await MneRequest.import('/weblet/template/' + this.config.template + '.mjs');
-    await templ.mkTemplate( this )
+    let { default: templ } = await MneRequest.import('/weblet/geometrie/' + this.obj.run.config.template + '.mjs');
+    var slider = await this.getSlider();
+    await templ.mkTemplate( this, slider )
   }
 
   async getSubWeblets()
   {
-    return await MneRequest.fetch('/htmlcompose/subweblets.json', { htmlcomposeid : this.config.htmlcomposeid } ); 
+    return await MneRequest.fetch('/htmlcompose/subweblets.json', { htmlcomposeid : this.obj.run.config.htmlcomposeid } ); 
   }
 
   async mkWeblet( position, sub )
   {
-    var promise;
     var i;
     
-    if ( sub.count == 0 || position == 'popup' )
+    if ( position == 'popup' )
     {
       var i;
       var container;
@@ -65,35 +100,29 @@ class MneGeometrieWeblet extends MneWeblet
       for ( i = 0; i< sub.values.length; i++)
       {
         var id = sub.values[i]['id'];
-
-        if ( position == 'popup' )
-          this.obj.popups[id] = new MnePopup(( container = document.createElement('div')), id );
-        else
-          container = this.obj.container[position];
-        
-        var config = Object.assign({}, sub.values[i] );
-        config.depend = ( config.depend ) ? config.depend.split(',') : [];
-
-        let { default: Weblet } =  await MneRequest.import(sub.values[i]['path'] + '.mjs');
-        this.obj.weblets[id] = new Weblet(this, container, id, ( position == 'popup' ) ? Object.assign({ popup : this.obj.popups[id] }, sub.values[i]['initpar'] ) : sub.values[i]['initpar'], config )
-        this.obj.weblets[id].obj.run.newvalues = true;
+        var config = Object.assign({composeparent : this}, sub.values[i] );
+        this.obj.popups[id] = new MnePopup( id, Object.assign({}, sub.values[i]['initpar']), config );
       }
+    }
+    else if ( sub.count == 0 )
+    {
+      var id = sub.values[0]['id'];
+      var container = this.obj.container[position];
+      container.innerHTML="<div></div>"; // äquivalent zu Register
+      
+      var config = Object.assign({ composeparent : this }, sub.values[0] );
 
-      if ( position == 'popup' )
-        promise = true;
-      else
-        promise = this.obj.weblets[id].load();
+      let { default: Weblet } =  await MneRequest.import(sub.values[0]['path'] + '.mjs');
+      this.obj.weblets[id] = new Weblet(this, container.firstChild, id, Object.assign({}, sub.values[0]['initpar']), config )
+      this.obj.weblets[id].obj.run.newvalues = true;
     }
     else if ( sub.count > 0 )
     {
-      var config = { path : '/weblet/weblet/register.mjs', id : position, initpar : {}, label : '', position : position, depend : [] };
+      var config = { htmlcomposeid : this.obj.run.htmlcomposeid, path : '/weblet/weblet/register', id : position, composeparent : this, register : sub.values, initpar : { menuframe : sub.menuframe }, label : '',  depend : [] };
 
-      this.obj.weblets[position] = new MneRegisterWeblet(this, this.obj.container[position], position, {}, config );
+      this.obj.weblets[position] = new MneRegister(this, this.obj.container[position], position, { menuframe : sub.menuframe }, config );
       this.obj.weblets[position].obj.run.newvalues = true;
-
-      promise = this.obj.weblets[position].load(sub.values);
     }
-    return promise;
   }
 
 
@@ -104,21 +133,35 @@ class MneGeometrieWeblet extends MneWeblet
     var sub = { popup : { count : -1, values : [] }};
     var initpar  = res.rids['initpar'];
     var position = res.rids['position'];
+    var errors = '';
      
     for ( i in this.obj.container )
-      sub[i] = { count : -1, values : [] };
+      if ( i.substr(i.length - 4) != 'menu' ) sub[i] = { count : -1, values : [] };
+
+    for ( i in this.obj.container )
+      if ( i.substr(i.length - 4) == 'menu' ) sub[i.substr(0, i.length - 4)].menuframe = this.obj.container[i];
       
     for ( i in res.values )
     {
-      var s = {};
+      var s = { composeparent : this };
       eval('res.values[i][initpar] = { ' + res.values[i][initpar] + '}');
+      res.values[i][res.rids.depend] = ( res.values[i][res.rids.depend] ) ? res.values[i][res.rids.depend].split(',') : [];
 
-      sub[res.values[i][position]].count++;
-
-      for ( j=0; j < res.ids.length; ++j)
-        s[res.ids[j]] = res.values[i][j];
-      sub[res.values[i][position]].values.push(s);
+      try
+      {
+        sub[res.values[i][position]].count++;
+        for ( j=0; j < res.ids.length; ++j)
+          s[res.ids[j]] = res.values[i][j];
+        sub[res.values[i][position]].values.push(s);
+      }
+      catch(e)
+      {
+        errors += 'Position ' + res.values[i][position] + ': ' + e.message + '\n';
+      }
     }
+    
+    if ( errors )
+      throw new Error(errors)
     
     for ( i in sub )
       p.push(this.mkWeblet(i, sub[i]));
@@ -135,19 +178,20 @@ class MneGeometrieWeblet extends MneWeblet
       this.obj.weblets[i].config.depend = [];
       for ( j =0; j < d.length; j++)
       {
-        this.obj.weblets[i].config.depend.push(this.obj.weblets[d[j]]);
-        
-        if ( this.obj.weblets[d[j]] ) this.obj.weblets[d].config.dependweblet = this.obj.weblets[i];
-        else throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Weblet <$1> nicht gefunden"), d[j]));
+        if ( typeof d[j] == 'string' && this.obj.weblets[d[j]] )
+        {
+            if ( !  ( this.obj.weblets[d[j]] instanceof MneRegister ) )
+              this.obj.weblets[i].config.depend.push(this.obj.weblets[d[j]]);
+            this.obj.weblets[d[j]].config.dependweblet = this.obj.weblets[i];
+        }
+        else if ( d[j] instanceof MneWeblet )
+          this.obj.weblets[i].config.depend.push(d[j]);
+        else
+          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Weblet <$1> nicht gefunden"), d[j]));
       }
     }
   }
 
-  async check_values()
-  {
-    await this.values();
-  }
-  
   async values()
   {
     var i;
@@ -158,15 +202,15 @@ class MneGeometrieWeblet extends MneWeblet
     while ( found )
     {
       found = false;
+
       for ( i in this.obj.weblets )
       {
         var d = this.obj.weblets[i].config.dependweblet;
-        if ( this.obj.weblets[i].obj.run.newvalues && ( ! d || ! d.obj.run.newvalues ) )
+        if ( this.obj.weblets[i].newvalues && ( ! d || ! d.newvalues ) )
         {
           found=true;
-          console.log('values für weblet: ' + i)
-          this.obj.weblets[i].obj.run.newvalues = false;
           await this.obj.weblets[i].values();
+          this.obj.weblets[i].newvalues = false;
         }
       }
     }
@@ -174,8 +218,11 @@ class MneGeometrieWeblet extends MneWeblet
   
   async show(name)
   {
-   await this.reset();
-   super.show();
+   var p = [];
+   var i;
+   
+   this.reset();
+   await super.show();
    
    this.obj.name = name;
 
@@ -183,7 +230,21 @@ class MneGeometrieWeblet extends MneWeblet
     await this.mkTemplate();
     await this.mkSubWeblets(await this.getSubWeblets());
     await this.mkDepend();
-    await this.values();
+    
+    for ( i in this.obj.weblets )
+      p.push(this.obj.weblets[i].load());
+
+    await Promise.all(p);
+    
+    p = [];
+    for ( i in this.obj.weblets )
+      if ( this.obj.weblets[i] instanceof MneRegister )
+        p.push(this.obj.weblets[i].show())
+    
+    await Promise.all(p);
+
+    
+    return this.values();
   }
 }
 

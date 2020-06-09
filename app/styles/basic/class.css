@@ -1,5 +1,5 @@
 .active {
-	background-color: var(--lightcolor2);
+	background-color: var(--lightcolor1);
 }
 
 .background {
@@ -18,5 +18,7 @@
    -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
-
+.disable-select .input {
+	-webkit-user-select: initial;
+}
 

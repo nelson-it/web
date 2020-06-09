@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: js/basic/element.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/basic/element.mjs
 //================================================================================
 'use strict';
 import MneTheme from './theme.mjs'
@@ -86,14 +86,6 @@ export class MneElement
     else node.parentNode.insertBefore(neu, node.nextSibling);
   };
 
-  static mkElements( frame )
-  {
-    MneElement.mkSelects(frame);
-    MneElement.mkInputs(frame);
-    MneElement.mkSpans(frame);
-    MneElement.mkTextareas(frame);
-  }
-
   static mkSelects( frame )
   {
     var i;
@@ -127,25 +119,30 @@ export class MneElement
     var obj = frame.querySelectorAll('textarea');
 
     for ( i=0; i<obj.length; ++i )
-      MneElements.mkTextareasSingle(obj[i]);
+      MneElement.mkTextareasSingle(obj[i]);
   }
 
   static mkSelectsSingle( obj )
   {
-      if ( typeof obj.wrapper == 'undefined'  ) 
-      {
-        var ele = document.createElement('div');
-        ele.className = 'ele-wrapper input-wrapper contain-select';
-        if ( obj.parentNode ) obj.parentNode.insertBefore(ele, obj.nextSibling);
-        ele.appendChild(obj);
-        obj.wrapper = ele;
-        obj.cleared = true;
-      }
+    if ( obj.closest('.ele-wrapper') == undefined  ) 
+    {
+      var ele = document.createElement('div');
+      ele.className = 'ele-wrapper input-wrapper contain-select';
+      if ( obj.parentNode ) obj.parentNode.insertBefore(ele, obj.nextSibling);
+      ele.appendChild(obj);
+      obj.cleared = true;
+    }
   }
+  
+  static getSelect(str)
+  {
+    return '<div class="ele-wrapper input-wrapper contain-select">' + str + '</div>' 
+  }
+ 
 
   static mkInputsSingle( ele )
   {
-      if ( typeof ele.wrapper != 'undefined' )
+    if ( ele.closest('.ele-wrapper') != undefined  ) 
         return;
       
       switch(ele.type)
@@ -157,8 +154,6 @@ export class MneElement
           if ( ele.parentNode ) ele.parentNode.insertBefore(wrapper, ele.nextSibling);
           wrapper.appendChild(ele);
           if ( ele.type == 'text' ) ele.type = "text";
-          ele.wrapper = wrapper;
-          ele.valuefield = ele;
           break;
 
         case 'checkbox':
@@ -168,39 +163,80 @@ export class MneElement
           wrapper.appendChild(ele)
           wrapper.appendChild(document.createElement('label'))
           wrapper.lastChild.addEventListener('click', function(evt) { var ele = this.previousSibling; ele.checked=!ele.checked; ele.setAttribute('checked', ele.checked)})
-
-          wrapper.firstChild.wrapper = wrapper;
-          wrapper.firstChild.valuefield = wrapper.firstChild;
           break;
 
         default:
-          ele.wrapper = ele;
+          MneElement.mkClass(ele, 'ele-wrapper');
           break;
       }
+  }
+  
+  static getInput(type, str)
+  {
+    switch(type)
+    {
+      case 'password':
+      case 'text':
+        return '<div class="ele-wrapper input-wrapper contain-text">' + str + '</div>'
+        break;
+
+      case 'checkbox':
+        return '<div class="ele-wrapper input-wrapper contain-checkbox">' + str + '<label onclick="var ele = this.previousSibling; ele.checked=!ele.checked; ele.setAttribute(\'checked\', ele.checked)"></label></div>';
+        break;
+
+      default:
+        return str;
+    }
   }
   
   static mkSpansSingle( ele )
   {
     ele.cleared = false;
-    if ( ele.wrapper == undefined )
+    
+    if ( ele.closest('.ele-wrapper') == undefined  ) 
     {
-      ele.wrapper = ele;
-      MneElement.mkClass(ele, 'ele-wrapper contain-span');
+      var wrapper = document.createElement('span');
+      wrapper.className = 'ele-wrapper contain-span';
+      if ( ele.parentNode ) ele.parentNode.insertBefore(wrapper, ele.nextSibling);
+      wrapper.appendChild(ele);
     }
+  }
+  
+  static getSpan(str)
+  {
+    return '<span class="ele-wrapper contain-span">' + str + '</span>';
   }
 
   static mkTextareasSingle( obj )
   {
-      if ( typeof obj.wrapper == 'undefined'  ) 
+      if ( obj.closest('.ele-wrapper') == undefined  ) 
       {
         var ele = document.createElement('div');
         ele.className = 'ele-wrapper textarea-wrapper contain-textarea';
         if ( obj.parentNode ) obj.parentNode.insertBefore(ele, obj.nextSibling);
         ele.appendChild(obj);
-        obj.wrapper = ele;
         obj.cleared = true;
       }
   }
+  
+  static mkElements( frame )
+  {
+    MneElement.mkSelects(frame);
+    MneElement.mkInputs(frame);
+    MneElement.mkSpans(frame);
+    MneElement.mkTextareas(frame);
+  }
+  
+  static moveCursor(ele, begin = false )
+  {
+    var range = document.createRange();
+    range.selectNodeContents(ele);
+    range.collapse(begin);
+    var selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
 }
 
 export default MneElement

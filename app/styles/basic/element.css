@@ -1,36 +1,192 @@
 .modifyno {
 }
 
-.modifyok, div.input-wrapper.modifyok input, div.input-wrapper.modifyok select {
+.label.modifyok,
+.output.modifyok,
+.input.modifyok,
+input[type="button"].modifyok,
+input.modifyok,
+select.modifyok,
+[contenteditable="true"].modifyok,
+.modifyok > span[contenteditable="true"],
+.modifyok > span.output,
+.modifyok > input,
+.modifyok > label:after,
+.modifyok > select {
     background-color: var(--modifyokbackgroundcolor);
     color: var(--modifyokcolor);
 }
-.modifywrong, div.input-wrapper.modifywrong input, div.input-wrapper.modifywrong select, select:invalid, input:invalid {
+.label.modifywrong,
+.output.modifywrong,
+.input.modifywrong,
+input.modifywrong,
+select.modifywrong,
+[contenteditable="true"].modifywrong,
+.modifywrong > [contenteditable="true"],
+.modifywrong > span.output,
+.modifywrong > input,
+.modifywrong > label:after,
+.modifywrong > select {
     background-color: var(--modifywrongbackgroundcolor);
     color: var(--modifywrongcolor);
 }
 
-.modifywarning, div.input-wrapper.modifywarning input, div.input-wrapper.modifywarning select {
+.label.modifywarning,
+.output.modifywarning,
+input.modifywarning,
+select.modifywarning,
+[contenteditable="true"].modifywanring,
+.modifywarning > [contenteditable="true"],
+.modifywarning > span.output,
+.modifywarning > input,
+.modifywarning > label:after,
+.modifywarning > select {
     background-color: var(--modifywarningbackgroundcolor);
     color: var(--modifywarningcolor);
 }
 
-.modifywait, div.input-wrapper.modifywait input, .modifywait div.input-wrapper.modifywait select {
+.label.modifywait,
+.output.modifywait,
+input.modifywait,
+select.modifywait,
+[contenteditable="true"].modifywait,
+.modifywait > [contenteditable="true"].modifywait,
+.modifywait > span.output,
+.modifywait > input,
+.modifywait > label:after,
+.modifywait > select {
     background-color: var(--modifywaitbackgroundcolor);
     color: var(--modifywaitcolor);
  
 }
 
-.hint {
-	background: #fff;
-	background-color: rgba(255,255,255,0.75);
-	border: 1px solid #000000;
-	border-radius: 4px;
-	padding: 2px;
-	white-space: nowrap;
+span.hint {
+	display: none;
+}
+
+[contenteditable="true"]:empty::after {
+    content: attr(placeholder);
+    color: var(--placeholdercolor);
+}
+
+.modifywrong:hover > input + span.hint, .modifywrong > input:focus + span.hint, .modifywrong > [contenteditable="true"]:hover + span.hint, .modifywrong > [contenteditable="true"]:focus + span.hint {
+    position: absolute;
+    display: inline-block;
+    left: 20px;
+    top: calc(var(--lineheight_normal) * 0.8);
+    border: var(--border);
+    border-width: 2px;
+    box-shadow: 0px 0px 12px;
+    padding: var(--margin);
+    line-height: initial;
+    background: var(--background);
+    border-radius: calc(2*var(--borderradius));
+    padding-top: 0px;
+    padding-bottom: 0px;
+    white-space: nowrap;
+    z-index: 100000;
 }
 
 div.ele-wrapper {
 	display: inline-block;
+}
+
+span[contenteditable="true"] {
+    display: inline-block;
+    min-height: var(--select_lineheight);
+    min-width: 3em;
+    max-width: 50em;
+    vertical-align: middle;
+    line-height: initial;
+    border-radius: var(--borderradius);
+    box-shadow: var(--boxshadow);
+    padding: var(--margin);
+    overflow: hidden;
+}
+
+span[contenteditable="true"][data-hidden="true"] {
+    white-space: pre-wrap;
+	max-width: 0px !important;
+	min-width: 0px !important;
+	max-height: 0px !important;
+	min-height: 0px !important;
+	box-shadow: none !important;
+	border: 0px !important;
+	overflow: hidden !important;
+	position: absolute !important;
+}
+
+span[contenteditable="true"][aria-multiline], span[contenteditable="true"].multionfocus:focus {
+    overflow : auto;
+    max-height: 30ex;
+    font-family: monospace;
+}
+
+span[contenteditable="true"].multionfocus {
+    overflow : hidden;
+    max-height: var(--select_lineheight);
+}
+
+td  span[contenteditable="true"] {
+	display: flow-root;
+    max-width: 30em;
+    margin: var(--margin);
+}
+
+div.selectlisti::after, span.selectlisti::after {
+	content: '\f002';
+	font-family: SymbolFont1;
+	color: var(--lightcolor1);
+	margin-left: var(--dmargin);
+	cursor: pointer;
+	line-height: 0px;
+}
+
+div.selectlists::after, span.selectlists::after {
+	content: '\f07c';
+	font-family: SymbolFont1;
+	color: var(--lightcolor1);
+	margin-left: var(--dmargin);
+	cursor: pointer;
+	line-height: 0px;
+}
+
+div.selectlistfi::after, span.selectlistfi::after {
+	content: '\f13a';
+	font-family: SymbolFont1;
+	color: var(--lightcolor1);
+	margin-left: -1em;
+	cursor: pointer;
+	line-height: 0px;
+	opacity: 0.5;
+}
+
+div.selectlistfs::after, span.selectlistfs::after {
+	content: '\f13a\00a0\f07c';
+	font-family: SymbolFont1;
+	color: var(--lightcolor1);
+	margin-left: -2.5em;
+	cursor: pointer;
+	line-height: 0px;
+	opacity: 0.5;
+}
+
+td .selectlisti span.inputi, td .selectlistfi span.input {
+    padding-right: var(--iconsize);
+}
+	
+td span.selectlisti:after, td span.selectlistfi:after  {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    line-height: var(--icon_lineheight);
+    padding-right: var(--dmargin);
+    margin-left: var(--dmargin);
+    margin-right: var(--dmargin);
+}
+
+td span.selectlisti > span {
+    padding-right: var(--iconsize);
 }
 

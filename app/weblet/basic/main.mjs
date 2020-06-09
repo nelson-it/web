@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: weblet/allg/main.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/basic/main.mjs
 //================================================================================
 'use strict';
 
@@ -21,10 +21,13 @@ MneTheme.loadCss('allg.css')
 
 class MneMainWeblet extends MneGeometrieWeblet
 {
-    constructor(frame, appl = 'main' )
+    constructor(frame, appl = 'main', startweblet = false )
     {
       super(null, frame, 'main', {}, { path : (( new URL(import.meta.url)).pathname.substring(8).replace(/\.mjs$/, '')) } );
       this.appl = appl;
+      this.startweblet = startweblet;
+      
+      window.main_weblet = this;
     }
     
     getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
@@ -33,20 +36,20 @@ class MneMainWeblet extends MneGeometrieWeblet
     {
       await MneDbConfig.read();
       MneTheme.setTheme(MneConfig.stylename)
-      super.show(name);
+      await super.show(name);
+
+      window.main_weblet = this.obj.weblets.detail;
     }
-    
-    async check_values() {}
     
     async values()
     {
       await super.values();
+      await this.obj.popups.message.create(this);
       await this.obj.weblets.message.load();
-      
-      var startweblet = window.localStorage.getItem('startweblet');
-      if ( startweblet ) this.obj.weblets['detail'].show(JSON.parse(startweblet));
-      else if ( MneConfig.startweblet ) this.obj.weblets['detail'].show([ MneConfig.startweblet] );
 
+      var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
+      if ( startweblet ) this.obj.weblets['detail'].show(JSON.parse(startweblet)).catch( (e) => { MneLog.exception('Main Startweblet', e); }) ;
+      else if ( this.startweblet && MneConfig.startweblet ) this.obj.weblets['detail'].show([ MneConfig.startweblet] ).catch( (e) => { MneLog.exception('Main Startweblet', e) });
     }
 }
 

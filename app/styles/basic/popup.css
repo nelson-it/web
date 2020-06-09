@@ -106,3 +106,10 @@ div.fullscreen .popupcontent {
 #reloadbutton.popupbutton::after {
     content: '\f021';
 }
+#querybutton.popupbutton::after {
+    content: '\f1c0';
+}
+#querybutton.popupbutton.active {
+    color: var(--titleactivecolor);
+    background: none;
+}

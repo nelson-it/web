@@ -1,10 +1,10 @@
-// ================================================================================
+//================================================================================
 //
 // Copyright: M.Nelson - technische Informatik
-//            Die Software darf unter den Bedingungen 
-//            der APGL ( Affero Gnu Public Licence ) genutzt werden
-//            
-//    datei: weblet/basic/count.mjs
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/basic/count.mjs
 //================================================================================
 'use strict';
 
@@ -51,16 +51,21 @@ class MneCountWeblet extends MneViewWeblet
     
     async showVersion()
     {
+      var self = this;
       var version = await MneRequest.fetch('https://' + MneConfig.updatehost + '/version.php', { version : MneConfig.version, x : (parseInt(parseInt(document.body.clientWidth) / 100 ) * 100), y : (parseInt(parseInt(document.body.clientHeight) / 100 ) * 100), uuid : MneConfig.uuid });
       this.obj.container.version.innerHTML = MneText.getText('#mne_lang#Neue Version# ') + version;
       this.obj.container.version.addEventListener('animationend', function() { MneElement.mkClass(this, 'versionhide', true, 'version')} );
+
       MneElement.mkClass(this.obj.container.version, 'versionshow');
-      MneElement.mkClass(this.obj.container.version, 'versionhide');
+      window.setTimeout( () =>
+      {
+        MneElement.mkClass(self.obj.container.version, 'versionhide');
+      }, 5000 )
     }
     
-    async loadview()
+    async load()
     {
-      await super.loadview();
+      await super.load();
       this.showTime();
       this.showVersion();
     }

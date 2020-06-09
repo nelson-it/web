@@ -1,0 +1,27 @@
+#!/bin/bash
+
+prog='BEGIN { first=1;
+              print "//================================================================================";
+              print "//";
+              print "// Copyright: M.Nelson - technische Informatik";
+              print "// Die Software darf unter den Bedingungen ";
+              print "// der APGL ( Affero Gnu Public Licence ) genutzt werden";
+              print "//";
+              print "// datei: dummy";
+              print "//================================================================================";
+            }
+            /\/\// { if ( first ) next; }
+	    /^ *$/ { if ( first ) next; }
+               { print $0; first = 0; }'
+
+find . ! -name change_datei -type f | \
+  while read file
+  do
+    egrep '^//.*datei' $file >/dev/null
+    if [ "$?" == "0" ]; then
+      name=$(echo "$file" | sed -e 's@^./@@')
+      p=$(echo "$prog" | sed -e "s@//.*datei:.*@// datei: $name\";@")
+      awk "$p" < $file > $file.new
+      mv $file.new $file
+    fi
+  done

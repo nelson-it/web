@@ -25,6 +25,8 @@
 	
 	--lineheight_normal: 26px;
     --select_lineheight: 18px;
+    --icon_lineheight: 26px;
+    --tablineheight_normal: 22px;
 
 	--select_padright:   20px;
 	
@@ -53,9 +55,13 @@
 	--modifywrongbackgroundcolor: #FFA0A0;
 	--modifywarningbackgroundcolor: #FFFFA0;
     --modifywaitbackgroundcolor: #f0f0f0;
-	
+    
+    --titleactivecolor: #d2691e;
+
     --rdonlycolor: #a0a0a0;
     --rdonlybackground: transparent;
+    
+    --placeholdercolor: #a0a0a0;
     
     --dragcolor: #a0a0a0;
 	
@@ -107,6 +113,8 @@
 	--mneajaxmonthtable_sa_color: background-color: #b0b0b0;
 	--mneajaxmonthtable_so_color: background-color: #a0a0a0;
 	
+	--gecko-two-ajust: 0px;
+	--webkit-two-ajust: 8px;
 }
 
 body[aria-view-mode="tablet"] {

@@ -1,10 +1,10 @@
 //================================================================================
-
-//Copyright: M.Nelson - technische Informatik
-//Die Software darf unter den Bedingungen 
-//der APGL ( Affero Gnu Public Licence ) genutzt werden
-
-//datei: weblet/db/view.mjs
+//
+// Copyright: M.Nelson - technische Informatik
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/db/view.mjs
 //================================================================================
 'use strict';
 
@@ -13,25 +13,33 @@ import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
 import MneTheme   from '/js/basic/theme.mjs'
 import MneElement from '/js/basic/element.mjs'
-import MnePopup   from '/js/geometrie/popup.mjs'
 
-import MneViewWeblet        from '../basic/view.mjs'
+import MneView  from '../basic/view.mjs'
+import MnePopup from '../basic/popup.mjs'
 
-export class MneDbViewWeblet extends MneViewWeblet
+export class MneDbView extends MneView
 {
   constructor( parent, frame, id, initpar = {}, config = {} )
   {
-    super(parent, frame, id, initpar, config);
+    var ivalues = 
+    {
+      selectlists : {},
+      selectlistids : id,
+    }
+
+    super(parent, frame, id, Object.assign(ivalues, initpar), config);
   }
   
   reset()
   {
     super.reset();
     
+    var addtyp, modtyp, deltyp;
+    
     var readurl = this.initpar.url;
     
-    this.obj.run.readpar  = {}
-    this.obj.run.writepar = {}
+    Object.assign(this.obj, { selectlists : {} } );
+    Object.assign(this.obj.run, { readpar : {}, addpar : {}, modpar : {}, delpar : {} } );
 
     if ( ! readurl )
     {
@@ -50,9 +58,12 @@ export class MneDbViewWeblet extends MneViewWeblet
     if ( readurl == undefined )
       throw new Error("#mne_lang#keine Leseurl für <" + this.id + ":" + this.config.path + "> definiert");
     
-    var addurl = this.initpar.addurl ?? (( this.initpar.addfunction || this.initpar.okfunction ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? "/db/utils/table/insert.json";
-    var modurl = this.initpar.modurl ?? (( this.initpar.modfunction || this.initpar.okfunction ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? "/db/utils/table/modify.json";
-    var delurl = this.initpar.delurl ?? (( this.initpar.delfunction ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? "/db/utils/table/delete.json";
+    if ( this.initpar.scols )     this.obj.run.readpar.scols = this.initpar.scols;
+    if ( this.initpar.lastquery ) this.obj.run.readpar.lastquery = "1";
+    
+    this.getParamAdd = function(p) { return this.getTableParamAdd(p) }
+    this.getParamMod = function(p) { return this.getTableParamMod(p) }
+    this.getParamDel = function(p) { return this.getTableParamDel(p) }
 
     if ( this.initpar.addurl == undefined )
     {
@@ -66,8 +77,9 @@ export class MneDbViewWeblet extends MneViewWeblet
         };
         
         this.getParamAdd = function(p) { return this.getFunctionParamAdd(p) }
+        addtyp = 'function';
       }
-      else
+      else if ( (this.initpar.addschema ?? this.initpar.okschema ?? this.initpar.schema) && (this.initpar.addtable ?? this.initpar.oktable ?? this.initpar.table) )
       {
         this.obj.run.addpar =
         {
@@ -75,10 +87,8 @@ export class MneDbViewWeblet extends MneViewWeblet
              table : this.initpar.addtable ?? this.initpar.oktable ?? this.initpar.table,
             sqlend : 1
         };
-
-        this.getParamAdd = function(p) { return this.getTableParamAdd(p) }
+        addtyp = 'table';
       }
-      if (  ( ! this.initpar.noadd ) && ( ! this.obj.run.addpar.schema  || ( ! this.obj.run.addpar.table && ! this.obj.run.addpar.name )) ) throw new Error(MneText.sprintf(MneText.getText("#mne_lang#keine Abfrage und keine Table für <$1> : <$2> definiert"), this.id + ":add", this.config.path));
     }
 
     if ( this.initpar.modurl == undefined )
@@ -93,8 +103,9 @@ export class MneDbViewWeblet extends MneViewWeblet
         };
 
         this.getParamMod = function(p) { return this.getFunctionParamMod(p) }
+        modtyp = 'function';
       }
-      else
+      else if ( ( this.initpar.modschema ?? this.initpar.okschema ?? this.initpar.schema ) && ( this.initpar.modtable ?? this.initpar.oktable ?? this.initpar.table ))
       {
         this.obj.run.modpar =
         {
@@ -102,58 +113,134 @@ export class MneDbViewWeblet extends MneViewWeblet
             table  : this.initpar.modtable ?? this.initpar.oktable ?? this.initpar.table,
             sqlend : 1
         }
-        this.getParamMod = function(p) { return this.getTableParamMod(p) }
+        modtyp = 'table';
       }
-      if ( ( ! this.initpar.nomod ) && ( ! this.obj.run.modpar.schema  || ( ! this.obj.run.modpar.table && ! this.obj.run.modpar.name )) ) throw new Error(MneText.sprintf(MneText.getText("#mne_lang#keine Abfrage und keine Table für <$1> : <$2> definiert"), this.id + ":mod", this.config.path));
     }
-
+    
     if ( this.initpar.delurl == undefined )
     {
       if ( this.initpar.delfunction )
       {
         this.obj.run.delpar =
         {
-            schema : this.initpar.delschema ?? this.initpar.schema,
+            schema : this.initpar.delschema ?? this.initpar.okschema ?? this.initpar.schema,
             name   : this.initpar.delfunction,
             sqlend : 1
         };
-        this.getParamDel = function(p) { return this.getFunctionParamDel(p) }
+        this.getParamDel = function(p) { return this.getFunctionParamDel(p) };
+        deltyp = 'function';
       }
-      else
+      else if ( (this.initpar.delschema ?? this.initpar.schema) && (this.initpar.deltable ?? this.initpar.table)  )
       {
         this.obj.run.delpar =
         {
-            schema : this.initpar.delschema ?? this.initpar.schema,
-            table  : this.initpar.deltable ?? this.initpar.table,
+            schema : this.initpar.delschema ?? this.initpar.okschema ?? this.initpar.schema,
+            table  : this.initpar.deltable ?? this.initpar.oktable ?? this.initpar.table,
             sqlend : 1
         };
-        this.getParamDel = function(p) { return this.getTableParamDel(p) }
+        deltyp = 'table';
       }
-      if ( ( ! this.initpar.nodel ) && ( ! this.obj.run.delpar.schema  || ( ! this.obj.run.delpar.table && ! this.obj.run.delpar.name )) ) throw new Error(MneText.sprintf(MneText.getText("#mne_lang#keine Abfrage und keine Table für <$1> : <$2> definiert"), this.id + ":del", this.config.path));
     }
     
+    var addurl = this.initpar.addurl ?? (( addtyp == 'function' ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? (( addtyp == 'table' ) ? "/db/utils/table/insert.json" : undefined );
+    var modurl = this.initpar.modurl ?? (( modtyp == 'function' ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? (( modtyp == 'table' ) ? "/db/utils/table/modify.json" : undefined );
+    var delurl = this.initpar.delurl ?? (( deltyp == 'function' ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? (( modtyp == 'table' ) ? "/db/utils/table/delete.json" : undefined );
+
     this.obj.run.btnrequest  = { read : readurl, add : addurl, mod : modurl, del : delurl, "export" : '/db/utils/query/data.csv' };
+    
+    if ( ! addurl ) this.delbutton('add');
+    if ( ! modurl ) this.delbutton('ok');
+    if ( ! delurl ) this.delbutton('del');
   }
 
   async getSelectLists()
   {
-    var i;
-    var p = 
+    if ( this.config.composeparent )
     {
-        htmlcomposeid : this.parent.config.htmlcomposeid,
-        ids : this.id
-    }
-    
-    var res = await MneRequest.fetch('/htmlcompose/select.json', p);
-    
-    this.obj.selectlists = {};
-    for ( i=0; i<res.values.length; ++i)
-    {
+      var i;
+      var p = 
+      {
+          htmlcomposeid : this.config.composeparent.obj.run.config.htmlcomposeid,
+          ids : this.initpar.selectlistids
+      }
+
+      var res = await MneRequest.fetch('/htmlcompose/select.json', p);
+
+      this.obj.selectlists = {};
+      for ( i=0; i<res.values.length; ++i)
+      {
         var id = res.values[i][res.rids['element']].split(',')[0];
         this.obj.selectlists[id] = { rids : res.rids, values : res.values[i] };
+      }
     }
   }
   
+  async getSelectListContent(id, value )
+  {
+    var i;
+    var res;
+    var p;
+    var list = this.obj.selectlists[id];
+    var result = '';
+    
+    if ( list != undefined  && list.content != undefined )
+    {
+      result = this.obj.selectlists[id].content; 
+    }
+    else
+    {
+
+      if ( list != undefined )
+      {
+        p =
+        {
+            schema : list.values[list.rids['schema']],
+            query  : list.values[list.rids['query']],
+            table  : list.values[list.rids['tab']],
+            cols   : ( list.values[list.rids['showcols']] == '' ) ? list.values[list.rids['cols']] : list.values[list.rids['cols']].split(',').concat(list.values[list.rids['showcols']].split(',')).join(','),
+                wcol   : list.values[list.rids['wcol']],
+                wop    : list.values[list.rids['wop']],
+                wval   : list.values[list.rids['wval']],
+                scols  : list.values[list.rids['scols']],
+                sqlend : 1
+        };
+      }
+      else
+      {
+        this.obj.selectlists[id] = { content : '' };
+        p =
+        {
+            schema : 'mne_application',
+            query  : 'selectlist',
+            cols   : 'text,value',
+            wcol   : 'name',
+            wop    : '=',
+            scols  : 'num',
+            sqlend : 1
+        };
+
+        p.wval = ( this.initpar.selectlists[id] ) ? this.initpar.selectlists[id] : id;
+      }
+
+      res = await MneRequest.fetch(( p.query ) ? '/db/utils/query/data.json' : '/db/utils/table/data.json', p);
+
+      var str = '';
+      for ( i = 0; i< res.values.length; i++)
+        str += '<option value="' + (( res.values[i][1] != undefined ) ? res.values[i][1] : res.values[i][0] ) + '">' + res.values[i][0] + "</option>";
+      this.obj.selectlists[id].content = str;
+
+      result = this.obj.selectlists[id].content;
+    }
+
+    if ( value != 'undefined' )
+    {
+      var index;
+      if ( ( index = result.indexOf('value="' + value + '"')) != -1 )
+        result = result.substring(0, index ) + ' selected="selected" ' + result.substring(index);
+    }
+    return result;
+  }
+
   async findIOParam()
   {
     var i;
@@ -189,150 +276,206 @@ export class MneDbViewWeblet extends MneViewWeblet
       if ( ! this.obj.labels[i].noautoread ) this.obj.labels[i].setText(res.labels[res.rids[i]]);
 
     for ( i in this.obj.inputs )
-      if ( ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]]  );
+      if ( this.obj.inputs[i] && ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]]  );
 
     for ( i in this.obj.outputs )
-      if ( ! this.obj.outputs[i].noautoread ) this.obj.outputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]] );
+      if ( this.obj.outputs[i] && ! this.obj.outputs[i].noautoread ) this.obj.outputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]] );
 
   }
   
-  async findIO()
+  async findIO(frame)
   {
-    await this.getSelectLists();
-    await super.findIO();
-    await this.findIOParam();
+    if ( frame == undefined ) await this.getSelectLists();
+    await super.findIO(frame);
+    if ( frame == undefined ) await this.findIOParam();
   }
 
-  async mkOutput (id, obj)
+  mkSelectList(id, obj, list)
   {
-    var list = this.obj.selectlists[id];
+    if ( list == undefined || obj.type == 'hidden' ) return;
     
-    await super.mkOutput (id, obj);
-    
-    if ( list != undefined )
+    var vals = list.values;
+    var rids = list.rids;
+    var self = this;
+    var i;
+    var path = { 'table' : 'table/select', 'menu' : 'menu/select', frame : 'table/frame' }
+    var config;
+    var isselect = (vals[rids['element']].indexOf('?') != -1 );
+    var interactive = ( vals[rids['type']] != 'frame' )
+
+    var initpar =
     {
-      var vals = list.values;
-      var rids = list.rids;
-      var self = this;
-      var i,icols;
-
-      MneElement.mkClass(obj, (vals[rids['element']].indexOf('?') != -1 ) ? 'selectlists' : 'selectlisti');
+      schema : vals[rids['schema']],
+      cols   : vals[list.rids['cols']],
+      showcols  : vals[list.rids['showcols']],
+      wcol   : vals[list.rids['wcol']],
+      wop    : vals[list.rids['wop']],
+      wval   : vals[list.rids['wval']],
+      scols  : vals[list.rids['scols']],
       
-      var initpar =
+      selval : vals[list.rids['selval']],
+      
+      selectsingle : true,
+      notitle : true,
+      
+      detailweblet : this.config.composeparent.obj.weblets[this.id + '_' + id + 'selectdetail'],
+    };
+
+    if ( vals[rids['query']] ) initpar.query = vals[rids['query']];
+    if ( vals[rids['tab']] )   initpar.table = vals[rids['tab']];
+    if ( vals[rids['showalias']] )   initpar.showids = vals[rids['showalias']].split(',');
+    
+    
+    config  = { path : '/weblet/allg/' + path[vals[rids['type']]], nointeractive : !interactive , initpar : initpar, id : id + 'select', position : 'popup', label : MneText.getText('#mne_lang#suchen') };
+    initpar = Object.assign({selectok : async (sel) => { self[id + 'selected'](sel) }}, initpar )
+    this.obj.popups[id + 'select']  = new MnePopup( id + 'select', initpar, config );
+
+    this[id + 'selected'] = async function( res )
+    {
+      var element = vals[rids['element']].split(',');
+      var cols = vals[rids['showcols']].split(',');
+      var i;
+      
+      if ( res.values.length == 0 ) return;
+      
+      if ( isselect )
       {
-        schema : vals[rids['schema']],
-        cols   : ( vals[rids['showcols']] == '' ) ? vals[list.rids['cols']] : vals[list.rids['cols']].split(',').concat(vals[list.rids['showcols']].split(',')).join(','),
-        wcol   : vals[list.rids['wcol']],
-        wop    : vals[list.rids['wop']],
-        wval   : vals[list.rids['wval']],
-        scols  : vals[list.rids['scols']],
-        
-        selval : vals[list.rids['selval']],
-        
-        selectsingle : true,
-        
-        title  : MneText.getText('#mne_lang#suchen'),
-        notitle : true,
-        
-        detailweblet : this.parent.obj.weblets[this.id + '_' + id + 'selectdetail']
-      };
-
-      if ( vals[rids['query']] ) initpar.query = vals[rids['query']];
-      if ( vals[rids['tab']] )   initpar.table = vals[rids['tab']];
-      
-      icols = [];
-      for ( i = 0; i < vals[rids['showcols']].split(',').length; i++)
-        icols[icols.length] = vals[list.rids['cols']].split.length + i - 1;
-
-      initpar.tablehidecols = icols.join(',');
-      
-      initpar.popup = this.obj.popups[id + 'select'] = new MnePopup(window.document.createElement("div"), MneText.getText('#mne_lang#suchen'), weblet );
-      initpar.ok    = async (sel) => { self[id + 'selected'](sel) };
-      
-      var config = { path : '/weblet/allg/table/select', initpar : initpar, id : id + 'select', position : 'popup', label : MneText.getText('#mne_lang#suchen') };
-
-      let { default: Weblet } =  await MneRequest.import('/weblet/allg/table/select.mjs');
-      var weblet = this.obj.weblets[id + 'select'] = new Weblet(this, initpar.popup.container, id + 'select', initpar, config );
-      
-      this[id + 'selected'] = async function( res )
+        for ( i=1; i<element.length; i++)
+        {
+          this.obj.run.values[element[i].substr(1)] = res.values[0][res.rids[cols[i]]];
+        }
+        this.obj.run.dependweblet = this;
+        await this.values();
+        this.newselect = true;
+        await window.main_weblet.check_values();
+      }
+      else
       {
-        var element = vals[rids['element']].split(',');
-        var cols = vals[rids['showcols']].split(',');
-        var i;
-        
         for ( i=0; i<element.length; i++)
         {
           if ( this.obj.inputs[element[i]] != undefined )  this.obj.inputs[element[i]].modValue(res.values[0][res.rids[cols[i]]]);
           if ( this.obj.outputs[element[i]] != undefined ) this.obj.outputs[element[i]].modValue(res.values[0][res.rids[cols[i]]]);
         }
       }
-
-      this[id + 'selectshow'] = async function()
-      {
-        await weblet.show();
-        await weblet.values();
-      }
-
-      obj.addEventListener('click', (evt) => { self.btnClick(id + 'selectshow', {}, obj, evt); });
     }
+
+    this[id + 'selectshow'] = async function()
+    {
+      await self.openpopup(id + 'select');
+      return false;
+    }
+    
+    if ( interactive )
+    {
+      obj.closest('.ele-wrapper').addEventListener('click', (evt) => { if ( evt.target == obj.closest('.ele-wrapper') ) { self.btnClick(id + 'selectshow', {}, obj, evt);} });
+      MneElement.mkClass(obj.closest('.ele-wrapper'), ( isselect ) ? 'selectlists' : 'selectlisti');
+    }
+    else
+    {
+      MneElement.mkClass(obj.closest('.ele-wrapper'), ( isselect ) ? 'selectlistfs' : 'selectlistfi');
+
+      var showselect = async (evt) =>
+      {
+        if ( obj.noselect ) return;
+        if ( obj.inshowselect ) return;
+
+        obj.inshowselect = true;
+
+        try {
+          if ( ! this.obj.weblets[id + 'select'] || ! this.obj.weblets[id + 'select'].obj.popup.visible ) 
+          {
+            this.obj.popups[id + 'select'].config.parentframe = obj.offsetParent;
+            await this.openpopup(id + 'select');
+            this.obj.weblets[id + 'select'].initpar.popup.frame.style.left = obj.offsetLeft + 'px';
+            this.obj.weblets[id + 'select'].initpar.popup.frame.style.top = obj.offsetTop + obj.offsetHeight + 'px';
+          }
+
+          var res = this.obj.weblets[id + 'select'].obj.weblets.table.obj.run.result;
+          var rows = this.obj.weblets[id + 'select'].obj.weblets.table.obj.tbody.rows;
+          var num = res.rids[vals[list.rids['cols']].split(',')[0]];
+          var index;
+
+          for ( index = 0; index < rows.length; index++ )
+            rows[index].style.display = ( rows[index].values[num].toString().indexOf(obj.getValue(false)) == 0 ) ? null : 'none';
+
+          this.obj.weblets[id + 'select'].obj.weblets.table.obj.lastselect = 0;
+        }
+        catch(e)
+        {
+          MneLog.exception('mkSelectlist: ' + this.fullid, e);
+        }
+        obj.inshowselect = false;
+      };
+
+      obj.closest('.ele-wrapper').addEventListener('click', (evt) => { obj.focus(); MneElement.moveCursor(obj); showselect(evt) });
+      obj.addEventListener('input', showselect);
+      
+      obj.addEventListener('blur', (evt) =>
+      {
+          //if(this.obj.weblets[id + 'select'] ) this.obj.weblets[id + 'select'].close();
+          obj.noselect = false;
+      });
+      
+      obj.addEventListener('keydown', (evt) =>
+      {
+        if ( ! this.obj.weblets[id + 'select'] || ! this.obj.weblets[id + 'select'].obj.popup.visible ) return;
+
+        switch(evt.key)
+        {
+          case "Escape" :
+            this.obj.weblets[id + 'select'].close();
+            obj.noselect = true;
+            evt.stopPropagation();
+            evt.preventDefault();
+
+          case "ArrowDown" :
+            this.obj.weblets[id + 'select'].obj.weblets.table.arrow_down(evt);
+            break;
+
+          case  "ArrowUp" :
+            this.obj.weblets[id + 'select'].obj.weblets.table.arrow_up(evt);
+            break;
+
+          case "Enter" :
+            evt.stopPropagation();
+            evt.preventDefault();
+            this.obj.weblets[id + 'select'].close();
+            this[id + 'selected'](this.obj.weblets[id + 'select'].obj.weblets.table.select);
+          default:
+            break;
+        }
+      }, true);
+    }
+  }
+ 
+  
+  async mkOutput (id, obj)
+  {
+    var list = this.obj.selectlists[id];
+    
+    await super.mkOutput (id, obj);
+    this.mkSelectList(id, obj,list)
+    
   }
 
   async mkInputINPUT (id, obj)
   {
     var list = this.obj.selectlists[id];
-
     await super.mkInputINPUT (id, obj);
-    
+    this.mkSelectList(id, obj,list)
+  }
+
+  async mkInputSPAN (id, obj)
+  {
+    var list = this.obj.selectlists[id];
+    await super.mkInputSPAN (id, obj);
+    this.mkSelectList(id, obj,list)
   }
 
   async mkInputSELECT (id, obj)
   {
-    var i;
-    var res;
-    var p;
-    var list = this.obj.selectlists[id];
-    
     await super.mkInputSELECT (id, obj);
-
-    if ( list != undefined )
-    {
-      p =
-      {
-          schema : list.values[list.rids['schema']],
-          query  : list.values[list.rids['query']],
-          table  : list.values[list.rids['tab']],
-          cols   : ( list.values[list.rids['showcols']] == '' ) ? list.values[list.rids['cols']] : list.values[list.rids['cols']].split(',').concat(list.values[list.rids['showcols']].split(',')).join(','),
-          wcol   : list.values[list.rids['wcol']],
-          wop    : list.values[list.rids['wop']],
-          wval    : list.values[list.rids['wval']],
-          scols  : list.values[list.rids['scols']],
-          sqlend : 1
-      };
-    }
-    else
-    {
-      p =
-      {
-          schema : 'mne_application',
-          query  : 'selectlist',
-          cols   : 'text,value',
-          wcol   : 'name',
-          wop    : '=',
-          scols  : 'num',
-          sqlend : 1
-      };
-
-      p.wval = id;
-    }
-
-    res = await MneRequest.fetch(( p.query ) ? '/db/utils/query/data.json' : '/db/utils/table/data.json', p);
-    
-    for ( i = 0; i< res.values.length; i++)
-    {
-      obj.appendChild(document.createElement('option'));
-      obj.lastChild.appendChild(document.createTextNode( res.values[i][0] ));
-      obj.lastChild.value = ( res.values[i][1] != undefined ) ? res.values[i][1] : res.values[i][0];
-    }
+    obj.innerHTML = await this.getSelectListContent(id); 
   }
 
   getIdparam(p, mod)
@@ -342,14 +485,14 @@ export class MneDbViewWeblet extends MneViewWeblet
 
     if ( m == 'mod' )
     {
-      for ( i=0; i<this.initpar.showids.length; i++ )
+      for ( i=0; i<this.initpar.modids.length; i++ )
       {
-        if ( p[this.initpar.showids[i] + "Input.old"] != undefined )
-          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Id Parameter <$1> ist schon definiert"), this.initpar.showids[i] ));
-        else if ( this.obj.run.values[this.initpar.showids[i]] != undefined )
-          p[this.initpar.showids[i] + "Input.old"] = this.obj.run.values[this.initpar.showids[i]];
+        if ( p[this.initpar.modids[i] + "Input.old"] != undefined )
+          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Id Parameter <$1> ist schon definiert"), this.initpar.modids[i] ));
+        else if ( this.obj.run.values[this.initpar.modids[i]] != undefined )
+          p[this.initpar.modids[i] + "Input.old"] = this.obj.run.values[this.initpar.modids[i]];
         else
-          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Objekt für name <$1> ist nicht definiert"), this.initpar.showids[i] ));        
+          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Objekt für name <$1> ist nicht definiert"), this.initpar.modids[i] ));        
       }
     }
     else
@@ -378,24 +521,27 @@ export class MneDbViewWeblet extends MneViewWeblet
     return p;
   }
 
-  getParam(p)
+  getParam(p, cols = [] )
   {
-    var i = null;
+    var i;
 
     for ( i in this.obj.inputs )
       p = this.addParam(p, i + "Input", this.obj.inputs[i]);
-
-    return p;     
+    
+    for ( i =0; i<cols.length; ++i)
+      if ( this.obj.inputs[cols[i]] == undefined ) p = this.addParam(p, cols[i] + "Input", this.obj.run.values[cols[i]]);
+      
+    return p;
   }
   
-  getFunctionParam(p, cols, typs)
+  getFunctionParam(p, cols = [], typs = [])
   {
     var i;
     
     for ( i =0; i<cols.length; ++i)
     {
-      p = this.addParam(p, 'par' + i, this.obj.inputs[cols[i]])
-      p = this.addParam(p, 'typ' + i, ( typs[i] ) ? typs[i] : 'text' )
+      p = this.addParam(p, 'par' + i, this.obj.inputs[cols[i]] ?? this.obj.run.values[cols[i]])
+      p = this.addParam(p, 'typ' + i, ( typs[cols[i]] ) ? typs[cols[i]] : 'text' )
     }
 
     return p;
@@ -403,76 +549,103 @@ export class MneDbViewWeblet extends MneViewWeblet
 
   getFunctionParamAdd(p)
   {
-    return this.getFunctionParam(p, ( this.initpar.addcols ?? this.initpar.okcols).split(','), ( this.initpar.addtyps ?? this.initpar.oktyps).split(','));
+    return this.getFunctionParam(p, ( this.initpar.addcols ?? this.initpar.okcols), ( this.initpar.addtyps ?? this.initpar.oktyps));
   }
 
   getFunctionParamMod(p)
   {
-    return this.getFunctionParam(p, ( this.initpar.modcols ?? this.initpar.okcols).split(','), ( this.initpar.modtyps ?? this.initpar.oktyps).split(','));
+    return this.getFunctionParam(p, ( this.initpar.modcols ?? this.initpar.okcols), ( this.initpar.modtyps ?? this.initpar.oktyps));
   }
 
   getFunctionParamDel(p)
   {
-    return this.getFunctionParam(p, this.initpar.delcols.split(','), this.initpar.deltyps.split(','));
+    return this.getFunctionParam(p, this.initpar.delcols, this.initpar.deltyps);
   }
 
   getTableParamAdd(p)
   {
-    return this.getIdparam(p);
+    p = this.getParam(p, ( this.initpar.addcols ?? this.initpar.okcols));
+    p.sqlend = 1;
+    return p;
   }
 
   getTableParamMod(p)
   {
-    p = this.getParam(p);
-    return this.getIdparam(p);
+    p = this.getParam(p, ( this.initpar.modcols ?? this.initpar.okcols));
+    p = this.getIdparam(p);
+    p.sqlend = 1;
+    return p;
   }
 
   getTableParamDel(p)
   {
-    return this.getIdparam(p);
+    p = this.getIdparam(p, this.initpar.delcols);
+    p.sqlend = 1;
+    return p;
   }
 
-  async values(param)
+  getParamShowSingle(w, showids, i )
+  {
+    if ( this.initpar.showalias && this.initpar.showalias[i] )
+      return this.initpar.showalias[i]();
+
+    return  ( w ) ? w.obj.run.values[showids[i]] : undefined;
+  }
+  
+  getParamShow(p, showids )
   {
     var i;
-    var str = '';
-    var w;
+    var w = this.obj.run.act_dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
+    var showids = ( showids ) ? showids : this.initpar.showids;
     
-    for ( i in this.obj.inputs )
-        str += i + ",";
-    for ( i in this.obj.outputs )
-        str += i + ",";
-    str = str.substring(0,str.length - 1);
+    this.obj.run.showvals = {};
+    for ( i=0; i<showids.length; ++i )
+    {
+      var val = this.getParamShowSingle(w, showids, i);
+      if ( val != undefined && val != '################' )
+        p[showids[i] + "Input.old"] = this.obj.run.showvals[showids[i]] = this.obj.run.values[showids[i]] = val;
+      else
+        p.value_not_found = true;
+    }
+    return p;
+  }
+  
+  async values(param = {})
+  {
+    var cols = param.cols;
+    var i;
+
+    if ( cols == undefined )
+    {
+      cols = '';
+      for ( i in this.obj.inputs )
+        if ( ! this.obj.inputs[i].noautoread ) cols += i + ",";
+      for ( i in this.obj.outputs )
+        if ( this.obj.inputs[i] == undefined && ! this.obj.outputs[i].noautoread ) cols += i + ",";
+      cols = cols.substring(0,cols.length - 1);
+    }
 
     var p = Object.assign(
     {
-      cols     : str,
-      sqlend   : 1
+      cols     : cols,
+      sqlend   : 1,
+      lastquery : ( this.obj.lastquery ) ? '1' : '',
     }, this.obj.run.readpar);
     
-    w = this.config.dependweblet;
-    for ( i=0; i<this.initpar.showids.length; ++i )
-    {
-      if ( w && w.obj.run.values[this.initpar.showids[i]] && w.obj.run.values[this.initpar.showids[i]] != '################' )
-      {
-        p[this.initpar.showids + "Input.old"] = w.obj.run.values[this.initpar.showids[i]];
-      }
-      else
-      {
-        await this.add();
-        return;
-      }
-    }
-
-    var res = await MneRequest.fetch(this.obj.run.btnrequest.read, p);
+    p = this.getParamShow(p)
+    if ( p.value_not_found  )
+        return this.add({ nomod : true });
+    
+    this.obj.run.dependweblet = undefined;
+    
+    var res = this.obj.run.result = await MneRequest.fetch(this.obj.run.btnrequest.read, p);
     if ( res.values.length == 0 )
     {
       if ( ! this.initpar.ignore_notfound  )
         MneLog.warning(MneText.sprintf(MneText.getText("#mne_lang#Keine Werte für $1:$2 gefunden"), "MneDbViewWeblet:values", this.id));
-      await this.add();
-      return;
+      return this.add({ nomod : true });
     }
-    else if ( res.values.length > 1 )
+    else if ( res.values.length > 1 && ! ( param.multiline === true )  )
     {
       MneLog.warning(MneText.sprintf(MneText.getText("#mne_lang#Mehr als einen Wertesatz gefunden für $1:$2 gefunden"), "MneDbViewWeblet:values", this.id));
     }
@@ -489,57 +662,111 @@ export class MneDbViewWeblet extends MneViewWeblet
     this.obj.run.values = {};
     for ( i =0; i<res.ids.length; i++)
       this.obj.run.values[res.ids[i]] = res.values[0][i];
+    
+    this.obj.run.values = Object.assign(Object.assign({}, this.obj.run.showvals), this.obj.run.values);
+    this.enable('value');
   }
   
   async ok()
   {
     var p;
-
+    var res;
+    var oldvalues,values;
+    
     p = Object.assign({}, this.obj.run[this.obj.run.okaction + 'par']);
     p = this['getParam' + this.obj.run.okaction[0].toUpperCase() + this.obj.run.okaction.substr(1)](p);
 
-    await MneRequest.fetch(this.obj.run.btnrequest[this.obj.run.okaction], p);
-    this.newvalues = true;
+    res = await MneRequest.fetch(this.obj.run.btnrequest[this.obj.run.okaction], p);
+    
+    oldvalues = this.obj.run.values;
+    values = this.obj.run.values = {};
+
+    if ( res.result && res.result != 'ok' )
+    {
+      res.ids[res.rids['result']] = this.initpar.showids[0];
+      res.rids[this.initpar.showids[0]] = res.rids['result'];
+    }
+
+    this.initpar.showids.forEach( ( item ) => { values[item] = oldvalues[item]; });
+    res.ids.forEach( (item, index) => { values[item] = res.values[0][index]; })
+
+    this.dependweblet = this;
   }
 
   async cancel()
   {
-    await this.values();
+    return this.values();
   }
   
-  async add()
+  async add(data)
   {
     var i;
 
-    if ( this.getModify() )
+    this.obj.run.okaction = 'add';
+    this.obj.run.dependweblet = undefined; 
+
+    if ( ! data.nomod && this.getModify() )
     {
+      for ( i=0; i< this.initpar.modids.length; ++i )
+        this.obj.inputs[this.initpar.modids[i]].setValue((this.obj.defvalues[this.initpar.modids[i]] != undefined ) ? this.obj.defvalues[this.initpar.modids[i]] : '################');
+
       await this.ok();
       return;
     }
 
-    for ( i in this.obj.inputs )
-      this.obj.inputs[i].setValue((this.obj.defvalues[i]) ? this.obj.defvalues[i] : '');
-
-    this.obj.run.okaction = 'add';
     this.title = this.obj.run.title.add;
 
     for ( i in this.obj.inputs )
       this.obj.inputs[i].setValue((this.obj.defvalues[i]) ? this.obj.defvalues[i] : '');
-    
+
+    this.obj.run.result = undefined;
+    this.obj.run.values = {};
+
+    this.initpar.modids.forEach((item, index) =>
+    {
+      this.obj.run.values[item] = ( this.obj.defvalues[item] != undefined ) ? this.obj.defvalues[item] : '################';
+      this.obj.inputs[item].setValue(this.obj.run.values[item]);
+    });
+
     for ( i in this.obj.outputs )
-      this.obj.outputs[i].setValue((this.obj.defvalues[i]) ? this.obj.defvalues[i] : '');
+      this.obj.outputs[i].setValue((this.obj.defvalues[i] != undefined ) ? this.obj.defvalues[i] : '');
+   
+
+    this.enable('add');
+    this.newselect = true;
   }
 
-  async del()
+  del_confirm(multi = false)
   {
-    var p;
+    var ids = ( this.initpar.delconfirmids ) ? this.initpar.delconfirmids : this.initpar.showids;
+    var str = "";
+    ids.forEach((item) =>
+    {
+      str += this.obj.run.values[item] + ':';
+    })
+    str = str.substr(0, str.length-1);
 
-    p = Object.assign({}, this.obj.run.delpar);
-    p = this.getParamAdd(p);
-        
-    await MneRequest.fetch(this.obj.run.btnrequest['del'], p);
-    this.newvalues = true;
+    return this.confirm(MneText.sprintf(( str != '' ) ? MneText.getText("#mne_lang#<$1> Wirklich löschen ?") : MneText.getText('#mne_lang#Wirklich löschen ?'), str + ((multi) ? ' ' + '#mne_lang#und andere' : '')));
+  }
+  
+  async del(data = {})
+  {
+    if ( data.noask || this.del_confirm() )
+    {
+      var p;
+      p = Object.assign({}, this.obj.run.delpar);
+      p = this.getParamDel(p);
+      await MneRequest.fetch(this.obj.run.btnrequest['del'], p);
+      this.obj.run.values = {};
+      this.dependweblet = this;
+    }
+  }
+  
+  async query()
+  {
+    this.obj.lastquery = ! this.obj.lastquery;
+    MneElement.mkClass(this.obj.buttons.query, 'active', this.obj.lastquery );
   }
 }
 
-export default MneDbViewWeblet;
+export default MneDbView;

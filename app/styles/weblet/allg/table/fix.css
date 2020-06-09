@@ -1,0 +1,8 @@
+div.tablewhere {
+	margin: var(--dmargin);
+}
+
+div.tablecontent > div.webletmain #contentContainer {
+	position : unset;
+	margin: 0px;
+}
