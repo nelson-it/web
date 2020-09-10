@@ -1,0 +1,306 @@
+.mne-rte select {
+	width: unset !important;
+}
+
+.mne-rte .mne-rte-editarea span:empty:after {
+	content: '\00a0';
+}
+
+.mne-rte .mne-rte-editarea td {
+	padding: var(--dmargin);
+}
+
+.mne-rte .mne-rte-editarea table:not(.mne_border), .mne-rte .mne-rte-editarea table:not(.mne_border) > tbody > tr > td {
+	border : var(--border);
+	border-style: dashed;
+	border-spacing: 1px;
+}
+
+.mne-rte .mne-rte-editarea * {
+	white-space: normal;
+    line-height: normal;
+}
+
+.mne-rte .mne-rte-editarea div + div, .mne-rte .mne-rte-editarea div + table, .mne-rte .mne-rte-editarea table + div , .mne-rte .mne-rte-editarea table + table {
+	margin-top: 0.5ex;
+}
+
+.mne-rte .mne-rte-active {
+	background: var(--lightcolor2);
+}
+
+.mne-rte {
+	display: flex;
+    flex-direction: column;
+}
+	
+.mne-rte .mne-rte-buttonframe {
+	border : var(--border);
+	line-height: 0px;
+	font-size: 0px;
+}
+
+.mne-rte .mne-rte-buttongroup {
+	display: inline-block;
+    border-right: var(--border);
+}
+
+.mne-rte .mne-rte-buttongroup div.input-wrapper.contain-select {
+	font-size: var(--font_normal);
+	line-height: var(--select_lineheight);
+	margin: var(--margin);
+	margin-left: var(--dmargin);
+	margin-right: 0px;
+	vertical-align: top;
+}
+.mne-rte .mne-rte-buttongroup div.input-wrapper.contain-select:after {
+    right: 4px !important;
+}
+.mne-rte .mne-rte-editarea {
+    border: var(--border);
+
+    padding-left: 1em;
+    padding-right: 1em;
+
+    max-width: 48em;
+    min-width: 48em;
+
+    margin-bottom: var(--dmargin);
+    margin-top: var(--dmargin);
+    margin-left: auto;
+    margin-right: auto;
+    
+    flex-grow: 1;
+}
+
+.mne-rte .mne-rte-button {
+	position: relative;
+    display: inline-block;
+	height: 20px;
+	width: 20px;
+	cursor: default;
+	margin: var(--margin);
+	font-size: var(--font_normal);
+	
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.mne-rte .mne-rte-attr-frame {
+	position: absolute;
+
+    margin: 0px;
+    padding: var(--margin);
+    transform: translateX(-100%) translateY(-12px) translateX(-12px);
+
+    background: var(--background);
+    border: var(--border);
+    box-shadow: 0px 0px 4px 8px var(--background);
+}
+
+.mne-rte .mne-rte-attr-frame > *
+{
+	vertical-align: middle;
+}
+
+.mne-rte .mne-rte-button.active {
+	border: 1px inset;
+    box-shadow: var(--button_boxshadow_active);
+    border: var(--button_border_active);
+    background-color: var(--button_background_active)
+}
+
+.mne-rte .mne-rte-button.seperator {
+    border: var(--border);
+    border-color: var(--lightcolor1);
+    width: 0px;
+}
+
+.mne-rte .mne-rte-hint {
+	position: absolute;
+	display: none;
+	
+	line-height: 20px;
+	color: var(--lightcolor1);
+	background: var(--background);
+	
+	border: var(--border);
+	border-width: 2px;
+	border-radius: calc(2 * var(--borderradius));
+	box-shadow: 0px 0px 12px;
+	
+	padding: var(--margin);
+	padding-top: 0px;
+	padding-bottom: 0px;
+	
+	white-space: nowrap;
+	transform: translate(10%, 60%);
+	z-index: 100000;
+}
+
+.mne-rte .mne-rte-button:hover .mne-rte-hint {
+	display: inline-block;
+}
+
+.mne-rte .mne-rte-button::before {
+    position: absolute;
+    font-family: SymbolFont1;
+    line-height: 20px;
+    text-align: center;
+    left: 0px;
+    top: 0px;
+    width: 20px;
+    height: 20px;
+    color: var(--lightcolor1);
+}
+
+.mne-rte .mne-rte-button::after {
+	position: absolute;
+	font-family: SymbolFont1;
+	line-height: 10px;
+	text-align: center;
+	right: 0px;
+	top: 0px;
+	width: 10px;
+	height: 10px;
+	color: red;
+	font-size: 12px;
+}
+
+.mne-rte .mne-rte-button.italic::before {
+    content: '\f033';
+}
+
+.mne-rte .mne-rte-button.bold::before {
+    content: '\f032';
+}
+
+.mne-rte .mne-rte-button.alignl::before {
+	content: '\f036'
+}
+
+.mne-rte .mne-rte-button.alignr::before {
+	content: '\f038'
+}
+
+.mne-rte .mne-rte-button.alignc::before {
+	content: '\f037'
+}
+
+.mne-rte .mne-rte-button.save::before {
+    content: '\f0c7';
+}
+
+.mne-rte .mne-rte-button.undo::before {
+    content: '\f0e2';
+}
+
+.mne-rte .mne-rte-button.redo::before {
+    content: '\f01e';
+}
+
+.mne-rte .mne-rte-button.item::before {
+    content: '\f0ca';
+}
+
+.mne-rte .mne-rte-button.enum::before {
+    content: '\f0cb';
+}
+
+.mne-rte .mne-rte-button.picture::before {
+    content: '\f03e';
+}
+
+.mne-rte .mne-rte-button.anker::before {
+    content: '\f0c1';
+}
+
+.mne-rte .mne-rte-button.close::before {
+    content: '\f00d';
+}
+
+.mne-rte .mne-rte-button.file::before {
+    content: '\f15b';
+}
+
+.mne-rte .mne-rte-button.cut::before {
+    content: '\f0c4';
+}
+
+.mne-rte .mne-rte-button.copy::before {
+    content: '\f0c5';
+}
+
+.mne-rte .mne-rte-button.paste::before {
+    content: '\f0ea';
+}
+
+.mne-rte .mne-rte-button.folder::before {
+    content: '\f07c';
+}
+
+.mne-rte .mne-rte-button.table::before {
+    content: '\f0ce';
+}
+
+.mne-rte .mne-rte-button.table_delete::before {
+    content: '\f0ce';
+}
+
+.mne-rte .mne-rte-button.table_delete::after {
+    content: '\f00d';
+}
+
+.mne-rte .mne-rte-button.table_insert_col_before::before {
+    content: '\f0db';
+}
+.mne-rte .mne-rte-button.table_insert_col_before::after {
+    content: '\f060';
+    color: green;
+}
+
+.mne-rte .mne-rte-button.table_insert_col_behind::before {
+    content: '\f0db';
+}
+
+.mne-rte .mne-rte-button.table_insert_col_behind::after {
+    content: '\f060';
+    color: green;
+    top: unset;
+    bottom: 2px;
+}
+
+.mne-rte .mne-rte-button.table_delete_col::before {
+    content: '\f0db';
+}
+
+.mne-rte .mne-rte-button.table_delete_col::after {
+    content: '\f00d';
+}
+
+.mne-rte .mne-rte-button.table_insert_row_before::before {
+    content: '\f0c9';
+}
+
+.mne-rte .mne-rte-button.table_insert_row_before::after {
+    content: '\f060';
+    color: green;
+}
+
+.mne-rte .mne-rte-button.table_insert_row_behind::before {
+    content: '\f0c9';
+}
+
+.mne-rte .mne-rte-button.table_insert_row_behind::after {
+    content: '\f060';
+    color: green;
+    top: unset;
+    bottom: 2px;
+}
+
+.mne-rte .mne-rte-button.table_delete_row::before {
+    content: '\f0c9';
+}
+.mne-rte .mne-rte-button.table_delete_row::after {
+    content: '\f00d';
+}

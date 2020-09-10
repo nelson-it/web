@@ -15,12 +15,13 @@
 :root {
 	--font-family: Arial,Helvetica,sans-serif;
 
-    --font_tiny: 9px;
+    --font_tiny: 8px;
+    --font_footnote: 9px;
     --font_small: 10px;
     --font_normal: 13px;
     --font_large: 15px;
     --font_Large: 18px;
-    --font_huge: 22px;
+    --font_LARGE: 22px;
     --font_Huge: 27px;
 	
 	--lineheight_normal: 26px;
@@ -40,7 +41,8 @@
 	--darkcolor1: #729fcf;
 
 	--lightcolor1: #aaccff;
-	--lightcolor2: #e0f0f0;
+	--lightcolor2: #eaeaff;
+	--grayoutcolor: #a0a0a0;
 	
 	--errorcolor:  rgba(255,0,0,0.5);
 	--warningcolor: rgba(255,255,0,0.5);
@@ -79,6 +81,8 @@
 	
 	--border: 1px solid #d0d0d0;
 	--bordercolor: #d0d0d0;
+	--bordersize: 1px;
+	--borderstyle: solid;
 
 	--lightborder: 1px solid #c0c0c0;
 	--lightbordercolor: #c0c0c0;
@@ -115,6 +119,9 @@
 	
 	--gecko-two-ajust: 0px;
 	--webkit-two-ajust: 8px;
+	
+	--ariabaserelwidth: 0.48em;
+	--ariaheight: 1;
 }
 
 body[aria-view-mode="tablet"] {

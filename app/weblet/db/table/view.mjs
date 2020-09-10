@@ -11,9 +11,10 @@
 import MneConfig     from '/js/basic/config.mjs'
 import MneText       from '/js/basic/text.mjs'
 import MneLog        from '/js/basic/log.mjs'
-import MneElement    from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneRequest    from '/js/basic/request.mjs'
 
+import MneWeblet  from '/weblet/basic/weblet.mjs'
 import MneDbTableBasic from './basic.mjs'
 
 class MneDbTableView extends MneDbTableBasic
@@ -30,22 +31,12 @@ class MneDbTableView extends MneDbTableBasic
   async check_values()
   {
     var mustcheck = false;
-    var p = [];
-    var self = this;
-    
-
-    this.config.depend.forEach( (item) =>
-    {
-      if ( item.newvalues && item.obj.run.dependweblet == item )
-             mustcheck = true;
-    });
+    this.config.depend.forEach( (item) => { if ( item instanceof MneWeblet ) mustcheck = (item.obj.run.checkdepend === true ) });
 
     if ( mustcheck )
-      p.push (this.refresh());
+       await this.refresh();
 
-    p.push(super.check_values());
-
-    return Promise.all(p);
+    return super.check_values();
   }
   
   async add()
@@ -62,8 +53,11 @@ class MneDbTableView extends MneDbTableBasic
      for ( i in this.config.dependweblet.obj.run.values )
        if ( res.rids[i] != undefined ) row.values[res.rids[i]] = this.config.dependweblet.obj.run.values[i];
      
-     for ( i=0; i< this.initpar.modids.length; ++i )
-       row.values[res.rids[this.initpar.modids[i]]] = (this.obj.defvalues[this.initpar.modids[i]] != undefined ) ? this.obj.defvalues[this.initpar.modids[i]] : '################';
+     for ( i in this.obj.defvalues )
+       row.values[res.rids[i]] = this.obj.defvalues[i];
+     
+     for ( i=0; i< this.initpar.okids.length; ++i )
+       row.values[res.rids[this.initpar.okids[i]]] = (this.obj.defvalues[this.initpar.okids[i]] != undefined ) ? this.obj.defvalues[this.initpar.okids[i]] : '################';
 
      for ( i=0; i< this.initpar.showids.length; ++i )
        row.values[res.rids[this.initpar.showids[i]]] = (this.obj.defvalues[this.initpar.showids[i]] != undefined ) ? this.obj.defvalues[this.initpar.showids[i]] : this.config.dependweblet.obj.run.values[this.initpar.showids[i]];
@@ -73,22 +67,10 @@ class MneDbTableView extends MneDbTableBasic
      
      row.innerHTML = str;
      row.addEventListener('click', function(evt) { self.btnClick('rowclick', {}, this, evt); }, true);
-     
- 
-     this.obj  = Object.assign(this.obj, { inputs  : {}, outputs : {} });
-     MneElement.mkElements(row);
-     await this.findIO(row);
-     row.obj = { inputs : this.obj.inputs, outputs : this.obj.outputs }
-
-     for ( i in this.obj.inputs )
-     {
-       var rr = this.obj.run.result.rids[i];
-       this.obj.inputs[i].setTyp(this.obj.run.result.typs[rr], this.obj.run.result.regexps[rr], this.obj.run.result.formats[rr]);
-       this.obj.inputs[i].setValue('########');
-       this.obj.inputs[i].modValue((row.values[rr]) ? row.values[rr] : ( this.obj.defvalues[i] ?? '' ));
-     }
-     
      await this.selectRow({type : 'add'}, row, {});
+     
+     for ( i=0; i<this.obj.cols.length; ++i)
+       if ( this.obj.inputs[this.obj.cols[i]] ) { this.obj.inputs[this.obj.cols[i]].setAttribute('oldvalue', ''); }
      
      for ( i=0; i<this.obj.cols.length; ++i)
        if ( this.obj.inputs[this.obj.cols[i]] ) { this.obj.inputs[this.obj.cols[i]].focus(); break; }
@@ -96,29 +78,50 @@ class MneDbTableView extends MneDbTableBasic
      this.obj.run.okaction = 'add';
   }
 
-  async ok()
+  primarykey()
+  {
+    var skey;
+    if ( this.initpar.primarykey )
+    {
+      skey = {};
+      this.initpar.primarykey.forEach((item) =>
+      {
+        skey[item] = this.obj.run.values[item]; 
+      })
+    this.obj.run.selectedkeys.push(skey);
+    }
+  }
+  
+  async ok(param)
   {
     if ( this.obj.buttons.ok ) 
     {
       var i,j;
       var rows = this.obj.tbody.children;
-
+      var retval = false;
+      
+      this.obj.run.selectedkeys = [];
+      
       for ( i=0; i<rows.length; i++)
       {
-        if ( rows[i].querySelector('.modifyok') != null ) 
+        if ( rows[i].ismodify || rows[i].querySelector('.modifyok') != null ) 
         {
-          this.selectRow({force : true}, rows[i] )
-          await super.ok();
+          retval = true;
+          await this.selectRow({force : true}, rows[i] )
+          this.primarykey();
+          await super.ok(param);
         }
-        this.dependweblet = undefined;
       }
+      this.dependweblet = undefined;
     }
+    return retval;
   }
   
   async del()
   {
     var sel = this.select;
 
+    this.obj.run.selectedkeys = [];
     if ( sel.values.length > 0 && this.del_confirm( sel.values.length > 1 ))
     {
       var i,j;
@@ -137,12 +140,44 @@ class MneDbTableView extends MneDbTableBasic
   async cancel()
   {
     this.unselectRows();
+    this.obj.run.selectedkeys = [];
     await super.cancel();
   }
   
   async detail()
   {
     await this.openpopup(this.initpar.detailweblet);
+    this.obj.weblets[this.initpar.detailweblet].config.depend.push(this);
+    return false;
+  }
+
+  async detailscreen()
+  {
+    var values = {};
+    var defvals = {};
+    
+    Object.keys(this.initpar.detailvalues).forEach( ( item ) => { values[item] = this.obj.run.values[this.initpar.detailvalues[item]]})
+    Object.keys(this.initpar.detaildefvalues).forEach( ( item ) =>
+    {
+      defvals[item] = { defvalues : {} };
+      Object.keys(this.initpar.detaildefvalues[item]).forEach( (subitem ) => {  defvals[item].defvalues[subitem] = this.obj.run.values[this.initpar.detaildefvalues[item][subitem]]});
+    });
+    
+    this.showweblet(this.initpar.detailscreen, values, defvals);
+    return false;
+  }
+  
+  async detailmod()
+  {
+    await this.openpopup(this.initpar.detailmodweblet);
+    this.obj.weblets[this.initpar.detailmodweblet].config.depend.push(this);
+    return false;
+  }
+  
+  async detailadd()
+  {
+    await this.openpopup(this.initpar.detailaddweblet);
+    this.obj.weblets[this.initpar.detailaddweblet].config.depend.push(this);
     return false;
   }
 
@@ -156,16 +191,12 @@ class MneDbTableView extends MneDbTableBasic
     return this.refresh();
   }
   
-  async refresh()
-  {
-    await super.refresh();
-    this.newvalues = true;
-  }
-  
   async dblclick()
   {
     if ( this.initpar.detailweblet )
       return this.detail();
+    else if ( this.initpar.detailscreen )
+      return this.detailscreen()
   }
 }
 

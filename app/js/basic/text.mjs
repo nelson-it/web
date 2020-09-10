@@ -32,17 +32,7 @@ export class MneText
   
   static addNull(value, size )
   {
-    var i,j;
-    var v;
-    if ( size < 2 ) return value + "";
-    v = value + "";  
-    j=10;
-    for ( i=1; i<size; i++ )
-    {
-      if ( value < j ) v = "0" + v;
-      j = j * 10;
-    }
-    return v; 
+    return value.toString().padStart(2, "0");
   };
 
   static getTimestamp() { return MneText.toDateTime((new Date()).getTime() / 1000); };

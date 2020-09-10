@@ -1,18 +1,19 @@
 //================================================================================
-
-//Copyright: M.Nelson - technische Informatik
-//Die Software darf unter den Bedingungen 
-//der APGL ( Affero Gnu Public Licence ) genutzt werden
-
-//datei: weblet/basic/weblet.mjs
+//
+// Copyright: M.Nelson - technische Informatik
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: weblet/basic/weblet.mjs
 //================================================================================
 'use strict';
 
+import MneMutex   from '/js/basic/mutex.mjs'
 import MneText    from '/js/basic/text.mjs'
 import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
 import MneTheme   from '/js/basic/theme.mjs'
-import MneElement from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneConfig  from '/js/basic/config.mjs'
 import MneFullscreen  from '/js/geometrie/fullscreen.mjs'
 
@@ -22,26 +23,58 @@ export class MneWebletEmpty
 {
   constructor(config = {})
   {
-    this.configorig = Object.assign({depend : [] }, config );
-    this.dropevt     = (evt) => { evt.preventDefault(); var data = JSON.parse(evt.dataTransfer.getData("text")); this.drop(data, evt).catch((e) => { MneLog.exception('drag & drop: ' + this.fullid, e); throw e}) };
+    this.configorig = Object.assign({depend : [], dependid : [] }, config );
+    this.dropevt     = (evt) =>
+    {
+      if ( evt.dataTransfer.types.length > 0 && evt.dataTransfer.types[0] == 'text/plain' && evt.target.modValue )
+      {
+        MneWeblet.dropok = true;
+        return;
+      }
+
+      evt.preventDefault();
+      var data = JSON.parse(evt.dataTransfer.getData("mnejson"));
+      this.drop(data, evt).catch((e) => { MneLog.exception('drag & drop: ' + this.fullid, e); throw e})
+      
+      MneWeblet.dropok = true;
+    };
+    
     this.dragoverevt = (evt) => 
     {
       var data;
-      try { data = JSON.parse(evt.dataTransfer.getData("text")) } catch(e) { evt.dataTransfer.dropEffect = "none"; return };
+      
+      MneWeblet.dropok = false;
+      if ( evt.dataTransfer.types.length > 0 && evt.dataTransfer.types[0] == 'text/plain' && evt.target.modValue )
+      {
+          evt.dataTransfer.dropEffect = 'copy';
+          evt.preventDefault();
+          return;
+      }
+      try { data = JSON.parse(evt.dataTransfer.getData("mnejson")) } catch(e) { evt.dataTransfer.dropEffect = "none"; return; }
       this.initpar.dropwait.forEach((item) => { if ( data.dropfrom && data.dropfrom == item ) evt.preventDefault(); });
     }
   }
 
-  getPath(url) { return (new URL(url)).pathname.replace(/\/[^\/]+\.mjs$/, ''); }
-  getCss(url)  { return (new URL(url)).pathname.substring(8).replace(/\.mjs$/, '.css'); }
-  getView(url) { return (new URL(url)).pathname.substring(8).replace(/\.mjs$/, '.html'); }
+  getPath(url)     { return (new URL(url)).pathname.replace(/\/[^\/]+\.mjs$/, ''); }
+  getBasePath(url) { return (new URL(url)).pathname.substring(8, ).replace(/\/[^\/]*$/, ''); }
+  getCss(url)      { return (new URL(url)).pathname.substring(8).replace(/\.mjs$/, '.css'); }
+  getView(url)     { return (new URL(url)).pathname.substring(8).replace(/\.mjs$/, '.html'); }
 
   getCssPath() { return "" };
 
   reset()
   {
+    if ( this.obj )
+    {
+      var i;
+
+      for ( i in this.obj.observer )
+        this.obj.observer[i].disconnect();
+
+    }
+
     this.config = Object.assign({}, this.configorig )
-    this.obj  =  { run : { values : {}, newvalues : false }};
+    this.obj  =  { run : { values : {}, newvalues : false }, observer : {} };
     this.deldrop(this.frame);
   }
 
@@ -55,14 +88,22 @@ export class MneWebletEmpty
     if ( val )
     {
       var i;
+      if ( this.obj.run.newvalues == true ) return;
+      
       this.obj.run.newvalues = true;
-      for ( i=0;  i<this.config.depend.length; i++ )
-        this.config.depend[i].newvalues = true;
+      this.config.depend.forEach ( (item, index) =>
+      {
+        if ( item.composeparent && item.composeparent.obj.weblets[item.depend] )
+          this.config.depend[index] = item = item.composeparent.obj.weblets[item.depend];
+        if ( item instanceof MneWeblet && item.newvalues != true )
+          item.newvalues = true;
+      });
     }
     else
     {
       this.obj.run.dependweblet = undefined;
       this.obj.run.newvalues = false;
+      this.obj.run.checkdepend = false;
     }
   }
 
@@ -70,6 +111,7 @@ export class MneWebletEmpty
   {
     this.newvalues = val;
     this.obj.run.newvalues = false;
+    this.obj.run.checkdepend = true;
   }
 
   set mustcheckvalues(val)
@@ -80,6 +122,7 @@ export class MneWebletEmpty
   set dependweblet(weblet)
   {
     this.obj.run.dependweblet = weblet;
+    this.obj.run.checkdepend = true;
     if ( ! this.newvalues )
       this.newvalues = true;
   }
@@ -122,7 +165,7 @@ export class MneWebletEmpty
     //if ( this == window.main_weblet )
     //  this.list_weblets();
 
-    console.log('check_values: ' + this.fullid + ' ' + this.newvalues);
+    //console.log('check_values: ' + this.fullid + ' ' + this.newvalues);
 
     if ( this.newvalues )
     {
@@ -240,26 +283,45 @@ export class MneWeblet extends MneWebletEmpty
     this.obj  = Object.assign( this.obj, { loaded : false, weblets : {}, popups : {}, slider : {} });
     if ( this.initpar.popup ) this.obj.popup = this.initpar.popup;
 
+    this.frame.className = '';
     MneElement.mkClass(this.frame, 'weblet');
     MneElement.mkClass(this.frame, this.config.path.replace(/\/[^\/]+\.mjs$/, '').replace(/^\//,'').replace(/\//g,'-'));
+    if ( this.initpar.frameclass ) MneElement.mkClass(this.frame, this.initpar.frameclass );
+    
+    this.frame.id = this.config.id;
   }
 
-  async openpopup(name, hide = false )
+  
+  showweblet(name, values, initpar )
   {
-    var self = this;
-
+    window.sessionStorage.setItem(window.mne_application + ':startweblet', JSON.stringify([ name ]));
+    window.sessionStorage.setItem(window.mne_application + ':' + name, JSON.stringify(values)); 
+    window.main_weblet.show(name, initpar).catch( (e) => { MneLog.exception('showweblet:' + name, e)});
+  }
+  
+  async createpopup(name, config, initpar )
+  {
     var p = ( this.obj.popups[name] ) ? this.obj.popups[name] : this.config.composeparent.obj.popups[name];
-    await p.create(this);
+    await p.create(this, config, initpar );
 
     var w = this.obj.weblets[name];
     w.config.dependweblet = this;
 
+    if ( this.config.depend.indexOf(w) == -1 )
+      this.config.depend.push(w);
+
+    return w;
+  }
+  
+  async openpopup(name, hide = false )
+  {
+    var self = this;
+
+    var w = await this.createpopup(name);
+    
     await w.show( hide );
     w.newvalues = true;
     await w.check_values();
-
-    if ( this.config.depend.indexOf(w) == -1 )
-      this.config.depend.push(w);
     
   }
 
@@ -311,7 +373,7 @@ export class MneWeblet extends MneWebletEmpty
     var w = parent.obj.weblets[id] = new Weblet(parent, oldweblet.frame, id,  oldweblet.initorig, Object.assign(oldweblet.config, {reload : true }) );
 
     w.obj.popup = oldweblet.obj.popup;
-    if ( w.obj.popup )
+    if ( typeof w.obj.popup == 'object')
     {
       w.obj.popup.reload = async function() { return w.reload() };
       w.obj.popup.query = async function() { return w.query() };
@@ -353,6 +415,7 @@ export class MneWeblet extends MneWebletEmpty
       var self = this;
       if ( hide == false )
         this.obj.popup.show();
+
       this.obj.popup.setTitle(this.title ?? this.config.label ?? this.id );
       this.obj.popup.reload = async function() { return self.reload() };
       this.obj.popup.query = async function() { return self.query() };
@@ -362,24 +425,31 @@ export class MneWeblet extends MneWebletEmpty
 
   async btnClick (clickid, data = {}, obj, evt )
   {
+    let unlock = await MneWeblet.click_mutex.lock();
+
+    var timeout = window.setTimeout(() => { MneElement.mkClass(MneWeblet.waitframe, 'show') }, 500);
     try
     {
-      if ( MneWeblet.inbutton ) return;
-
-      MneWeblet.inbutton = true;
       var res;
+      
       if ( ( res = await this[clickid](data, obj, evt)) !== false )
         await window.main_weblet.check_values();
-      MneWeblet.inbutton = false;
-      console.log(clickid + " ready " + ( res !== false ) );
+      console.log(clickid + " ready " + ( res ) );
+      window.clearTimeout(timeout);
+      MneElement.mkClass(MneWeblet.waitframe, 'show', false);
+      unlock()
     }
     catch(e)
     {
-      MneWeblet.inbutton = undefined;
+      window.clearTimeout(timeout);
+      MneElement.mkClass(MneWeblet.waitframe, 'show', false);
+      
+      unlock();
       MneLog.exception('clickid: ' + this.fullid, e);
       e.nolog = true;
       throw e;
     }
+    
   }
 
   async close()
@@ -396,6 +466,12 @@ export class MneWeblet extends MneWebletEmpty
 }
 
 MneWeblet.stylePath = '/styles/weblet';
-MneWeblet.inbutton = false;
+MneWeblet.click_mutex = new MneMutex();
+
+MneWeblet.waitframe = document.createElement("div");
+MneWeblet.waitframe.className = 'waitframe';
+MneWeblet.waitframe.innerHTML = "<div>Daten werden gelesen/geschrieben</div>";
+document.body.appendChild(MneWeblet.waitframe);
+
 
 export default MneWeblet;

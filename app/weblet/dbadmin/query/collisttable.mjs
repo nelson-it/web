@@ -12,7 +12,7 @@ import MneConfig    from '/js/basic/config.mjs'
 import MneText      from '/js/basic/text.mjs'
 import MneLog       from '/js/basic/log.mjs'
 import MneRequest   from '/js/basic/request.mjs'
-import MneElement   from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 
 import MneDbTableBasic from '/weblet/db/table/basic.mjs'
 
@@ -41,7 +41,7 @@ class MneAdminQueryCollistTable extends MneDbTableBasic
   async values()
   {
     this.getParamShow({}, ['schema', 'table', 'tabnum'])
-    this.obj.run.tableparam = Object.assign({ selectid : this.initpar.selectid }, this.obj.run.showvals);
+    this.obj.run.tableparam = Object.assign({ selectid : this.initpar.selectid }, this.config.dependweblet.obj.run.values);
 
     await super.values();
     
@@ -55,7 +55,7 @@ class MneAdminQueryCollistTable extends MneDbTableBasic
         {
           values[ids] = item.values[index];
         })
-        evt.dataTransfer.setData("text", JSON.stringify(Object.assign( Object.assign({ dropfrom : ( this.initpar.dropfrom ?? this.parent.id ) }, this.obj.run.tableparam ), values)));
+        evt.dataTransfer.setData("mnejson", JSON.stringify(Object.assign( Object.assign({ dropfrom : ( this.initpar.dropfrom ?? this.parent.id ) }, this.obj.run.tableparam ), values)));
       })
     });
   }

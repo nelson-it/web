@@ -8,7 +8,7 @@
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
@@ -27,7 +27,7 @@ class MneAdminQueryColumn extends MneTable
           query : 'query_cols',
           cols : 'tabnum,schema,table,field,columnid,lang,groupby,musthaving,typ,format,text_de,text_en',
 
-          tablecoltype : { tabnum : 'text', schema : 'text', table : 'text', field : 'mtext', columnid : 'text', language : 'bool', group : 'bool', musthaving : 'bool', typ : 'selection', format : 'text', text_de : 'text', text_en : 'text' },
+          tablecoltype : { tabnum : 'text', schema : 'text', table : 'text', field : 'mtext', columnid : 'text', lang : 'bool', groupby : 'bool', musthaving : 'bool', typ : 'selection', format : 'text', text_de : 'text', text_en : 'text' },
           showids : ['queryid', 'unionnum'],
           
           selectlists: { typ :  'tabledpytype' },

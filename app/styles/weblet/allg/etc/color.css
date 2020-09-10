@@ -1,0 +1,23 @@
+
+.colorselecttable td {
+    line-height: 0px;
+    height: auto;
+}
+
+.colorselecttable div.colorshow {
+	position: relative;
+	width: 2em;
+	height: 3ex;
+}
+
+.colorselecttable table {
+	margin-left: auto;
+}
+
+table.colorselect {
+	width: 100%;
+	margin: var(--dmargin);
+}
+table.colorselect td {
+	padding: var(--dmargin);
+}

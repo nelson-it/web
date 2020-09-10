@@ -10,7 +10,7 @@
 
 import MneText    from '/js/basic/text.mjs'
 import MneLog     from '/js/basic/log.mjs'
-import MneElement from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneView    from './view.mjs'
 
 class MneMessage extends MneView

@@ -4,11 +4,11 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/templ/templ.mjs
+// datei: weblet/dbadmin/query/jointree.mjs
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
@@ -87,7 +87,6 @@ class MneAdminJoinTree extends MneDbView
   {
     var tabnum = this.obj.tabnum++;
 
-    console.log(values)
     var div = document.createElement("div");
     div.innerHTML = '<div class="treelink">' + tabnum + " " + str + '</div><div class="treemain"></div>';
     div.firstChild.addEventListener('click', (evt) =>

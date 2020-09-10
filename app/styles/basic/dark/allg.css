@@ -1,7 +1,6 @@
 @import "../variable.css";
 @import "../tag.css";
 @import "../class.css";
-@import "../editor/content.css";
 
 :root {
 	--background: #0f0f0f;

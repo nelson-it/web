@@ -4,11 +4,11 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/template/main.mjs
+// datei: weblet/geometrie/main.mjs
 //================================================================================
 'use strict';
 import { MneVSlider, MneHSlider }  from '/js/geometrie/slider.mjs'
-import MneElement                  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 
 class MneTemplateMain
 {

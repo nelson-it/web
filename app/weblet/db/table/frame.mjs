@@ -4,14 +4,14 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/db/table/view.mjs
+// datei: weblet/db/table/frame.mjs
 //================================================================================
 'use strict';
 
 import MneConfig     from '/js/basic/config.mjs'
 import MneText       from '/js/basic/text.mjs'
 import MneLog        from '/js/basic/log.mjs'
-import MneElement    from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneRequest    from '/js/basic/request.mjs'
 
 import MneDbTableBasicWeblet from './basic.mjs'

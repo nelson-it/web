@@ -8,62 +8,64 @@
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
 
-import MneDbView   from '/weblet/db/view.mjs'
+import MneElement from '/weblet/basic/element.mjs'
+import MneDbView  from '/weblet/db/view.mjs'
 
 class MneTemplate extends MneDbView
 {
-    constructor(parent, frame, id, initpar = {}, config = {} )
+  constructor(parent, frame, id, initpar = {}, config = {} )
+  {
+    var ivalues = 
     {
-      var ivalues = 
-      {
-        readurl : '',
-        schema  : '',
-        query   : '',
-        table   : '',
-        showids : [''],
-        //modids  : [''],
-        
-        //okschema    : '',
-        //oktable     : '',
+      url           : '',
+      schema        : '',
+      query         : '',
+      table         : '',
+      showids       : [''],
+      delconfirmids : [ 'name'],
 
-        //addschema   : '',
-        //addtable    : '',
+      //okids  : [''],
 
-        //modschema   : '',
-        //modtable    : '',
+      //okschema    : '',
+      //oktable     : '',
 
-        //delschema   : '',
-        //deltable    : '',
+      //addschema   : '',
+      //addtable    : '',
 
-        //okfunction  : '',
-        //okcols  : [''],
-        //oktyps  : { '' : '' },
-        
-        //addfunction : '',
-        //addcols : [''],
-        //addtyps : { '' : '' },
+      //modschema   : '',
+      //modtable    : '',
 
-        //modfunction : '',
-        //modcols : [''],
-        //modtyps : { '' : '' },
+      //delschema   : '',
+      //deltable    : '',
 
-        //delfunction : '',
-        //delcols : [ '' ],
-        //deltyps : [],
-        
-        hinput : false
-      };
-           
-      super(parent, frame, id, Object.assign(ivalues, initpar), config );
-    }
-    
-    getViewPath() { return this.getView(import.meta.url) }
-    //getCssPath()  { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
+      //okfunction  : '',
+      //okcols  : [''],
+      //oktyps  : { '' : '' },
+
+      //addfunction : '',
+      //addcols : [''],
+      //addtyps : { '' : '' },
+
+      //modfunction : '',
+      //modcols : [''],
+      //modtyps : { '' : '' },
+
+      //delfunction : '',
+      //delcols : [ '' ],
+      //deltyps : [],
+
+      hinput : false
+    };
+
+    super(parent, frame, id, Object.assign(ivalues, initpar), config );
+  }
+
+  getViewPath() { return this.getView(import.meta.url) }
+  //getCssPath()  { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
 
 }
 

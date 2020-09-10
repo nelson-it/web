@@ -1,12 +1,12 @@
-div.weblet-dbadmin-command-detail .inputsingle {
+div.weblet-dbadmin-command-detail #contentContainer .inputsingle {
 	border: 0;
 }
 
-div.weblet-dbadmin-command-detail .ele-wrapper {
+div.weblet-dbadmin-command-detail #contentContainer .ele-wrapper {
 	flex-grow: 1;
 }
 
-div.weblet-dbadmin-command-detail #commandInput {
+div.weblet-dbadmin-command-detail #contentContainer #commandInput {
 	position: absolute;
 	left: 0px;
 	right: 0px;

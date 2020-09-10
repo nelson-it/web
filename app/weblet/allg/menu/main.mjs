@@ -53,30 +53,32 @@ export class MneMainMenu extends MneRecursiveMenu
   getReadParam(data)
   {
     var par = Object.assign({}, this.obj.readparam);
-    par.wval = this.initpar.name + "," + data.values[2];
+    par.wval = this.initpar.name + "," + data.values[data.res.rids.menuid];
     
     return par;
   }
   
   async values()
   {
-    this.action_submenu( { menu : null, values : ['','',''], frame : this.obj.container.content})
+    this.action_submenu( { menu : null, values : ['','',''], res : { rids : { action : 0, menuid : 2 }}, frame : this.obj.container.content})
   }
   
   async action_show(data)
   {
-    window.sessionStorage.setItem(window.mne_application + ':startweblet', JSON.stringify(data.values[0].parameter));
-    await this.obj.weblet.show(...data.values[0].parameter);
+    var aid = data.res.rids.action;
+    
+    window.sessionStorage.setItem(window.mne_application + ':startweblet', JSON.stringify(data.values[aid].parameter));
+    await this.obj.weblet.show(...data.values[aid].parameter);
   }
   
   async action_request(data)
   {
-    await MneRequest.fetch(data.values[0].parameter[0]);
+    await MneRequest.fetch(data.values[data.res.rids.action].parameter[0]);
   }
 
   async action_location(data)
   {
-    window.location = data.values[0].parameter[0];
+    window.location = data.values[data.res.rids.action].parameter[0];
   }
 
 }

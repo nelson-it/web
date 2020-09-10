@@ -84,6 +84,12 @@ div.input-wrapper {
 	margin-right: var(--margin);
 }
 
+.contain-file label::after {
+	content: '\f093';
+	font-family: SymbolFont1;
+	color: var(--lightcolor1);
+	padding-left: var(--dmargin);
+}
 
 input[type=text], input[type=password], div.ehtml {
     border-radius: var(--borderradius);
@@ -111,7 +117,7 @@ input[type="file"] {
 	height: initial;
 }
 
-input[type="checkbox"] {
+input[type="checkbox"], input[type="file"] {
 	display: none;
 }
 
@@ -134,7 +140,6 @@ input[type="checkbox"] + label:after {
 input[type="checkbox"]:checked + label:after {
 	content: '\f14a';
 }
-
 
 div.draginfo {
 	display: none;
@@ -311,6 +316,7 @@ div.input-wrapper.contain-select {
     position: relative;
 	margin-left: var(--margin);
     margin-right: var(--margin);
+    line-height: var(--lineheight_normal);
 }
 
 div.input-wrapper.contain-select:after {
@@ -319,16 +325,26 @@ div.input-wrapper.contain-select:after {
       position: absolute;
       right: 4px;
       color: var(--color);
+      
 }
 
 option {
 	padding-right: 8px;
 }
 
-ul {
-	margin-left: 32px;
-	margin-top:  8px;
-	margin-bottom: 8px;
+ul, ol {
+	margin-left: 3em;
+	margin-top:  1.5ex;
+	margin-bottom: 1.5ex;
+}
+
+li + li {
+	margin-top : 1ex;
+}
+
+table.mne_border, table.mne_border > tbody > tr >td {
+	border: var(--border);
+	border-collapse: collapse;
 }
 
 

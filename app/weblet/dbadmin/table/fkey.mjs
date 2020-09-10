@@ -8,7 +8,7 @@
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
@@ -36,12 +36,6 @@ class MneAdminTableFkeyWeblet extends MneDbViewWeblet
     }
     
     getViewPath() { return this.getView(import.meta.url) }
-    
-    reset()
-    {
-      super.reset();
-      Object.assign(this.obj, { observer : {}});
-    }
     
     async getColWeblet(path, par = '')
     {

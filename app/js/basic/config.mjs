@@ -17,6 +17,10 @@ export class MneConfig
     MneConfig.locale = { language : 'de', region : 'DE' };
     MneConfig.group = {};
   }
+  
+  static sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
 
 export default MneConfig

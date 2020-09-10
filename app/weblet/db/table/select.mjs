@@ -11,10 +11,40 @@
 import MneConfig     from '/js/basic/config.mjs'
 import MneText       from '/js/basic/text.mjs'
 import MneLog        from '/js/basic/log.mjs'
-import MneElement    from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneRequest    from '/js/basic/request.mjs'
+import MnePopupWeblet   from '/weblet/basic/popup.mjs'
 
 import MneDbTableBasic from './basic.mjs'
+
+class MnePopupDetail extends MnePopupWeblet
+{
+  constructor( id, initpar = {}, config = {} )
+  {
+    super(id, initpar, config);
+  }
+  
+  async getWeblet(path)
+  {
+    let { default: Weblet } = await MneRequest.import(path);
+    
+    class MyWeblet extends Weblet
+    {
+      async ok()
+      {
+        await super.ok();
+        await super.values();
+        
+        if ( this.initpar.selectok)
+          await this.initpar.selectok(this.obj.run.result);
+        
+        this.obj.popup.close();
+        return false;
+      }
+    }
+    return MyWeblet;
+  }
+}
 
 class MneDbTableSelect extends MneDbTableBasic
 {
@@ -22,12 +52,12 @@ class MneDbTableSelect extends MneDbTableBasic
   {
     var ivalues = 
     {
-        lastquery : 0
+        delbutton : ['del', 'detaildel']
     };
 
     var cols = ( initpar.cols != '' ) ? initpar.cols.split(',') : [];
     var showcols = ( initpar.showcols != 'undefined' && initpar.showcols != '' ) ? initpar.showcols.split(',') : [];
-    var hide = [];
+    var hide = ( initpar.tablehidecols ) ?  initpar.tablehidecols : [];
     
     showcols.forEach((item, index) =>
     {
@@ -43,6 +73,12 @@ class MneDbTableSelect extends MneDbTableBasic
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
   }
+  
+  reset()
+  {
+    super.reset();
+    this.obj.enablebuttons.value.push('ok');
+  }
 
   async ok()
   {
@@ -56,9 +92,32 @@ class MneDbTableSelect extends MneDbTableBasic
     await this.parent.close();
   }
   
+  async opendetail(detail)
+  {
+    if ( this.obj.popups[detail] == undefined )
+    {
+      var p = this.config.composeparent.obj.popups[detail];
+      this.obj.popups[detail] = new MnePopupDetail(p.id, Object.assign({selectok : this.initpar.selectok }, p.initpar), p.config);
+    }
+
+    await this.openpopup(detail);
+    
+    return this.cancel();
+  }
+
   async detail()
   {
-    await this.openpopup(this.initpar.detailweblet);
+    return this.opendetail(this.initpar.detailweblet);
+  }
+
+  async detailadd()
+  {
+    return this.opendetail(this.initpar.detailaddweblet);
+  }
+  
+  async detailmod()
+  {
+    return this.opendetail(this.initpar.detailmodweblet);
   }
   
   async dblclick(data, obj, evt)

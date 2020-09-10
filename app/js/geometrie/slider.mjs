@@ -8,7 +8,7 @@
 //================================================================================
 'use strict';
 
-import MneElement   from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneTheme     from '/js/basic/theme.mjs'
 
 class MneSlider
@@ -234,7 +234,7 @@ MneHSlider.prototype.startmove = function(evt)
   document.addEventListener('mouseup',   this.mup  );
  };
 
-MneVSlider.prototype.starttouch = function(evt)
+MneHSlider.prototype.starttouch = function(evt)
 {
   this.slider.dist = false;
   var dist = evt.targetTouches[0].clientY - MneElement.getTop(this.slider, document.body);

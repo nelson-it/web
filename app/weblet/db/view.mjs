@@ -12,7 +12,8 @@ import MneText    from '/js/basic/text.mjs'
 import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
 import MneTheme   from '/js/basic/theme.mjs'
-import MneElement from '/js/basic/element.mjs'
+import MneInput   from '/js/basic/input.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 
 import MneView  from '../basic/view.mjs'
 import MnePopup from '../basic/popup.mjs'
@@ -25,6 +26,7 @@ export class MneDbView extends MneView
     {
       selectlists : {},
       selectlistids : id,
+      ignore_notfound : true,
     }
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config);
@@ -58,8 +60,7 @@ export class MneDbView extends MneView
     if ( readurl == undefined )
       throw new Error("#mne_lang#keine Leseurl für <" + this.id + ":" + this.config.path + "> definiert");
     
-    if ( this.initpar.scols )     this.obj.run.readpar.scols = this.initpar.scols;
-    if ( this.initpar.lastquery ) this.obj.run.readpar.lastquery = "1";
+    if ( this.initpar.scols )  this.obj.run.readpar.scols = this.initpar.scols;
     
     this.getParamAdd = function(p) { return this.getTableParamAdd(p) }
     this.getParamMod = function(p) { return this.getTableParamMod(p) }
@@ -246,6 +247,8 @@ export class MneDbView extends MneView
     var i;
     var str = '';
 
+    if ( this.obj.run.btnrequest.read == '' ) return;
+    
     for ( i in this.obj.labels )
       if ( ! this.obj.labels[i].noautoread ) str += i + ",";
 
@@ -273,7 +276,7 @@ export class MneDbView extends MneView
     var res = await MneRequest.fetch(this.obj.run.btnrequest.read, p);
 
     for ( i in this.obj.labels )
-      if ( ! this.obj.labels[i].noautoread ) this.obj.labels[i].setText(res.labels[res.rids[i]]);
+      if ( ! this.obj.labels[i].noautoread ) this.obj.labels[i].setValue(res.labels[res.rids[i]]);
 
     for ( i in this.obj.inputs )
       if ( this.obj.inputs[i] && ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]]  );
@@ -303,32 +306,43 @@ export class MneDbView extends MneView
     var isselect = (vals[rids['element']].indexOf('?') != -1 );
     var interactive = ( vals[rids['type']] != 'frame' )
 
-    var initpar =
+    if ( vals[rids['type']] == 'weblet' )
     {
-      schema : vals[rids['schema']],
-      cols   : vals[list.rids['cols']],
-      showcols  : vals[list.rids['showcols']],
-      wcol   : vals[list.rids['wcol']],
-      wop    : vals[list.rids['wop']],
-      wval   : vals[list.rids['wval']],
-      scols  : vals[list.rids['scols']],
-      
-      selval : vals[list.rids['selval']],
-      
-      selectsingle : true,
-      notitle : true,
-      
-      detailweblet : this.config.composeparent.obj.weblets[this.id + '_' + id + 'selectdetail'],
-    };
+        var name = vals[rids['weblet']];
+        var popup = this.config.composeparent.obj.popups[name];
+        this.obj.popups[id + 'select']  = new MnePopup( id + 'select', Object.assign(popup.initpar, { selectok : async (sel) => { self[id + 'selected'](sel) } }), popup.config );
+    }
+    else
+    {
+      var initpar =
+      {
+          addurl : '',
+          delurl : '',
 
-    if ( vals[rids['query']] ) initpar.query = vals[rids['query']];
-    if ( vals[rids['tab']] )   initpar.table = vals[rids['tab']];
-    if ( vals[rids['showalias']] )   initpar.showids = vals[rids['showalias']].split(',');
-    
-    
-    config  = { path : '/weblet/allg/' + path[vals[rids['type']]], nointeractive : !interactive , initpar : initpar, id : id + 'select', position : 'popup', label : MneText.getText('#mne_lang#suchen') };
-    initpar = Object.assign({selectok : async (sel) => { self[id + 'selected'](sel) }}, initpar )
-    this.obj.popups[id + 'select']  = new MnePopup( id + 'select', initpar, config );
+          schema : vals[rids['schema']],
+          cols   : vals[list.rids['cols']],
+          showcols  : vals[list.rids['showcols']],
+          wcol   : vals[list.rids['wcol']],
+          wop    : vals[list.rids['wop']],
+          wval   : vals[list.rids['wval']],
+          scols  : vals[list.rids['scols']],
+
+          selval : vals[list.rids['selval']],
+
+          selectsingle : true,
+          notitle : true,
+
+          detailmodweblet : ( this.config.composeparent.obj.popups[this.id + '_' + id + 'selectdetail'] ) ? this.id + '_' + id + 'selectdetail' : undefined
+      };
+
+      if ( vals[rids['query']] ) initpar.query = vals[rids['query']];
+      if ( vals[rids['tab']] )   initpar.table = vals[rids['tab']];
+      if ( vals[rids['showalias']] )   initpar.showids = vals[rids['showalias']].split(',');
+
+      config  = { path : '/weblet/allg/' + path[vals[rids['type']]], composeparent : this.config.composeparent, nointeractive : !interactive , initpar : initpar, id : id + 'select', position : 'popup', label : MneText.getText('#mne_lang#suchen') };
+      initpar = Object.assign({selectok : async (sel) => { self[id + 'selected'](sel) }}, initpar )
+      this.obj.popups[id + 'select']  = new MnePopup( id + 'select', initpar, config );
+    }
 
     this[id + 'selected'] = async function( res )
     {
@@ -336,7 +350,8 @@ export class MneDbView extends MneView
       var cols = vals[rids['showcols']].split(',');
       var i;
       
-      if ( res.values.length == 0 ) return;
+      if ( res.values.length == 0 )
+        res.values.push(new Array(res.ids.length).fill(''));
       
       if ( isselect )
       {
@@ -367,7 +382,7 @@ export class MneDbView extends MneView
     
     if ( interactive )
     {
-      obj.closest('.ele-wrapper').addEventListener('click', (evt) => { if ( evt.target == obj.closest('.ele-wrapper') ) { self.btnClick(id + 'selectshow', {}, obj, evt);} });
+      obj.closest('.ele-wrapper').addEventListener('click', (evt) => { if ( evt.target == obj.closest('.ele-wrapper') ) { self.btnClick(id + 'selectshow', {}, obj, evt); }} );
       MneElement.mkClass(obj.closest('.ele-wrapper'), ( isselect ) ? 'selectlists' : 'selectlisti');
     }
     else
@@ -485,14 +500,14 @@ export class MneDbView extends MneView
 
     if ( m == 'mod' )
     {
-      for ( i=0; i<this.initpar.modids.length; i++ )
+      for ( i=0; i<this.initpar.okids.length; i++ )
       {
-        if ( p[this.initpar.modids[i] + "Input.old"] != undefined )
-          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Id Parameter <$1> ist schon definiert"), this.initpar.modids[i] ));
-        else if ( this.obj.run.values[this.initpar.modids[i]] != undefined )
-          p[this.initpar.modids[i] + "Input.old"] = this.obj.run.values[this.initpar.modids[i]];
+        if ( p[this.initpar.okids[i] + "Input.old"] != undefined )
+          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Id Parameter <$1> ist schon definiert"), this.initpar.okids[i] ));
+        else if ( this.obj.run.values[this.initpar.okids[i]] != undefined )
+          p[this.initpar.okids[i] + "Input.old"] = this.obj.run.values[this.initpar.okids[i]];
         else
-          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Objekt für name <$1> ist nicht definiert"), this.initpar.modids[i] ));        
+          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Objekt für name <$1> ist nicht definiert"), this.initpar.okids[i] ));        
       }
     }
     else
@@ -598,12 +613,11 @@ export class MneDbView extends MneView
     var w = this.obj.run.act_dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
     var showids = ( showids ) ? showids : this.initpar.showids;
     
-    this.obj.run.showvals = {};
     for ( i=0; i<showids.length; ++i )
     {
       var val = this.getParamShowSingle(w, showids, i);
       if ( val != undefined && val != '################' )
-        p[showids[i] + "Input.old"] = this.obj.run.showvals[showids[i]] = this.obj.run.values[showids[i]] = val;
+        p[showids[i] + "Input.old"] = this.obj.run.values[showids[i]] = val;
       else
         p.value_not_found = true;
     }
@@ -614,6 +628,12 @@ export class MneDbView extends MneView
   {
     var cols = param.cols;
     var i;
+
+    if ( this.initpar.defalias )
+    {
+      for ( i in this.initpar.defalias )
+        this.obj.defvalues[i] = this.config.dependweblet.obj.run.values[this.initpar.defalias[i]];
+    }
 
     if ( cols == undefined )
     {
@@ -651,31 +671,48 @@ export class MneDbView extends MneView
     }
 
     for ( i in this.obj.inputs )
-      this.obj.inputs[i].setValue(res.values[0][res.rids[i]])
+      if ( this.obj.inputs[i] && ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setValue(res.values[0][res.rids[i]]);
 
-      for ( i in this.obj.outputs )
-        this.obj.outputs[i].setValue(res.values[0][res.rids[i]])
-    
+    for ( i in this.obj.outputs )
+      if ( this.obj.outputs[i] && ! this.obj.outputs[i].noautoread ) this.obj.outputs[i].setValue(res.values[0][res.rids[i]]);
+
+    for ( i in this.obj.files )
+      this.obj.files[i].clearModify();
+
     this.obj.run.okaction = 'mod';
     this.title = this.obj.run.title.mod;
 
     this.obj.run.values = {};
     for ( i =0; i<res.ids.length; i++)
-      this.obj.run.values[res.ids[i]] = res.values[0][i];
+      this.obj.run.values[res.ids[i]] = MneInput.format(res.values[0][i], res.typs[i], res.formats[i]);
     
-    this.obj.run.values = Object.assign(Object.assign({}, this.obj.run.showvals), this.obj.run.values);
-    this.enable('value');
+    this.obj.run.values = Object.assign({}, this.obj.run.values);
+    if ( this.initpar.mainweblet ) window.sessionStorage.setItem(window.mne_application + ':' + this.config.composeparent.obj.name, JSON.stringify(this.obj.run.values)); 
+
+    var enable = 'value';
+    if ( this.initpar.okids != this.initpar.showids )
+      this.initpar.showids.forEach((item, index) =>
+      {
+        var val = ( this.initpar.showalias && this.initpar.showalias[index] ) ? this.initpar.showalias[index]() : this.config.dependweblet.obj.run.values[item];
+        if ( ! val || val == '################') enable = '';
+      });
+
+    this.enable(enable, enable != '' );
   }
   
-  async ok()
+  async ok(param = {} )
   {
     var p;
     var res;
+    var i;
     var oldvalues,values;
     
     p = Object.assign({}, this.obj.run[this.obj.run.okaction + 'par']);
     p = this['getParam' + this.obj.run.okaction[0].toUpperCase() + this.obj.run.okaction.substr(1)](p);
+    p.lastquery = ( this.obj.lastquery ) ? '1' : '';
 
+    for ( i in param ) p[i] = param[i];
+      
     res = await MneRequest.fetch(this.obj.run.btnrequest[this.obj.run.okaction], p);
     
     oldvalues = this.obj.run.values;
@@ -698,7 +735,7 @@ export class MneDbView extends MneView
     return this.values();
   }
   
-  async add(data)
+  async add(data = {})
   {
     var i;
 
@@ -707,10 +744,10 @@ export class MneDbView extends MneView
 
     if ( ! data.nomod && this.getModify() )
     {
-      for ( i=0; i< this.initpar.modids.length; ++i )
-        this.obj.inputs[this.initpar.modids[i]].setValue((this.obj.defvalues[this.initpar.modids[i]] != undefined ) ? this.obj.defvalues[this.initpar.modids[i]] : '################');
+      for ( i=0; i< this.initpar.okids.length; ++i )
+        this.obj.inputs[this.initpar.okids[i]].setValue((this.obj.defvalues[this.initpar.okids[i]] != undefined ) ? this.obj.defvalues[this.initpar.okids[i]] : '################');
 
-      await this.ok();
+      await this.ok({ doadd : true });
       return;
     }
 
@@ -722,7 +759,7 @@ export class MneDbView extends MneView
     this.obj.run.result = undefined;
     this.obj.run.values = {};
 
-    this.initpar.modids.forEach((item, index) =>
+    this.initpar.okids.forEach((item, index) =>
     {
       this.obj.run.values[item] = ( this.obj.defvalues[item] != undefined ) ? this.obj.defvalues[item] : '################';
       this.obj.inputs[item].setValue(this.obj.run.values[item]);
@@ -732,7 +769,11 @@ export class MneDbView extends MneView
       this.obj.outputs[i].setValue((this.obj.defvalues[i] != undefined ) ? this.obj.defvalues[i] : '');
    
 
-    this.enable('add');
+    var enable = 'add';
+    if ( this.initpar.okids != this.initpar.showids )
+      this.initpar.showids.forEach((item) => { if ( ! this.config.dependweblet.obj.run.values[item] || this.config.dependweblet.obj.run.values[item] == '################') enable = ''; });
+    
+    this.enable(enable, enable != '' );
     this.newselect = true;
   }
 
@@ -756,6 +797,7 @@ export class MneDbView extends MneView
       var p;
       p = Object.assign({}, this.obj.run.delpar);
       p = this.getParamDel(p);
+      p.lastquery = ( this.obj.lastquery ) ? '1' : '',
       await MneRequest.fetch(this.obj.run.btnrequest['del'], p);
       this.obj.run.values = {};
       this.dependweblet = this;

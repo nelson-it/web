@@ -74,6 +74,10 @@ export class MneInput
       case '1011':
       case "link":
         return "link";
+
+      case '1020':
+      case 'color':
+        return 'color';
       default: 
         console.info(MneText.getText('#mne_lang#unbekannter Typ') + ' ' + typ )
         return 'char';
@@ -94,7 +98,8 @@ export class MneInput
         return 'floatoempty';
       case "double":
         return 'floatoempty';
-
+      case "color":
+         return 'color';
       case "binary":
         return "ok";
 
@@ -103,7 +108,7 @@ export class MneInput
     }
   }
 
-  static getValue(value, typ)
+  static getValue(value, typ, raw)
   {
     switch(MneInput.getTyp(typ))
     {
@@ -122,13 +127,13 @@ export class MneInput
         return "binary";
 
       case "datetime":
-        return MneInput.parseDateTime(value);
+        return (raw ) ? parseInt(value) : MneInput.parseDateTime(value);
       case "date":
-        return MneInput.parseDate(value);
+        return (raw ) ? parseInt(value) : MneInput.parseDate(value);
       case "time":
-        return MneInput.parseTime(value, true);
+        return (raw ) ? parseInt(value) : MneInput.parseTime(value, true);
       case "interval":
-        return MneInput.parseTime(value, false);
+        return (raw ) ? parseInt(value) : MneInput.parseTime(value, false);
       case "day":
         return parseInt(value);
       case "quarter":
@@ -191,7 +196,7 @@ export class MneInput
   
   static parseDateTime(value)
   {
-    var v = value.split(' ');
+    var v = value.split(/\s/);
     return MneInput.parseDate(v[0]) + MneInput.parseTime(v[1]);
   }
   
@@ -204,6 +209,8 @@ export class MneInput
     var t,m,j;
 
     value = value.toString();
+    if ( value == '')return value;
+    
     switch( MneConfig.language)
     {
       case 'de':
@@ -300,6 +307,8 @@ export class MneInput
     regexp = /[^0123456789\:]/;
 
     value = value.toString();
+    if ( value == '' ) return '';
+    
     value = value.replace(/-/g, ":");
     var sarray = value.split(delimiter);
 
@@ -339,6 +348,16 @@ export class MneInput
       error = true;
 
     return ( ! error ) ? (  h * 3600 + m * 60 + s ) : undefined;
+  }
+  
+  static readfile(file, result )
+  {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (evt) => { resolve(evt.target.result.split(',')[1]) };
+      reader.onerror = (error) => { throw new Error(error) };
+    });
   }
 }
 

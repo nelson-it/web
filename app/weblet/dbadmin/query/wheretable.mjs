@@ -12,7 +12,7 @@ import MneConfig    from '/js/basic/config.mjs'
 import MneText      from '/js/basic/text.mjs'
 import MneLog       from '/js/basic/log.mjs'
 import MneRequest   from '/js/basic/request.mjs'
-import MneElement   from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 
 import MneDbTableBasic from '/weblet/db/table/basic.mjs'
 

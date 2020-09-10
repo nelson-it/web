@@ -12,7 +12,7 @@ import MneText        from '/js/basic/text.mjs'
 import MneLog         from '/js/basic/log.mjs'
 import MneRequest     from '/js/basic/request.mjs'
 import MneTheme       from '/js/basic/theme.mjs'
-import MneElement     from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import { MneHSlider } from '/js/geometrie/slider.mjs'
 
 import MneWeblet           from './weblet.mjs'
@@ -81,7 +81,7 @@ export class MneRegister extends MneWeblet
           bf.lastChild.innerText = this.config.register[i]['label'];
         bf.lastChild.id = this.config.register[i]['id'];
 
-        bf.lastChild.addEventListener('click', async function(evt) { await self.btnClick('register', this.id); })
+        bf.lastChild.addEventListener('click', function(evt) { self.btnClick('register', this.id); });
       }
 
       var mwidth = 10;
@@ -95,32 +95,34 @@ export class MneRegister extends MneWeblet
 
     async register( id )
     {
+      var data = this.obj.webletdata[id];
+      var depend = [...data.depend];
+
       if ( this.config.composeparent.obj.weblets[id] == undefined )
       {
-          var data = this.obj.webletdata[id];
           var composeparent = this.config.composeparent;
           var self = this;
 
           var weblet;
           var config;
           
-          config = Object.assign({ dependweblet : this.config.dependweblet }, data);
-          config.depend.forEach((item, index) => { config.depend[index] = composeparent.obj.weblets[item]; });
-          
+          config = Object.assign({ dependweblet : this.config.dependweblet, dependid : [] }, data);
+          config.depend.forEach((item, index) => { config.dependid[index] = item; config.depend[index] = ( composeparent.obj.weblets[( item[0] != '#') ? item : item.substring(1)] ) ?? { composeparent : composeparent, depend : ( item[0] != '#') ? item : item.substring(1) } });
+          if ( composeparent.obj.run.depend && composeparent.obj.run.depend[id] ) composeparent.obj.run.depend[id].split(',').forEach( ( item ) => { config.depend.push( { composeparent : composeparent.config.composeparent, depend : ( item[0] != '#') ? item : item.substring(1) }) });
+
           let { default: Weblet } =  await MneRequest.import(data['path'] + '.mjs');
           weblet = this.config.composeparent.obj.weblets[id] = new Weblet(this.config.composeparent, document.createElement('div'), id, data['initpar'], config );
           
-          config.depend.forEach((item,index) => { item.config.dependweblet = weblet; });
           if ( this.config.dependweblet ) this.config.dependweblet.config.depend.push(weblet);
           
           await weblet.load();
-          weblet.newvalues = true;
+          weblet.obj.run.newvalues = true;
       }
 
       Array.from(this.obj.container.menu.children).forEach((item) => { MneElement.mkClass(item, 'registeractive', item.id == id )})
       
       var weblet = this.config.composeparent.obj.weblets[id];
-      weblet.config.depend.forEach((item) => { item.config.dependweblet = weblet; })
+      weblet.config.depend.forEach((item, index) => { if ( item instanceof MneWeblet && weblet.config.dependid[index] && weblet.config.dependid[index][0] != '#' ) item.config.dependweblet = weblet; })
       
       if ( this.obj.container.frame.firstChild ) this.obj.container.frame.removeChild(this.obj.container.frame.firstChild);
       this.obj.container.frame.appendChild(this.config.composeparent.obj.weblets[id].frame);

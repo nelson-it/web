@@ -1,5 +1,7 @@
 div.tablewhere {
 	margin: var(--dmargin);
+	overflow: hidden;
+	flex-shrink: 0;
 }
 
 div.tablecontent > div.webletmain #contentContainer {

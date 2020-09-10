@@ -4,11 +4,11 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/dbadmin/query/collist.mjs
+// datei: weblet/dbadmin/join/collist.mjs
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'

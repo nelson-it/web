@@ -12,7 +12,7 @@ import MneConfig    from '/js/basic/config.mjs'
 import MneText      from '/js/basic/text.mjs'
 import MneLog       from '/js/basic/log.mjs'
 import MneRequest   from '/js/basic/request.mjs'
-import MneElement   from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneInput     from '/js/basic/input.mjs'
 
 import MneDbTableViewWeblet from '/weblet/db/table/view.mjs'
@@ -28,7 +28,10 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
   {
     var res = await MneRequest.fetch(request, p);
     
-    this.obj.cols = res.ids;
+    this.initpar.addcols = this.obj.cols = res.ids;
+    this.initpar.modcols = [];
+    this.obj.cols.forEach((item, index) => { if (MneInput.getTyp(res.typs[index]) != 'binary' ) this.initpar.modcols.push(item)} );
+    
     res.typs.forEach( (item,index) => 
     {
       var t;
@@ -38,7 +41,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
           t = 'bool';
           break;
         default:
-          t = 'text';
+          t = 'mtext';
       }
       this.obj.coltyp[index] = ( res.ids[index] != 'createdate' && res.ids[index] != 'createuser' && res.ids[index] != 'modifydate' && res.ids[index] != 'modifyuser' ) ? t : '';
     });
@@ -66,7 +69,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
       this.obj.run.delpar.schema = this.config.dependweblet.obj.run.values.schema;
       this.obj.run.delpar.table  = this.config.dependweblet.obj.run.values.table;
       
-      var modids = [];
+      var okids = [];
       var p =
       {
           schema : 'mne_catalog',
@@ -80,8 +83,11 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
       }
 
       var res = await MneRequest.fetch('/db/utils/table/data.json', p);
-      res.values.forEach((item, index) => { modids.push(item[res.rids['column']]); });
-      this.initpar.modids = modids;
+      res.values.forEach((item, index) => { okids.push(item[res.rids['column']]); });
+
+      this.initpar.okids = okids;
+      this.initpar.delids = okids;
+      this.initpar.primarykey = okids;
       
       p = Object.assign(
           {

@@ -8,7 +8,7 @@
 //================================================================================
 'use strict';
 
-import MneElement from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneRequest from '/js/basic/request.mjs'
 import MneWeblet  from '/weblet/basic/view.mjs'
 
@@ -46,7 +46,7 @@ class MneFrameButtonWeblet extends MneWeblet
     
     MneElement.mkClass(this.initpar.frame, 'framebutton-frame');
     
-    this.obj.observer = new MutationObserver((mut) => 
+    this.obj.observer.menubutton = new MutationObserver((mut) => 
     {
       var width,left
       width = left = self.initpar.frame.firstChild.offsetWidth;
@@ -63,7 +63,7 @@ class MneFrameButtonWeblet extends MneWeblet
       self.insertRule(".framebuttonshow" + self.num + ' > div:last-child  {  animation-direction: reverse; animation-name: framebuttonresizer' + self.num + ';  left: '  + left + 'px; }');
 
     });
-    this.obj.observer.observe(this.initpar.frame.firstChild, { attributes : true, aattributeFilter: [ 'style' ] } );
+    this.obj.observer.menubutton.observe(this.initpar.frame.firstChild, { attributes : true, aattributeFilter: [ 'style' ] } );
     
     this.initpar.frame.firstChild.addEventListener("animationend",   (evt) => { self.animationend(evt) },   false);
     

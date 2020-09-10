@@ -32,13 +32,12 @@ class MneUserPasswdWeblet extends MneDbViewWeblet
 
         modschema   : 'mne_catalog',
         modfunction : 'userpasswd',  
-        modcols     : 'username,passwd1',
-        modtyps     : 'text,text',
+        modcols     : ['username', 'passwd1'],
+        modtyps     : {},
 
         modpost     : '/sysexec/user/passwd/setpasswd',
         
-        nodel      : true,
-        noadd      : true
+        hinput : false
       };
            
       super(parent, frame, id, Object.assign(ivalues, initpar), config );

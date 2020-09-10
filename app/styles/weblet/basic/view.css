@@ -30,8 +30,21 @@ div.popupcontent > div.weblet > div.weblettitle > div.weblettitleright {
     display: none;
 }
 
+div.weblet div.webletmain.modifyok {
+	border-top: 3px solid var(--modifyokbackgroundcolor);
+}
+
+div.weblet div.webletmain.modifywarning {
+	border-top: 3px solid var(--modifywarningbackgroundcolor);
+}
+
+div.weblet div.webletmain.modifywrong {
+	border-top: 3px solid var(--modifywrongbackgroundcolor);
+}
+
 div.weblet div#buttonContainer, div.weblet div#contentContainer {
-	display: inline-block;
+	display: flex;
+	flex-direction: column;
 	flex-grow: 1;
 	vertical-align: top;
 	margin: var(--dmargin);
@@ -40,11 +53,15 @@ div.weblet div#buttonContainer, div.weblet div#contentContainer {
 div.weblet div#buttonContainer {
 	position: sticky;
 	flex-grow: 0;
-	left: var(--dmargin);
 	top: var(--dmargin);
+	left: var(--dmargin);
 	padding-bottom: var(--dmargin);
 	min-width: max-content;
 	z-index: 1;
+}
+
+div.weblet div#buttonContainer.mneoverflow {
+	top: unset;
 }
 
 div.weblet div#buttonContainer:empty {
@@ -121,23 +138,26 @@ div.weblet div#buttonContainer div.webletbutton {
 	height: 2ex;
 }
 
-div.weblet div.webletfullscreen {
+.fullscreen > div.weblet  {
 	position : absolute;
 	top: 0px;
 	left: 0px;
 	height : 100%;
 	width : 100%;
 	background-color: var(--background);
+    display: flex;
+    flex-direction: column;
 	z-index : 300;
 }
 
 div.weblet .inputarea {
 	display: flex;
+	flex-grow: 0;
+	flex-shrink: 0;
 }
 
 div.weblet .inputarea.fullheight {
-	position: relative;
-	height: 100%;
+	flex-grow: 1;
 }
 
 div.weblet .inputarea.fullheight .inputsingle:last-child {
@@ -156,12 +176,17 @@ div.weblet .inputgroup {
 }
 
 div.weblet .inputsingle {
+	position: relative;
     display: flex;
 	border: var(--border);
     border-collapse: collapse;
 
     line-height: var(--lineheight_normal);
     white-space: nowrap;
+}
+
+div.weblet .inputsingle[aria-height]  {
+	    height: calc(var(--ariaheight) * (var(--lineheight_normal) + var(--bordersize)) );
 }
 
 div.weblet .inputsingle + .inputsingle {
@@ -178,10 +203,6 @@ div.weblet .inputsingle :nth-child(2), div.weblet .inputsingle :nth-child(4), di
 
 div.weblet .inputsingle input, div.weblet .inputsingle span[contenteditable="true"], div.weblet .inputsingle select {
     width: calc(100% - var(--iconfontsize));
-}
-
-div.weblet .inputsingle span[contenteditable="true"][aria-multiline] {
-    width: unset;
 }
 
 div.weblet .inputsingle div.input-wrapper.contain-select::after {
@@ -223,6 +244,11 @@ div.weblet .label {
     padding-left: var(--qmargin);
 }
 
+div.weblet .link {
+    color : var(--lightcolor1);
+    cursor: pointer;
+}
+
 div.weblet div.label .label {
 	text-align: unset;
 	padding-left: unset;
@@ -244,21 +270,34 @@ div.weblet .inputgroup + .inputgroup > .inputsingle, .inputgroup + .inputgroup >
 div.weblet .inputsingle > .ele-wrapper {
 	position: relative;
 }
+div.weblet .inputsingle > .ele-wrapper.fullsize {
+	position: absolute;
+}
 
-div.weblet .inputsingle > .ele-wrapper.contain-span [contenteditable="true"] {
+div.weblet .inputsingle > .ele-wrapper.contain-span > [contenteditable="true"] {
     min-width: 15em;
+    max-width: unset;
     margin-top: var(--dmargin);
     margin-bottom: var(--dmargin);
 }
 
-div.weblet .inputsingle > .ele-wrapper.contain-span [contenteditable="true"]:focus {
+.popup div.weblet .inputsingle > .ele-wrapper.contain-span > [aria-multiline="true"][contenteditable="true"] {
+    max-height: 30ex;
+    max-width: 30em;
+}
+.popup div.weblet .inputsingle > .ele-wrapper.contain-span > [aria-multiline="true"][contenteditable="true"]:focus {
     max-height: 60ex;
-    max-width: 80vw;
+    max-width: 50vw;
 }
 
-div.weblet .inputsingle > .contain-textarea  {
-    width : 100%;
-    height: 100%;
+.popup div.weblet .mne-rte .mne-rte-editarea {
+    min-height: 30ex;
+}
+
+div.weblet .inputsingle .editor {
+    height: calc( 100% - var(--dmargin));
+    margin: var(--dmargin);
+    position: relative;
 }
 
 div.weblet .inputsingle .ele-wrapper + button, .inputsingle .ele-wrapper + input[type="button"] {

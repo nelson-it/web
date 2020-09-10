@@ -19,10 +19,11 @@ class MneRequest
   {
   }
 
-  static mkHeader()
+  static mkHeader(data)
   {
     const headers = new Headers();
-    headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
+    
+    if ( ! data instanceof FormData ) headers.append('Content-Type', 'application/x-www-form-urlencoded;charset=utf-8');
     
     return headers
   }
@@ -33,6 +34,8 @@ class MneRequest
     var sep = "";
     var p;
 
+    if ( parameter instanceof FormData ) return parameter;
+    
     for ( p in parameter )
     {
       param = param + sep + p + "=" + encodeURIComponent(parameter[p]);
@@ -41,7 +44,7 @@ class MneRequest
     return param;
   };
   
-  static async fetch( request, parameter)
+  static async fetch( request, parameter, raw)
   {
     var data;
     
@@ -49,7 +52,7 @@ class MneRequest
 
     var res = await fetch(request, {
       method: 'POST',
-      headers : MneRequest.mkHeader(),
+      headers : MneRequest.mkHeader(parameter),
       body: MneRequest.mkParam(parameter) 
     })
     
@@ -59,6 +62,8 @@ class MneRequest
     if ( res.status == 201 )
       location.reload();
 
+    if ( raw ) return res;
+    
     data = await res.text();
     
     if ( res.headers.get('content-type').indexOf('text/json') == 0 )
@@ -81,8 +86,11 @@ class MneRequest
         var str, par;
         
         par = '\n' + MneText.getText('#mne_lang#Parameter') + '\n' + request + '\n';
-        for ( i in parameter )
-          par += ( i + ": " + parameter[i] + "\n");
+        
+        if ( parameter instanceof FormData )
+          for ( i of parameter.keys() ) par += ( i + ": " + parameter.get(i) + "\n");
+        else
+          for ( i in parameter ) par += ( i + ": " + parameter[i] + "\n");
 
         str = '';
         for ( i=data.meldungen.length-1;  i>=0; i-- )
@@ -117,6 +125,7 @@ class MneRequest
         data.labels = [ 'result' ];
         data.typs = [ '2' ];
         data.formats = [ '' ];
+        data.regexps = [ [ '', '', ''] ]; 
         data.values = [[ data.result ]];
       }
 

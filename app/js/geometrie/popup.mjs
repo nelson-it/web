@@ -1,16 +1,16 @@
 //================================================================================
-
-//Copyright: M.Nelson - technische Informatik
-//Die Software darf unter den Bedingungen 
-//der APGL ( Affero Gnu Public Licence ) genutzt werden
-
-//datei: js/geometrie/popup.mjs
+//
+// Copyright: M.Nelson - technische Informatik
+// Die Software darf unter den Bedingungen 
+// der APGL ( Affero Gnu Public Licence ) genutzt werden
+//
+// datei: js/geometrie/popup.mjs
 //================================================================================
 'use strict';
 
 import MneText       from '/js/basic/text.mjs'
 import MneLog        from '/js/basic/log.mjs'
-import MneElement    from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneTheme      from '/js/basic/theme.mjs'
 import MneFullscreen from '/js/geometrie/fullscreen.mjs'
 
@@ -52,7 +52,7 @@ export class MnePopupFrame
         this.frame.querySelector('#titletext').addEventListener('touchstart', (evt) => { self.startmove(evt) } , false);
 
         this.tmove = (evt) => { return self.touchmove(evt) };
-        this.tend  = (evt) => { return self.toucheend(evt) };
+        this.tend  = (evt) => { return self.touchend(evt) };
       }
       else
       {
@@ -101,9 +101,9 @@ export class MnePopupFrame
     if ( ! this.visible )
     {
       MneElement.mkClass(this.frame, "display");
-      this.frame.style.zIndex = MnePopupFrame.zindex++;
       this.repos();
     }
+    this.frame.style.zIndex = MnePopupFrame.zindex++;
   }
 
   async reload()
@@ -151,6 +151,7 @@ export class MnePopupFrame
   dblclick (evt)
   {
     MneElement.clearClass(this.frame, 'popupisresize' );
+    MneElement.clearClass(this.frame, 'popupdoresize' );
     this.frame.style.width = this.frame.style.height = 'auto';
 
     var td = document.body.offsetHeight - this.frame.scrollHeight - this.frame.offsetTop;
@@ -168,8 +169,8 @@ export class MnePopupFrame
     this.frame.style.zIndex = MnePopupFrame.zindex++;
     if ( this.istouch )
     {
-      this.addEventListener('touchmove', this.tmove, false);
-      this.addEventListener('touchend',  this.tend,  false);
+      document.addEventListener('touchmove', this.tmove, false);
+      document.addEventListener('touchend',  this.tend,  false);
     }
     else
     {
@@ -182,7 +183,7 @@ export class MnePopupFrame
   {
     if ( evt.targetTouches )
     {
-      e.preventDefault();
+      evt.preventDefault();
       evt = evt.targetTouches[0];
     }
 
@@ -199,7 +200,7 @@ export class MnePopupFrame
   {
     if ( evt.targetTouches )
     {
-      e.preventDefault();
+      evt.preventDefault();
       evt = evt.targetTouches[0];
     }
 
@@ -246,6 +247,7 @@ export class MnePopupFrame
         this.frame.style.width   = x + "px";
         this.frame.style.height  = y + "px";
 
+        MneElement.mkClass(this.frame, 'popupdoresize' );
         MneElement.mkClass(this.frame, 'popupisresize' );
         break;
     }
@@ -257,13 +259,14 @@ export class MnePopupFrame
     document.removeEventListener('mousemove', this.mmove );
     document.removeEventListener('mouseup',   this.mend  );
 
+    MneElement.clearClass(this.frame, 'popupdoresize' );
     return true;
   }
 
   touchend (evt)
   {
-    evt.targetTouches[0].target.removeEventListener('touchmove', this.tmove, false);
-    evt.targetTouches[0].target.removeEventListener('touchend',  this.tend,  false);
+    document.removeEventListener('touchmove', this.tmove, false);
+    document.removeEventListener('touchend',  this.tend,  false);
 
     return true;
   }

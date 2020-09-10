@@ -15,11 +15,13 @@ import MneConfig from '/js/basic/config.mjs'
 
 import MneDbConfig from '/js/db/config.mjs'
 
-import MneGeometrieWeblet   from './geometrie.mjs'
+import MneGeometrie from './geometrie.mjs'
 
-MneTheme.loadCss('allg.css')
+MneTheme.loadCss('variable.css');
+MneTheme.loadCss('tag.css');
+MneTheme.loadCss('class.css');
 
-class MneMainWeblet extends MneGeometrieWeblet
+class MneMain extends MneGeometrie
 {
     constructor(frame, appl = 'main', startweblet = false )
     {
@@ -39,18 +41,30 @@ class MneMainWeblet extends MneGeometrieWeblet
       await super.show(name);
 
       window.main_weblet = this.obj.weblets.detail;
+      this.obj.newvalues = true;
+      await this.check_values();
     }
     
-    async values()
+    async load()
     {
-      await super.values();
+      await super.load();
       await this.obj.popups.message.create(this);
       await this.obj.weblets.message.load();
 
       var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
-      if ( startweblet ) this.obj.weblets['detail'].show(JSON.parse(startweblet)).catch( (e) => { MneLog.exception('Main Startweblet', e); }) ;
-      else if ( this.startweblet && MneConfig.startweblet ) this.obj.weblets['detail'].show([ MneConfig.startweblet] ).catch( (e) => { MneLog.exception('Main Startweblet', e) });
+      try { startweblet = JSON.parse(startweblet); } catch(e) { console.log(e); console.log(startweblet), startweblet = undefined; }
+
+      if ( startweblet )
+        await this.obj.weblets['detail'].show( startweblet).catch( (e) => { MneLog.exception('Main Startweblet', e); });
+      else if ( this.startweblet && MneConfig.startweblet )
+        await this.obj.weblets['detail'].show([ MneConfig.startweblet] ).catch( (e) => { MneLog.exception('Main Startweblet', e) });
+        
+      this.obj.weblets['detail'].newvalues = true;
+      
+      this.frame.addEventListener('dragover', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })
+      this.frame.addEventListener('drop', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })
+
     }
 }
 
-export default MneMainWeblet;
+export default MneMain;

@@ -4,7 +4,7 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/allg/table/where/select.mjs
+// datei: weblet/allg/table/where/single.mjs
 //================================================================================
 'use strict';
 
@@ -13,15 +13,14 @@ import MneText   from '/js/basic/text.mjs'
 import MneLog    from '/js/basic/log.mjs'
 
 
-import MneViewWeblet     from '/weblet/basic/view.mjs'
+import MneView     from '/weblet/basic/view.mjs'
 
-class MneWhereSelectWeblet extends MneViewWeblet
+class MneWhereSelectWeblet extends MneView
 {
   constructor(parent, frame, id, initpar = {}, config = {} )
   {
     var ivalues = 
     {
-      selval : '-1'
     }
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config);
@@ -32,14 +31,28 @@ class MneWhereSelectWeblet extends MneViewWeblet
     super.reset();
     this.obj.mkbuttons = [];
 
-    var selval = this.initpar.selval.split(':');
-    this.obj.selpos = parseInt(selval[0]) + 1;
-    this.obj.selval = selval[1];
+    this.obj.selpos = 0;
+    this.obj.selval = '';
+    
+    if ( this.initpar.selval )
+    {
+      var selval = this.initpar.selval.split(':');
+      this.obj.selpos = parseInt(selval[0]) + 1;
+      this.obj.selval = selval[1];
+    }
   }
   
   getViewPath() { return this.getView(import.meta.url) }
   getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
   
+  async load()
+  {
+    await super.load();
+    
+    this.obj.observer.content.disconnect();
+    delete this.obj.observer.content;
+  }
+
   set viewpar(par)
   {
     var i;
@@ -56,6 +69,7 @@ class MneWhereSelectWeblet extends MneViewWeblet
       wcol.appendChild(document.createElement('option'));
       wcol.lastChild.appendChild(document.createTextNode( this.obj.viewpar.labels[i] ));
       wcol.lastChild.value = this.obj.viewpar.ids[i];
+      if ( this.initpar.selcol && this.initpar.selcol == this.obj.viewpar.ids[i] ) wcol.lastChild.setAttribute('selected', 'selected');
     }
 
     var check_change = function () 
@@ -64,17 +78,17 @@ class MneWhereSelectWeblet extends MneViewWeblet
       {
         case '1':
           self.obj.inputs['wop'].innerHTML = '<option value="true">' + MneText.getText("#mne_lang#wahr") + '</option><option value="false">' + MneText.getText("#mne_lang#falsch") + '</option>';
-          self.obj.inputs['wop'].setValue('true')
+          self.obj.inputs['wop'].setValue(( self.initpar.selop ) ? self.initpar.selop : 'true')
           break;
           
         case '2':
           self.obj.inputs['wop'].innerHTML = '<option value="=">=</option><option value="<>">&lt;&gt;</option><option value="<">&lt;</option><option value=">">&gt;</option><option value="<=">&lt;=</option><option value=">=">&gt;=</option><option value="isnull">' + MneText.getText('#mne_lang#leer') + '</option><option value="is not null">' + MneText.getText('#mne_lang#nicht leer') + '</option><option value="like">' + MneText.getText('#mne_lang#änhlich') + '</option>'
-          self.obj.inputs['wop'].setValue('like')
+          self.obj.inputs['wop'].setValue(( self.initpar.selop ) ? self.initpar.selop : 'like')
           break;
           
         default:
           self.obj.inputs['wop'].innerHTML = '<option value="=">=</option><option value="<>">&lt;&gt;</option><option value="<">&lt;</option><option value=">">&gt;</option><option value="<=">&lt;=</option><option value=">=">&gt;=</option><option value="isnull">' + MneText.getText('#mne_lang#leer') + '</option><option value="is not null">' + MneText.getText('#mne_lang#nicht leer') + '</option>'
-          self.obj.inputs['wop'].setValue('=')
+          self.obj.inputs['wop'].setValue(( self.initpar.selop ) ? self.initpar.selop : '=')
           break;
       }
       wcol.modClear();
@@ -84,10 +98,16 @@ class MneWhereSelectWeblet extends MneViewWeblet
     this.obj.wcol_observer = new MutationObserver( check_change);
     this.obj.wcol_observer.observe(wcol, { subtree: true, attributes : true, attributeFilter: [ 'selected' ] } );
 
-    wcol.children[( this.obj.selpos < wcol.children.length ) ? this.obj.selpos : 0 ].setAttribute("selected",true);
-
-    if ( this.obj.selpos >= wcol.children.length )
-      MneLog.warning("MneTableWhereSelectWeblet: Selval zu gross")
+    if ( this.initpar.selval )
+    {
+      wcol.children[( this.obj.selpos < wcol.children.length ) ? this.obj.selpos : 0 ].setAttribute("selected", true);
+      if ( this.obj.selpos >= wcol.children.length )
+        MneLog.warning("MneTableWhereSelectWeblet: Selval zu gross")
+    }
+    else
+      {
+      check_change();
+      }
     
   }
   

@@ -10,9 +10,11 @@ select.modifyok,
 [contenteditable="true"].modifyok,
 .modifyok > span[contenteditable="true"],
 .modifyok > span.output,
+.modifyok > span.label,
 .modifyok > input,
 .modifyok > label:after,
-.modifyok > select {
+.modifyok > select,
+.modifyok.editor .mne-rte-buttonframe {
     background-color: var(--modifyokbackgroundcolor);
     color: var(--modifyokcolor);
 }
@@ -24,9 +26,11 @@ select.modifywrong,
 [contenteditable="true"].modifywrong,
 .modifywrong > [contenteditable="true"],
 .modifywrong > span.output,
+.modifywrong > span.label,
 .modifywrong > input,
 .modifywrong > label:after,
-.modifywrong > select {
+.modifywrong > select,
+.modifywrong.editor .mne-rte-buttonframe {
     background-color: var(--modifywrongbackgroundcolor);
     color: var(--modifywrongcolor);
 }
@@ -38,9 +42,11 @@ select.modifywarning,
 [contenteditable="true"].modifywanring,
 .modifywarning > [contenteditable="true"],
 .modifywarning > span.output,
+.modifywarning > span.label,
 .modifywarning > input,
 .modifywarning > label:after,
-.modifywarning > select {
+.modifywarning > select,
+.modifywarning.editor .mne-rte-buttonframe {
     background-color: var(--modifywarningbackgroundcolor);
     color: var(--modifywarningcolor);
 }
@@ -52,12 +58,18 @@ select.modifywait,
 [contenteditable="true"].modifywait,
 .modifywait > [contenteditable="true"].modifywait,
 .modifywait > span.output,
+.modifywait > span.label,
 .modifywait > input,
 .modifywait > label:after,
-.modifywait > select {
+.modifywait > select,
+.modifywait.editor .mne-rte-buttonframe {
     background-color: var(--modifywaitbackgroundcolor);
     color: var(--modifywaitcolor);
  
+}
+
+tr.modifyok > td {
+    background: linear-gradient(to bottom, var(--modifyokbackgroundcolor), transparent 20%, transparent);
 }
 
 span.hint {
@@ -91,6 +103,12 @@ div.ele-wrapper {
 	display: inline-block;
 }
 
+td > .contain-file label {
+	position: absolute;
+	top: 0px;
+	right: var(--dmargin);
+}
+
 span[contenteditable="true"] {
     display: inline-block;
     min-height: var(--select_lineheight);
@@ -102,6 +120,7 @@ span[contenteditable="true"] {
     box-shadow: var(--boxshadow);
     padding: var(--margin);
     overflow: hidden;
+    background: var(--background);
 }
 
 span[contenteditable="true"][data-hidden="true"] {
@@ -131,6 +150,10 @@ td  span[contenteditable="true"] {
 	display: flow-root;
     max-width: 30em;
     margin: var(--margin);
+}
+
+td  .contain-file span[contenteditable="true"] {
+    margin-right: var(--iconpicsize);
 }
 
 div.selectlisti::after, span.selectlisti::after {
@@ -168,7 +191,10 @@ div.selectlistfs::after, span.selectlistfs::after {
 	margin-left: -2.5em;
 	cursor: pointer;
 	line-height: 0px;
-	opacity: 0.5;
+}
+
+div.selectlisti.disabled::after, span.selectlisti.disabled::after, div.selectlists.disabled::after, span.selectlists.disabled::after, div.selectlistfi.disabled::after, span.selectlistfi.disabled::after, div.selectlistfi.disabled::after, span.selectlistfi.disabled::after {
+  display: none;
 }
 
 td .selectlisti span.inputi, td .selectlistfi span.input {
@@ -186,7 +212,42 @@ td span.selectlisti:after, td span.selectlistfi:after  {
     margin-right: var(--dmargin);
 }
 
+tr.active td span.selectlisti:after, tr.active td .selectlistfi span.input:after, tr.active div.selectlistfs::after, tr.active span.selectlistfs::after, tr.active .contain-file label:after
+{
+	color: var(--background);
+}
+
 td span.selectlisti > span {
     padding-right: var(--iconsize);
 }
 
+.slidervalue {
+    position: relative;
+	border: var(--border);
+}
+
+.slidervalue.modifyok {
+	border-color: var(--modifyokbackgroundcolor);
+}
+
+.slidervalue .slider {
+	position: absolute;
+	width: 0.75em;
+	height: 3ex;
+	background: var(--bordercolor);
+	transform: translateY(-50%);
+	border-radius: var(--borderradius);
+}
+
+span.dpytypecolor, input.dpytypecolor {
+    display: inline-block;
+    color: transparent !important;
+
+    min-width: var(--lineheight_normal);
+    max-width: var(--lineheight_normal);
+    min-height: var(--lineheight_normal);
+    max-height: var(--lineheight_normal);
+
+    border-radius: var(--borderradius);
+    box-shadow: var(--boxshadow);
+}

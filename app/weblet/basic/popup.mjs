@@ -20,7 +20,13 @@ class MnePopupWeblet
       this.config = config;
     }
     
-    async create( parent )
+    async getWeblet(path)
+    {
+      let { default: Weblet } = await MneRequest.import(path);
+      return Weblet;
+    }
+    
+    async create( parent, config = {}, initpar = {} )
     {
       
       if ( parent.obj.weblets[this.id] == undefined || document.body.contains(parent.obj.weblets[this.id].obj.popup.frame) == false )
@@ -28,9 +34,8 @@ class MnePopupWeblet
         var container;
         var popup = new MnePopupFrame((container = document.createElement('div')), '', this.config.nointeractive, this.config.parentframe )
 
-        let { default: Weblet } =  await MneRequest.import(this.config.path + '.mjs');
-        
-        parent.obj.weblets[this.id] = new Weblet(parent, container, this.id, Object.assign({ popup : popup }, this.initpar ), this.config )
+        var weblet =  await this.getWeblet(this.config.path + '.mjs');
+        parent.obj.weblets[this.id] = new weblet(parent, container, this.id, Object.assign(Object.assign({ popup : popup }, this.initpar), initpar ), Object.assign(Object.assign({}, this.config), config) )
       }
         
     }

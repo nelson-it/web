@@ -1,0 +1,117 @@
+.weblet-allg-repository-tree div.treelink::before {
+    background-size: 8px;
+	background-repeat: no-repeat;
+	background-position: 100% 70%;
+	padding-right: 4px;
+}
+
+.weblet-allg-repository-tree div.treelinkM::before {
+    background-image: url('mod.svg');
+	background-position: bottom;
+}
+
+.weblet-allg-repository-tree div.treelinkD, .weblet-allg-repository-tree div.treelinkAD {
+	text-decoration: line-through;
+    color: #800000;
+}
+
+.weblet-allg-repository-tree div.treelinkD::before, .weblet-allg-repository-tree div.treelinkAD::before {
+    background-image: url('del.svg');
+}
+
+.weblet-allg-repository-tree div.treelinkA::before {
+    background-image: url('add.svg');
+}
+
+.weblet-allg-repository-tree div.treelinkY::before {
+    background-image: url('notadd.svg');
+}
+
+.weblet-allg-repository-tree div.treelinkR::before {
+    background-image: url('ren.svg');
+}
+
+.weblet-allg-repository-treeedit > .webletmain {
+	border: var(--border);
+}
+	
+.weblet-allg-repository .repository-select > #contentContainer {
+	display: none;
+}
+
+.weblet-allg-repository .repository-addfile > #buttonContainer,
+.weblet-allg-repository .repository-adddir  > #buttonContainer,
+.weblet-allg-repository .repository-rename  > #buttonContainer {
+	display: none;
+}
+
+.weblet-allg-repository .repository-adddir .namefile,
+.weblet-allg-repository .repository-rename .namefile {
+	display: none;
+}
+
+.weblet-allg-repository tr.interesse td,
+.weblet-allg-repository tr.send1 td,
+.weblet-allg-repository td.interesse,
+.weblet-allg-repository td.send1 {
+    background-color: #ffa858;
+}
+
+.weblet-allg-repository tr.sendtrue td,
+.weblet-allg-repository tr.sendwahr td,
+.weblet-allg-repository tr.send2 td,
+.weblet-allg-repository td.sendtrue,
+.weblet-allg-repository td.sendwahr,
+.weblet-allg-repository td.send2 {
+	background-color: #fb7b7b;
+}
+
+.weblet-allg-repository tr.fetchtrue td,
+.weblet-allg-repository tr.fetchwahr td,
+.weblet-allg-repository tr.send3 td ,
+.weblet-allg-repository td.fetchtrue,
+.weblet-allg-repository td.fetchwahr,
+.weblet-allg-repository td.send3 {
+    background-color: #80ff80
+}
+
+.weblet-allg-repository tr.interesse.active td,
+.weblet-allg-repository tr.send1.active td {
+    background: linear-gradient(to bottom, #ffa858, transparent 60%, transparent);
+}
+
+.weblet-allg-repository tr.sendtrue.active td,
+.weblet-allg-repository tr.sendwahr.active td,
+.weblet-allg-repository tr.send2.active td {
+    background: linear-gradient(to bottom, #fb7b7b, transparent 60%, transparent);
+}
+
+.weblet-allg-repository tr.fetchtrue.active td,
+.weblet-allg-repository tr.fetchwahr.active td,
+.weblet-allg-repository tr.send3.active td {
+    background: linear-gradient(to bottom, #80ff80, transparent 60%, transparent);
+}
+
+.weblet-allg-repository td.person.active {
+	box-shadow: inset 0px 0px 5px black;
+}
+
+.weblet-allg-repository .treelink.dropover {
+    color: #d21d1d;
+    color: var(--modifywaitcolor);
+    background: var(--modifywaitbackgroundcolor);
+}
+
+.weblet-allg-repository > .webletmain.avaible #buttonContainer > *,
+.weblet-allg-repository > .webletmain.avaiblenot #buttonContainer > * {
+  display: none;
+}
+
+.weblet-allg-repository > .webletmain.avaible #buttonContainer > .send {
+  display: block;
+}
+
+.weblet-allg-repository > .webletmain.avaiblenot #buttonContainer > .ok {
+  display: block;
+}
+

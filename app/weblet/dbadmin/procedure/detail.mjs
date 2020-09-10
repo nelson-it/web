@@ -4,11 +4,11 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/procedure/detail.mjs
+// datei: weblet/dbadmin/procedure/detail.mjs
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
@@ -53,11 +53,13 @@ class MneDbAdminProcedure extends MneDbView
       this.obj.editor = ace.edit("textEdit");
       this.obj.editor.getSession().setMode("ace/mode/sql");
       this.obj.editor.getSession().setTabSize(2)
+      
+      this.frame.querySelector('textarea').setAttribute('aria-multiline', true);
     }
     
     async ok()
     {
-      this.obj.inputs.text.setValue(this.obj.editor.getValue());
+      this.obj.inputs.text.setValue(await this.obj.editor.getValue());
       this.obj.run.values.schema = this.obj.inputs.schema.getValue();
       this.obj.run.values.fullname = this.obj.inputs.fullname.getValue();
 

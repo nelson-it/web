@@ -8,10 +8,11 @@
 //================================================================================
 'use strict';
 
-import MneElement from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneRequest from '/js/basic/request.mjs'
 
 import MneView    from '/weblet/basic/view.mjs'
+import MneWeblet  from '/weblet/basic/weblet.mjs'
 
 class MneMenu extends MneView
 {
@@ -31,43 +32,21 @@ class MneMenu extends MneView
   async check_values()
   {
     var mustcheck = false;
-    var p = [];
     var self = this;
     
-
-    this.config.depend.forEach( (item) =>
-    {
-      if ( item.newvalues && item.obj.run.dependweblet )
-      {
-        var index;
-        var val;
-        
-        for (index in self.obj.run.values )
-        {
-          if ( ! mustcheck )
-          {
-            if ( item.obj.inputs && item.obj.inputs[index] != undefined && ( val = item.obj.inputs[index].getValue(false) != self.obj.run.values[index] ) )
-            {
-              self.obj.run.values[index] = val;
-              mustcheck = true;
-            }
-            else if ( item.obj.run.values != self.obj.run.values )
-            {
-              var i;
-              for ( i in item.obj.run.values ) self.obj.run.values = item.obj.run.values;
-              mustcheck = true;
-            }
-          }
-        }
-      }
-    });
+    this.config.depend.forEach( (item) => { if ( item instanceof MneWeblet ) mustcheck = (item.obj.run.checkdepend === true ) });
 
     if ( mustcheck && this.obj.act_data != undefined )
-      p.push (this.action_submenu(Object.assign({ refresh : true }, this.obj.act_data)));
+      await this.action_submenu(Object.assign({ refresh : true }, this.obj.act_data));
 
-    p.push(super.check_values());
-
-    return Promise.all(p);
+    return super.check_values();
+  }
+  
+  async reload()
+  {
+    var val = this.obj.run.values;
+    await super.reload();
+    this.config.composeparent.obj.weblets[this.id].obj.run.values = val;
   }
 
   async action_submenu( data, dblclick )
@@ -91,11 +70,13 @@ class MneMenu extends MneView
 
     this.mk_submenu( container, res, data);
     this.obj.act_data = data;
+    
+    return false;
   }
 
   async action(data, obj, evt )
   {
-    try { await this['action_' + data.values[0].action](data, evt.detail == 2 ) } catch(e) { console.error(data); e.message += "\nMenu::action: " +  data.values[0].action; throw e }
+    try { return await this['action_' + data.values[data.res.rids.action].action](data, evt.detail == 2 ) } catch(e) { console.error(data); e.message += "\nMenu::action: " +  data.values[0].action; throw e }
   }
   
   async query()

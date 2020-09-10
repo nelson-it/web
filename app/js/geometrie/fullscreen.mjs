@@ -7,7 +7,7 @@
 // datei: js/geometrie/fullscreen.mjs
 //================================================================================
 'use strict';
-import MneElement          from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 
 export class MneFullscreen
 {
@@ -37,13 +37,6 @@ export class MneFullscreen
       frame.stylesave.back = window.document.createElement("div");
       frame.stylesave.back.className = "fullscreen";
       frame.stylesave.back.id = "fullscreen";
-      frame.style.position = 'absolute';
-      frame.style.top  = "0px";
-      frame.style.left = "0px";
-      frame.style.width = "100%";
-      frame.style.height = "100%";
-      frame.style.background = "var(--background)";
-      frame.style.zIndex = 1000000;
 
       document.body.appendChild(frame.stylesave.back);
       frame.stylesave.back.appendChild(frame);

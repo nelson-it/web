@@ -4,18 +4,18 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/dbadmin/detail.mjs
+// datei: weblet/dbadmin/query/detail.mjs
 //================================================================================
 'use strict';
 
-import MneElement  from '/js/basic/element.mjs'
+import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
 
-import MneDbViewWeblet     from '/weblet/db/view.mjs'
+import MneDbView     from '/weblet/db/view.mjs'
 
-class MneAdminQueryDetail extends MneDbViewWeblet
+class MneAdminQueryDetail extends MneDbView
 {
     constructor(parent, frame, id, initpar = {}, config = {} )
     {
@@ -28,7 +28,7 @@ class MneAdminQueryDetail extends MneDbViewWeblet
         delurl : '/db/admin/query/del.json',
         
         showids : [ 'queryid'],
-        modids  : [ 'queryid', 'schema', 'query', 'unionnum'],
+        okids   : [ 'queryid', 'schema', 'query', 'unionnum'],
         delids  : [ 'queryid'],
 
         defvalues : { schema : '', query : '', unionnum : 1 },
@@ -60,6 +60,8 @@ class MneAdminQueryDetail extends MneDbViewWeblet
         p.sqlend = 1;
         return p;
       }
+      
+      this.obj.enablebuttons.buttons = [];
     }
 
     async ok()
@@ -71,8 +73,14 @@ class MneAdminQueryDetail extends MneDbViewWeblet
     async values()
     {
       this.getParamShow({}, ['schema'] );
-      this.obj.defvalues.schema =  ( this.obj.run.showvals.schema ) ? this.obj.run.showvals.schema : '';
-      return super.values();
+
+      this.obj.defvalues.schema =  ( this.config.dependweblet.obj.run.values.schema ) ? this.config.dependweblet.obj.run.values.schema : '';
+      this.obj.defvalues.query  =  ( this.config.dependweblet.obj.run.values.table  ) ? this.config.dependweblet.obj.run.values.table : '';
+      
+      await super.values();
+      
+      if ( this.obj.run.values.queryid == '################')
+        Object.assign(this.obj.run.values, this.config.dependweblet.obj.run.values);
     }
 }
 
