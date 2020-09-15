@@ -36,8 +36,8 @@ class MneMenu extends MneView
     
     this.config.depend.forEach( (item) => { if ( item instanceof MneWeblet ) mustcheck = (item.obj.run.checkdepend === true ) });
 
-    if ( mustcheck && this.obj.act_data != undefined )
-      await this.action_submenu(Object.assign({ refresh : true }, this.obj.act_data));
+    if ( mustcheck && this.obj.act_openmenu != undefined )
+      await this.action_submenu(Object.assign({ refresh : true }, this.obj.act_openmenu));
 
     return super.check_values();
   }
@@ -46,7 +46,8 @@ class MneMenu extends MneView
   {
     var val = this.obj.run.values;
     await super.reload();
-    this.config.composeparent.obj.weblets[this.id].obj.run.values = val;
+    this.parent.obj.weblets[this.id].obj.run.values = val;
+    return false;
   }
 
   async action_submenu( data, dblclick )
@@ -59,7 +60,7 @@ class MneMenu extends MneView
     if ( dblclick ) return;
     if ( data.menu ) MneElement.mkClass(data.menu, 'menuopen', !open);
     
-    this.obj.act_data = undefined;
+    this.obj.act_openmenu = undefined;
     
     if ( open ) return;
     
@@ -69,7 +70,7 @@ class MneMenu extends MneView
     res = await MneRequest.fetch(this.obj.readurl, this.getReadParam(data));
 
     this.mk_submenu( container, res, data);
-    this.obj.act_data = data;
+    this.obj.act_openmenu = data;
     
     return false;
   }

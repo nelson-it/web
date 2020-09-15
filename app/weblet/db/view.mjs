@@ -301,7 +301,7 @@ export class MneDbView extends MneView
     var rids = list.rids;
     var self = this;
     var i;
-    var path = { 'table' : 'table/select', 'menu' : 'menu/select', frame : 'table/frame' }
+    var path = { 'table' : 'table/select', 'fmenu' : 'menu/fselect', 'rmenu' : 'menu/rselect', frame : 'table/frame' }
     var config;
     var isselect = (vals[rids['element']].indexOf('?') != -1 );
     var interactive = ( vals[rids['type']] != 'frame' )
@@ -630,10 +630,7 @@ export class MneDbView extends MneView
     var i;
 
     if ( this.initpar.defalias )
-    {
-      for ( i in this.initpar.defalias )
-        this.obj.defvalues[i] = this.config.dependweblet.obj.run.values[this.initpar.defalias[i]];
-    }
+      this.initpar.defalias.forEach( (item) => { this.obj.defvalues[item] = this.config.dependweblet.obj.run.values[item]; });
 
     if ( cols == undefined )
     {

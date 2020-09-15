@@ -4,7 +4,7 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/allg/menu/select.mjs
+// datei: weblet/allg/menu/fselect.mjs
 //================================================================================
 'use strict';
 import MneFixMenu from './fix.mjs'
@@ -16,6 +16,8 @@ export class MneSelectFixMenu extends MneFixMenu
   {
     initpar.nowebletframe = 0;
     initpar.delbutton = 'cancel,add,del';
+    initpar.nobuttonframe = false;
+    
     super( parent, frame, id, initpar, config );
   }
   

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+komma="'"
 prog='BEGIN { first=1;
               print "//================================================================================";
               print "//";
@@ -20,7 +21,7 @@ find . ! -name change_datei -type f | \
     egrep '^//.*datei' $file >/dev/null
     if [ "$?" == "0" ]; then
       name=$(echo "$file" | sed -e 's@^./@@')
-      p=$(echo "$prog" | sed -e "s@//.*datei:.*@// datei: $name\";@")
+      p=$(echo "$prog" | sed -e "s@//.*datei:.*@// datei: $name\";@" )
       awk "$p" < $file > $file.new
       mv $file.new $file
     fi

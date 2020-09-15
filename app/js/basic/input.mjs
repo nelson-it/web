@@ -119,9 +119,9 @@ export class MneInput
       case "long":
         return ( value !== '') ? parseInt(value) : '';
       case "float":
-        return ( value !== '') ? parseFloat(value) : '';
+        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : '';
       case "double":
-        return ( value !== '') ? parseFloat(value) : '';
+        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : '';
 
       case "binary":
         return "binary";
@@ -163,15 +163,6 @@ export class MneInput
     {
       case "bool":
         return (( value != false && value != '' && value != '0' && value != MneText.getText("#mne_lang#falsch")) ? '&#10004;' : '' );
-      case "short":
-        return ( value !== '') ? parseInt(value) : '';
-      case "long":
-        return ( value !== '') ? parseInt(value) : '';
-      case "float":
-        return ( value !== '') ? parseFloat(value) : '';
-      case "double":
-        return ( value !== '') ? parseFloat(value) : '';
-
 
       case "binary":
         return "binary";

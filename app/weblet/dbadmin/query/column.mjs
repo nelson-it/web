@@ -30,6 +30,9 @@ class MneAdminQueryColumn extends MneTable
           tablecoltype : { tabnum : 'text', schema : 'text', table : 'text', field : 'mtext', columnid : 'text', lang : 'bool', groupby : 'bool', musthaving : 'bool', typ : 'selection', format : 'text', text_de : 'text', text_en : 'text' },
           showids : ['queryid', 'unionnum'],
           
+          tablerowstyle : ['querytab'],
+          tablerowstylecol : ['tabnum'],
+          
           selectlists: { typ :  'tabledpytype' },
           
           drop : true,
@@ -43,6 +46,8 @@ class MneAdminQueryColumn extends MneTable
       super(parent, frame, id, Object.assign(ivalues, initpar), config );
     }
     
+    getCssPath()  { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
+
     getParam(p)
     {
       var res = this.obj.weblets.table.all;

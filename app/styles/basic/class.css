@@ -94,6 +94,11 @@
     color: var(--grayoutcolor);
 }
 
+.dropover {
+    color: var(--modifywaitcolor);
+    background: var(--modifywaitbackgroundcolor);
+}
+
 table.mne_alignl {
 	margin-right: auto;
 }

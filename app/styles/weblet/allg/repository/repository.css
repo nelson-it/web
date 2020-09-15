@@ -96,12 +96,6 @@
 	box-shadow: inset 0px 0px 5px black;
 }
 
-.weblet-allg-repository .treelink.dropover {
-    color: #d21d1d;
-    color: var(--modifywaitcolor);
-    background: var(--modifywaitbackgroundcolor);
-}
-
 .weblet-allg-repository > .webletmain.avaible #buttonContainer > *,
 .weblet-allg-repository > .webletmain.avaiblenot #buttonContainer > * {
   display: none;

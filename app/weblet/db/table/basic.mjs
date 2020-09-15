@@ -479,7 +479,7 @@ class MneDbTableBasic extends MneDbView
         this.obj.defvalues[i] = this.config.dependweblet.obj.run.values[this.initpar.defalias[i]];
     }
 
-    this.obj.run.values = {};
+    this.obj.run.values = ( this.initpar.savedependvalues ) ? Object.assign({}, this.config.dependweblet.obj.run.values) : {};
     this.obj.run.act_row = undefined;
     
     var p = Object.assign(

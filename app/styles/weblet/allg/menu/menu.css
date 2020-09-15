@@ -111,7 +111,9 @@ div.treeleaf > div.treelink::before {
 /* ========================================================================== */
 /* /weblet/allg/menu/select                                                   */
 /* ========================================================================== */
-
+.tree.selected > .treelink, .treeleaf.selected > .treelink {
+	background: var(--lightcolor2);
+}
 
 div.weblet.weblet-allg-menu-select div#contentContainer {
     border-left: var(--border);

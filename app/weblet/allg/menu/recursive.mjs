@@ -31,19 +31,19 @@ class MneRecursiveMenu extends MneMenu
 
         this.obj.readparam =
         {
-          schema : this.initpar.schema,
-          cols : this.initpar.cols,
-          scols : this.initpar.scols,
+          schema   : this.initpar.schema,
+          cols     : this.initpar.cols,
+          scols    : this.initpar.scols,
           distinct : ( this.initpar.distinct ) ? '1' : '',
-              wval : '',
-              sqlend : 1
+          sqlend   : 1
         }
 
       if ( this.initpar.query ) this.obj.readparam.query = this.initpar.query;
       if ( this.initpar.table ) this.obj.readparam.table = this.initpar.table;
 
-      this.obj.readparam.wcol = this.initpar.showids.join(',');
-      this.obj.readparam.wop = (Array(this.initpar.showids.length).fill('=')).join(',')
+      this.obj.readparam.wcol = this.initpar.wcol ?? this.initpar.showids.join(',');
+      this.obj.readparam.wop  = this.initpar.wop  ?? (Array(this.initpar.showids.length).fill('=')).join(',')
+      this.obj.readparam.wval = this.initpar.wval ?? ''
     }
     else
     {
@@ -52,15 +52,21 @@ class MneRecursiveMenu extends MneMenu
     }
   }
   
+  async load()
+  {
+    await super.load();
+    this.obj.container.tree = this.obj.container.content;
+  }
+  
   getReadParam(data)
   {
     var par = Object.assign({sqlend : 1}, this.obj.readparam);
     if ( this.obj.lastquery ) par.lastquery = 1;
-    par.wval += (( par.wval == '' ) ? '' : ',' ) + data.values[data.res.rids.menuid];
+    par.wval += data.values[data.res.rids.menuid];
     return par;
   }
   
-  mk_submenu( container, res )
+  mk_submenu( container, res, data )
   {
     var i;
     var r = Object.assign({}, res);
@@ -74,7 +80,7 @@ class MneRecursiveMenu extends MneMenu
       div.innerHTML = '<div class="' + this.initpar.classname + 'link"></div><div class="' + this.initpar.classname + 'main"></div>'
       div.firstChild.innerHTML = res.values[i][1];
       if ( res.rids.status && res.values[i][res.rids.status] ) MneElement.mkClass(div.firstChild, 'treelink' + res.values[i][res.rids.status] );
-      this.mkButton(res.values[i][0], div.firstChild, { menu : div, frame : div.lastChild, values : res.values[i], res : r }, 'action');
+      this.mkButton('treelink', div.firstChild, { parent : data, menu : div, frame : div.lastChild, values : res.values[i], res : r }, 'action');
       container.appendChild(div);
     }
   }
@@ -92,9 +98,8 @@ class MneRecursiveMenu extends MneMenu
         val = w.obj.run.values[showids[i]];
       this.obj.readparam.wval = val + ',';
     }
-    this.obj.readparam.wval = this.obj.readparam.wval.substring(0, this.obj.readparam.wval.length - 1)
     
-    await this.action_submenu( { menu : null, values : [{}, '', '', '', ''], res : { rids : { action : 0, menuid : 2 }}, frame : this.obj.container.content})
+    await this.action_submenu( { menu : null, values : [{}, '', '', '', ''], res : { rids : { action : 0, menuid : 2 }}, frame : this.obj.container.tree});
   }
   
   async action_show(data)

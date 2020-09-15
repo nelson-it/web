@@ -1,0 +1,9 @@
+[class^="querytab"] #typInput {
+    pointer-events: none;
+    color: var(--rdonlycolor);
+}
+
+.querytab-1 #typInput {
+    pointer-events: unset;
+    color: unset;
+}

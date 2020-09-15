@@ -73,7 +73,9 @@ export class MneWebletEmpty
 
     }
 
-    this.config = Object.assign({}, this.configorig )
+    this.config = Object.assign({}, this.configorig );
+    this.config.webletnum = MneWeblet.webletnum++;
+    
     this.obj  =  { run : { values : {}, newvalues : false }, observer : {} };
     this.deldrop(this.frame);
   }
@@ -286,6 +288,7 @@ export class MneWeblet extends MneWebletEmpty
     this.frame.className = '';
     MneElement.mkClass(this.frame, 'weblet');
     MneElement.mkClass(this.frame, this.config.path.replace(/\/[^\/]+\.mjs$/, '').replace(/^\//,'').replace(/\//g,'-'));
+    MneElement.mkClass(this.frame, 'weblet' + this.config.webletnum);
     if ( this.initpar.frameclass ) MneElement.mkClass(this.frame, this.initpar.frameclass );
     
     this.frame.id = this.config.id;
@@ -465,6 +468,7 @@ export class MneWeblet extends MneWebletEmpty
 
 }
 
+MneWeblet.webletnum = 0;
 MneWeblet.stylePath = '/styles/weblet';
 MneWeblet.click_mutex = new MneMutex();
 

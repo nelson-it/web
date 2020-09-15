@@ -167,6 +167,15 @@ export class MneViewContainer extends MneWeblet
     await super.load();
     return this.loadview();
   }
+  
+  async view(data, obj, evt)
+  {
+    var config = this.config;
+    this.reset();
+    this.config = config;
+    this.obj.run.viewnum = ( obj.checked ) ? "1" : "2";
+    await this.load();
+  }
 }
 
 export class MneView extends MneViewContainer
@@ -186,7 +195,7 @@ export class MneView extends MneViewContainer
     var self = this;
 
     super.reset();
-    this.obj  = Object.assign(this.obj, { defvalues : {}, labels : {}, fields : [], inputs  : {}, outputs : {},  tables : {},  sliders : {}, files : {}, enablebuttons : {} });
+    this.obj  = Object.assign(this.obj, { defvalues : {}, labels : {}, fields : [], inputs  : {}, outputs : {},  tables : {},  sliders : {}, checkboxs : {},  files : {}, enablebuttons : {} });
 
     this.obj.mkbuttons = 
       [
@@ -296,7 +305,7 @@ export class MneView extends MneViewContainer
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.textContent : this.id ));
         }
-        return undefined;
+        return this.getAttribute('newvalue');
       }
 
       return MneInput.getValue(this.getAttribute('newvalue'), this.dpytype, true );
@@ -411,7 +420,7 @@ export class MneView extends MneViewContainer
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.textContent : this.id ));
         }
-        return undefined;
+        return this.getAttribute('newvalue');
       }
 
       switch(this.type)
@@ -469,8 +478,9 @@ export class MneView extends MneViewContainer
     {
       if ( obj.getAttribute('newvalue') == obj.getAttribute('oldvalue') ) ok = 'no';
 
-      var r = obj.innerText.match(obj.regexp.reg);
-      if ( ! r || r[0] != obj.innerText )
+      var text = obj.innerText.replace(/\n$/,'');
+      var r = text.match(obj.regexp.reg);
+      if ( ! r || r[0] != text )
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifywrong', true, 'modify');
         if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modifywrong', true, 'modify');
@@ -516,7 +526,7 @@ export class MneView extends MneViewContainer
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.innerText : this.id ));
         }
-        return undefined;
+        return this.getAttribute('newvalue').replace(/\u00A0/g,' ');
       }
       return MneInput.getValue(this.getAttribute('newvalue').replace(/\u00A0/g,' '), this.dpytype, true );
     }
@@ -754,7 +764,7 @@ export class MneView extends MneViewContainer
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.textContent : this.id ));
         }
-        return undefined;
+        return this.editor.getValue(true)
       }
       return this.editor.getValue();
     }
@@ -879,7 +889,7 @@ export class MneView extends MneViewContainer
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.textContent : this.id ));
         }
-        return undefined;
+        return this.getAttribute('newvalue');
       }
 
       return MneInput.getValue(this.getAttribute('newvalue'), this.dpytype, true );
@@ -899,11 +909,17 @@ export class MneView extends MneViewContainer
 
     obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { childList: false, subtree: false, attributeOldValue: true, attributes : true, attributeFilter: [ 'newvalue' , 'oldvalue' ] } );
-
-    
   }
 
-
+  async mkCheckbox(id, obj)
+  {
+      this.obj.checkboxs[id] = obj;
+      obj.nextSibling.addEventListener('click', (evt) =>
+      {
+         this.btnClick(id, {}, obj, evt);
+      });
+  }
+  
   async findIO(frame)
   {
     var i;
@@ -942,6 +958,10 @@ export class MneView extends MneViewContainer
     obj = frame.querySelectorAll("[id$='Slider']");
     for ( i = 0; i< obj.length; i++)
       p.push(this.mkSlider(obj[i].id.substr(0, obj[i].id.indexOf("Slider")), obj[i]));
+
+    obj = frame.querySelectorAll("[id$='Checkbox']");
+    for ( i = 0; i< obj.length; i++)
+      p.push(this.mkCheckbox(obj[i].id.substr(0, obj[i].id.indexOf("Checkbox")), obj[i]));
 
     obj = frame.querySelectorAll("[id$='Table']");
     for ( i = 0; i< obj.length; i++)
@@ -1107,8 +1127,29 @@ export class MneView extends MneViewContainer
       else
         MneElement.mkClass(this.obj.container.weblet, 'modify', false, 'modify');
     });
-    this.obj.observer.content.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['newvalue', 'oldvalue'] });
+    this.obj.observer.content.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
     await this.loadbutton();
+  }
+  
+  async view(data, obj, evt)
+  {
+    var objsave = Object.assign({}, this.obj);
+    var i;
+
+    await super.view(data, obj, evt);
+    await this.values();
+    
+    for ( i in this.obj.outputs )
+    {
+      if ( objsave.outputs[i] && objsave.outputs[i].getModify() ) this.obj.outputs[i].modValue(objsave.outputs[i].getValue(false));
+      else if ( objsave.inputs[i] && objsave.inputs[i].getModify() ) this.obj.outputs[i].modValue(objsave.inputs[i].getValue(false));
+    }
+
+    for ( i in this.obj.inputs )
+    {
+      if ( objsave.inputs[i] && objsave.inputs[i].getModify() ) this.obj.inputs[i].modValue(objsave.inputs[i].getValue(false));
+      else if ( objsave.outputs[i] && objsave.outputs[i].getModify() ) this.obj.inputs[i].modValue(objsave.outputs[i].getValue(false));
+    }
   }
 
   async enter()

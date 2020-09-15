@@ -208,6 +208,21 @@ div.weblet .inputsingle input, div.weblet .inputsingle span[contenteditable="tru
 div.weblet .inputsingle div.input-wrapper.contain-select::after {
 	right: calc(4px + var(--iconfontsize));
 }
+div.weblet div.contain-unit {
+	display : flex;
+	flex-direction: row;
+}
+
+div.weblet div.contain-unit :first-child {
+	flex-grow: 1;
+	width: 100%;
+    padding-right: var(--dmargin);
+}
+
+div.weblet div.contain-unit :last-child {
+	flex-grow: 0;
+	flex-basis: 10%;
+}
 
 div.weblet .inputsinglehead {
     display: table-caption;

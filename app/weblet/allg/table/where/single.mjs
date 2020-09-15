@@ -157,7 +157,7 @@ class MneWhereSelectWeblet extends MneView
   
   async values()
   {
-    if ( this.obj.selval ) this.obj.inputs.wval.setValue(this.config.dependweblet.getValue(this.obj.selval));
+    if ( this.obj.selval && this.config.dependweblet.getValue ) this.obj.inputs.wval.setValue(this.config.dependweblet.getValue(this.obj.selval));
   }
 }
 

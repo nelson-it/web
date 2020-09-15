@@ -6,8 +6,9 @@
 //
 // datei: js/basic/request.mjs
 //================================================================================
-import MneText       from '/js/basic/text.mjs'
-import MneLog        from '/js/basic/log.mjs'
+import MneInput from '/js/basic/input.mjs'
+import MneText  from '/js/basic/text.mjs'
+import MneLog   from '/js/basic/log.mjs'
 
 // ================================================================================
 //  MneRequest          
@@ -133,7 +134,7 @@ class MneRequest
       {
         var i;
         for ( i = 0; i < data.regexps.length; i++ )
-          data.regexps[i] = { reg :new RegExp(( data.regexps[i][0] ) ? data.regexps[i][0] : '(?:.|\n)+|^$', data.regexps[i][1]), help : data.regexps[i][2] };
+          data.regexps[i] = ( MneInput.checktype[data.regexps[i][0]] ) ? MneInput.checktype[data.regexps[i][0]] : { reg :new RegExp(( data.regexps[i][0] ) ? data.regexps[i][0] : '(?:.|\n)+|^$', data.regexps[i][1]), help : data.regexps[i][2] };
       }
     }
     return data;
