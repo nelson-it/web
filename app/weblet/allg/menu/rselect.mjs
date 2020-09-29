@@ -188,8 +188,9 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
 
     if ( dblclick )
     {
-      await this.ok();
-      return this.cancel();
+      var retval = await this.ok();
+      if ( ! this.initpar.noclose ) await this.cancel();
+      return retval;
     }
   }
   
@@ -198,9 +199,11 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     if ( ! this.obj.buttons.add.disabled ) return this.add();
     return false;
   }
+
   async ok()
   {
     var res;
+    var retval = false;
     
     if ( this.obj.selectdata == undefined ) return false;
     
@@ -213,9 +216,9 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     });
     
     if ( this.initpar.selectok )
-      await this.initpar.selectok(res);
+      retval = ( await this.initpar.selectok(res) === true );
     
-    return false;
+    return retval;
   }
   
   async add()

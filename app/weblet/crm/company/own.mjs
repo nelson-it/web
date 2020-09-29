@@ -30,16 +30,15 @@ class MneCrmCompanyOwn extends MneDbView
        okids : ['companyownid'],
       delids : ['companyownid'],
       
-      defalias :  { companyid : 'companyid' },
+      defalias :  { companyid : 'companyid', company : 'company' },
       
-      hinput : false
+      hinput : false 
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
   }
 
   getViewPath() { return this.getView(import.meta.url) }
-  //getCssPath()  { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
 
   async ok()
   {
@@ -58,14 +57,6 @@ class MneCrmCompanyOwn extends MneDbView
     }
 
     return super.ok();
-  }
-  
-  async values()
-  {
-    await super.values();
-    
-  //  if ( ! this.config.dependweblet.obj.run.values.companyid || this.config.dependweblet.obj.run.values.companyid == '################')
-  //    this.enable('', false)
   }
 }
 

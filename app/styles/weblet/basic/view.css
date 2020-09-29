@@ -205,9 +205,11 @@ div.weblet .inputsingle input, div.weblet .inputsingle span[contenteditable="tru
     width: calc(100% - var(--iconfontsize));
 }
 
-div.weblet .inputsingle div.input-wrapper.contain-select::after {
-	right: calc(4px + var(--iconfontsize));
+div.weblet .inputsingle .ele-wrapper span:empty::after {
+    content: ' ';
+    white-space: pre;
 }
+
 div.weblet div.contain-unit {
 	display : flex;
 	flex-direction: row;

@@ -1,5 +1,6 @@
 .active {
 	background-color: var(--lightcolor1);
+	background-image:  linear-gradient(to bottom, var(--lightcolor1), transparent 50%);
 }
 
 .background {

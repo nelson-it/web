@@ -34,13 +34,13 @@ export class MneRegister extends MneWeblet
 
     set newvalues(val)
     {
-      MneLog.warning("Geometrieweblet set newvalue");
+      MneLog.warning("Registerweblet set newvalue");
       super.newvalues = val;
     }
 
     async check_values()
     {
-      if ( this.newvalues ) MneLog.warning("Geometrieweblet hat newvalue");
+      if ( this.newvalues ) MneLog.warning("Registerweblet hat newvalue");
     }
     
     async load()

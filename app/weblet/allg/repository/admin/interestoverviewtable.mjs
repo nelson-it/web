@@ -40,9 +40,9 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
   async addperson()
   {
     var w;
-    if ( ! ( w = this.obj.weblets['interestoverviewadd'] ) )
+    if ( ! ( w = this.obj.weblets['interesseadd'] ) )
     {
-      w = await this.createpopup('interestoverviewadd', {}, { selectok : async (res) =>
+      w = await this.createpopup('interesseadd', {}, { selectok : async (res) =>
       {
         this.obj.run.selectedkeys = [];
         this.primarykey();

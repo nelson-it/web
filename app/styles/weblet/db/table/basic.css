@@ -84,20 +84,6 @@ tr.active0 td, tr.active0 input, tr.active0 textarea, tr.active0 select {
 tr.active1 td {
 }
 
-tr.sum1 {
-}
-tr.sum2 {
-    font-weight: bold;
-}
-tr.sum3 {
-    font-weight: bold;
-    background-color: #e0e0e0;
-}
-
-tr.sum2 input, tr.sum3 input, tr.sum2 textarea, tr.sum3 textarea, tr.sum2 select, tr.sum3 select {
-    visibility: hidden; 
-}
-
 tr.enable0 td {
 	color: var(--table_enablecolor0)
 }
@@ -106,10 +92,30 @@ tr.enable1  td {
 	color: var(--table_enablecolor1)
 }
 
-tr.resultnotok {
+tr.sum1 {
+}
+
+tr.sum2 {
+    font-weight: bold;
+}
+tr.sum3 {
+    font-weight: bold;
+    background-color: #e0e0e0;
+}
+
+tr.sum2 span[contenteditable="true"], tr.sum3 span[contenteditable="true"] {
+	pointer-events: none;
+	box-shadow: none;
+    background: none;
+}
+tr.sum2 span[contenteditable="true"]:empty, tr.sum3 span[contenteditable="true"]:empty, tr.sum2 .contain-select, tr.sum3 .contain-select {
+	display: none;
+}
+
+tr.negativ {
     background-color : var(--modifywrongbackgroundcolor);
 }
-tr.resultok {
+tr.positiv {
 }
 
 tr.day1 td {

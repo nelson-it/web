@@ -88,8 +88,8 @@ class MneTable extends MneViewContainer
     if ( this.initpar.whereweblet != undefined )
     {
       path = ( this.initpar.whereweblet[0] == '/' ) ? this.initpar.whereweblet : this.getPath(import.meta.url) + '/where/' + this.initpar.whereweblet;
-      initpar = Object.assign(Object.assign({}, this.initorig), { popup : undefined, nowebletframe : true });
-      config = Object.assign(Object.assign({}, this.config ), { path : path, depend : [], dependweblet : this, selectlistids : this.initpar.selectlistids ?? this.id  });
+      initpar = Object.assign(Object.assign({}, this.initorig), { popup : undefined, nowebletframe : true, selectlistids : this.initpar.selectlistids ?? this.id  });
+      config = Object.assign(Object.assign({}, this.config ), { path : path, depend : [], dependweblet : this  });
 
       var WhereWeblet =  await this.getWhereWeblet(path, ( reload ) ? '?date=' + Date.now() : '');
       this.obj.weblets.where = new WhereWeblet(this, whereframe, 'where', initpar, config );

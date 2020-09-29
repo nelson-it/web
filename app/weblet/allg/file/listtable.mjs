@@ -31,8 +31,8 @@ class MneAllgFileListTable extends MneDbTableView
   {
     super.reset();
     
-    this.obj.mkbuttons.push({ id: 'data',     value : MneText.getText('#mne_lang#Editor#'), behind : 'ok' } );
-    this.obj.mkbuttons.push({ id: 'download', value : MneText.getText('#mne_lang#Ansehen#'), space : 'before', behind : 'data' } );
+    this.obj.mkbuttons.push({ id: 'data',     value : MneText.getText('#mne_lang#Editor#'), space : 'before' } );
+    this.obj.mkbuttons.push({ id: 'download', value : MneText.getText('#mne_lang#Ansehen#'), behind : 'data' } );
     
     this.obj.enablebuttons.buttons.push('data');
     this.obj.enablebuttons.buttons.push('download');
@@ -128,7 +128,7 @@ class MneAllgFileListTable extends MneDbTableView
   
   async download()
   {
-    this.openpopup('show');
+    /* await */ this.openpopup('show');
     return false;
   }
   
@@ -188,8 +188,8 @@ class MneAllgFileListTable extends MneDbTableView
     this.obj.buttons.data.disabled = ( ! this.config.dependweblet.obj.run.values[this.initpar.refidname] );
     this.obj.defvalues.refid = this.config.dependweblet.obj.run.values[this.initpar.refidname];
     
-    if ( ! this.config.dependweblet.obj.run.values[this.initpar.refidname] )
-      this.enable('')
+    if ( ! this.config.dependweblet.obj.run.values[this.initpar.refidname]  || this.config.dependweblet.obj.run.values[this.initpar.refidname]  == '################')
+      this.enable('', false)
   }
 }
 

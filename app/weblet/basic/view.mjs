@@ -26,6 +26,7 @@ export class MneViewContainer extends MneWeblet
     var ivalues = 
     {
         title   : {},
+        regexp  : {},
         
         showids : []
     }
@@ -37,8 +38,11 @@ export class MneViewContainer extends MneWeblet
 
   reset()
   {
+    var i;
+    
     super.reset();
-    Object.assign(this.obj, { title : {}, buttons : {}, container : {}, htmlcontent : '' })
+    
+    Object.assign(this.obj, { title : {}, container : {}, htmlcontent : '' })
     this.obj.run.title =
     {
         add : ( this.initpar.title.add ) ? this.initpar.title.add : (( MneConfig.language == 'en' ) ? MneText.getText("#mne_lang#hinzufügen") + " " : '' ) + this.config.label + (( MneConfig.language != 'en' ) ? " " + MneText.getText("#mne_lang#hinzufügen") : '' ),
@@ -70,6 +74,9 @@ export class MneViewContainer extends MneWeblet
         }
       });
     }
+    
+    for ( i in this.initpar.regexp )
+      this.initpar.regexp[i] = MneInput.checktype[this.initpar.regexp[i]] ?? this.initpar.regexp[i];
     
     this.initpar.okids  = this.initpar.okids  ?? this.initpar.showids;
     this.initpar.delids = this.initpar.delids ?? this.initpar.okids ?? this.initpar.showids;
@@ -171,8 +178,13 @@ export class MneViewContainer extends MneWeblet
   async view(data, obj, evt)
   {
     var config = this.config;
+    var popup = this.obj.popup;
+    this.obj.popup = undefined;
+    
     this.reset();
     this.config = config;
+    if ( popup ) this.obj.popup = popup;
+    
     this.obj.run.viewnum = ( obj.checked ) ? "1" : "2";
     await this.load();
   }
@@ -277,13 +289,13 @@ export class MneView extends MneViewContainer
     {
       this.setAttribute("newvalue", value);
       this.setAttribute("oldvalue", value);
-      this.innerHTML = MneInput.format(value, this.dpytype);
+      this.innerText = MneInput.format(value, this.dpytype);
     }
 
     obj.modValue = function(value)
     {
       this.setAttribute("newvalue", value);
-      this.innerHTML = MneInput.format(value, this.dpytype);
+      this.innerText = MneInput.format(value, this.dpytype);
     }
 
     obj.clearValue = function()
@@ -351,6 +363,7 @@ export class MneView extends MneViewContainer
     var self = this;
 
     this.obj.inputs[id] = obj;
+
     if ( obj.type != 'hidden' && obj.type != 'checkbox' )
     {
       obj.fieldnum = this.obj.fields.length;
@@ -408,7 +421,7 @@ export class MneView extends MneViewContainer
 
     obj.modClear = function()
     {
-      this.setValue(this.value);
+      this.setValue(this.getAttribute('newvalue'));
     }
 
     obj.getValue = function(error = true)
@@ -439,7 +452,6 @@ export class MneView extends MneViewContainer
     {
       return ( this.getAttribute('newvalue') != this.getAttribute('oldvalue') );
     }
-
 
     if ( this['mkInput' + obj.tagName] ) return this['mkInput' + obj.tagName](id, obj);
   }
@@ -496,14 +508,20 @@ export class MneView extends MneViewContainer
 
     obj.setValue = function(value)
     {
-      this.innerText = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
+      var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
+      if ( text[text.length - 1] == '\n') text = text + '\n';
+      this.innerText = text;
+
       this.setAttribute("newvalue", value);
       this.setAttribute("oldvalue", value);
     }
 
     obj.modValue = function(value)
     {
-      this.innerText = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
+      var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
+      if ( text[text.length - 1] == '\n') text = text + '\n';
+      this.innerText = text;
+
       this.setAttribute("newvalue", value);
     }
 
@@ -592,10 +610,13 @@ export class MneView extends MneViewContainer
 
     obj.addEventListener('input', function (evt)
     {
-      this.setAttribute('newvalue', MneInput.getValue(this.innerText, this.dpytype ));
+      this.setAttribute('newvalue', MneInput.getValue(this.innerText.replace(/\n$/,''), this.dpytype ));
     });
 
-    obj.addEventListener('keypress', (evt) => { if ( ! obj.getAttribute('aria-multiline') && evt.key == 'Enter') evt.preventDefault(); });
+    obj.addEventListener('keypress', (evt) => 
+    {
+      if ( ! obj.getAttribute('aria-multiline') && evt.key == 'Enter') evt.preventDefault();
+    });
   }
 
   async mkInputINPUT (id, obj )
@@ -641,12 +662,15 @@ export class MneView extends MneViewContainer
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifywrong', true, 'modify');
         if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modifywrong', true, 'modify');
+        if ( this.initpar.checklabel && this.initpar.checklabel[obj.getAttribute('shortid')]) MneElement.mkClass(this.obj.labels[this.initpar.checklabel[obj.getAttribute('shortid')]],'modifywrong', true, 'modify');
       }
       else
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
         if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
+        if ( this.initpar.checklabel && this.initpar.checklabel[obj.getAttribute('shortid')]) MneElement.mkClass(this.obj.labels[this.initpar.checklabel[obj.getAttribute('shortid')]],'modify' + ok, true, 'modify');
       }
+      
     }
 
     obj.addEventListener('input', function() { this.setAttribute('newvalue', MneInput.getValue(this.value, this.dpytype)); })
@@ -662,7 +686,7 @@ export class MneView extends MneViewContainer
     {
       this.dpytype  = dpytype;
       this.format   = format;
-      MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
+      MneElement.mkClass(obj, "dpytype" + MneInput.getTyp(this.dpytype), true, "dpytype");
 
       this.regexp   = regexp;
       this.oldvalue = this.value
@@ -1113,8 +1137,21 @@ export class MneView extends MneViewContainer
     await super.load();
 
     var self = this;
-    this.obj.container.content.addEventListener('keydown',  (evt) => { if ( ! evt.target.getAttribute('aria-multiline') &&  evt.key == 'Tab')   { self.btnClick('tab',   {}, self.obj.container.content, evt ); } });
-    this.obj.container.content.addEventListener('keypress', (evt) => { if ( ! evt.target.getAttribute('aria-multiline') &&  evt.key == 'Enter') { self.btnClick('enter', {}, self.obj.container.content, evt ); } });
+    this.obj.container.content.addEventListener('keydown',  (evt) =>
+    {
+      if ( ! evt.target.getAttribute('aria-multiline') &&  evt.key == 'Tab')
+        self.btnClick('tab',   {}, self.obj.container.content, evt );
+      else if ( evt.ctrlKey && evt.key == 's' )
+      {
+        evt.preventDefault();
+        self.btnClick('ctrl_s', {}, self.obj.container.content, evt );
+      }
+    });
+    this.obj.container.content.addEventListener('keypress', (evt) =>
+    {
+      if ( ! evt.target.getAttribute('aria-multiline') &&  evt.key == 'Enter')
+       self.btnClick('enter', {}, self.obj.container.content, evt ); 
+    });
     
     this.obj.observer.content = new MutationObserver( (muts) => 
     {
@@ -1152,10 +1189,15 @@ export class MneView extends MneViewContainer
     }
   }
 
-  async enter()
+  async ctrl_s()
   {
     if ( ! this.obj.buttons.ok || this.obj.buttons.ok && this.obj.buttons.ok.disabled == false )
       return this.ok();
+  }
+
+  async enter()
+  {
+      return this.ctrl_s();
   }
 
   async tab(data, obj, evt )

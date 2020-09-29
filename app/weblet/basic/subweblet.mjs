@@ -13,7 +13,8 @@ import MneText     from '/js/basic/text.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
 
-import MneGeometrie   from './geometrie.mjs'
+import MneGeometrie from './geometrie.mjs'
+import MneRegister  from './register.mjs'
 
 class MneSubweblet extends MneGeometrie
 {
@@ -48,7 +49,7 @@ class MneSubweblet extends MneGeometrie
     await super.mkDepend();
     for ( i in this.obj.weblets )
     {
-      if ( ! this.obj.weblets[i].config.dependweblet ) 
+      if ( ! this.obj.weblets[i].config.dependweblet && ! this.obj.weblets[i] instanceof MneRegister ) 
       {
         this.obj.weblets[i].config.dependweblet = this;
         this.config.depend.push(this.obj.weblets[i]);

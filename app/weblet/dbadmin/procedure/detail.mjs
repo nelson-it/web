@@ -69,7 +69,6 @@ class MneDbAdminProcedure extends MneDbView
     async values()
     {
       await super.values();
-      console.log(this.obj.run.values.text)
       this.obj.editor.setValue(this.obj.inputs.text.getValue());
     }
     

@@ -113,15 +113,15 @@ export class MneInput
     switch(MneInput.getTyp(typ))
     {
       case "bool":
-        return ( value != '' && value != '0' && value != MneText.getText("#mne_lang#falsch"));
+        return ( value != '' && value != '0' && value != 'false' && value != MneText.getText("#mne_lang#falsch"));
       case "short":
-        return ( value !== '') ? parseInt(value) : '';
+        return ( value !== '') ? parseInt(value) : 0;
       case "long":
-        return ( value !== '') ? parseInt(value) : '';
+        return ( value !== '') ? parseInt(value) : 0;
       case "float":
-        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : '';
+        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : 0.0;
       case "double":
-        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : '';
+        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : 0.0;
 
       case "binary":
         return "binary";
@@ -157,6 +157,11 @@ export class MneInput
     }
   }
 
+  static mkNull(value)
+  {
+    return ( value == '' ) ? 0 : value;
+  }
+  
   static format(value, typ, format)
   {
     switch(MneInput.getTyp(typ))

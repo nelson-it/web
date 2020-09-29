@@ -105,6 +105,10 @@
 	--iconsize: 24px;
 	--iconpicsize: 20px;
 	--iconfontsize: 16px;
+
+	--niconsize: -24px;
+	--niconpicsize: -20px;
+	--niconfontsize: -16px;
 	
 	--slider_border_color: #bbb8a9;
 	--slider_active_boxshadow: 0px 0px 4px 1px #0077cc;

@@ -28,7 +28,7 @@ class MneRepositoryLogTable extends MneDbTableView
     super.reset();
     this.obj.run.readpar = Object.assign({}, this.initpar.readpar );
     
-    this.obj.mkbuttons.push({ id: 'download', value : MneText.getText('#mne_lang#Ansehen#'), space : 'before', behind : 'ok' } );
+    this.obj.mkbuttons.push({ id: 'download', value : MneText.getText('#mne_lang#Ansehen#'), space : 'before', behind : 'cancel' } );
 
     this.obj.enablebuttons.buttons.push('download');
     this.obj.enablebuttons.select.push('download');

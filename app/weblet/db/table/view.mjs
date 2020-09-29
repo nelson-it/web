@@ -184,10 +184,26 @@ class MneDbTableView extends MneDbTableBasic
   async detaildel()
   {
     var name = this.initpar.detailweblet;
-    await this.openpopup(name, true);
-    await this.obj.weblets[name].values();
-    await this.obj.weblets[name].del();
-    this.obj.weblets[name].dependweblet = undefined;
+    await this.openpopup(name, { popuphide : true } );
+    var sel = this.select;
+
+    this.obj.run.selectedkeys = [];
+    if ( sel.values.length > 0 && this.del_confirm( sel.values.length > 1 ))
+    {
+      var i,j;
+
+      for ( i=0; i<sel.values.length; i++)
+      {
+        for ( j = 0; j<this.obj.run.result.ids.length; ++j)
+          this.obj.run.values[this.obj.run.result.ids[j]] = sel.values[i][j];
+
+        await this.obj.weblets[name].values();
+        await this.obj.weblets[name].del({noask : true});
+        this.obj.weblets[name].dependweblet = undefined;
+      }
+      this.dependweblet = undefined;
+    }
+
     return this.refresh();
   }
   

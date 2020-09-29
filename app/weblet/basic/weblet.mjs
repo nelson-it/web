@@ -21,9 +21,11 @@ MneTheme.loadCss('basic/weblet.css', '/styles/weblet');
 
 export class MneWebletEmpty
 {
-  constructor(config = {})
+  constructor(parent, config = {})
   {
+    this.parent = parent;
     this.configorig = Object.assign({depend : [], dependid : [] }, config );
+    
     this.dropevt     = (evt) =>
     {
       if ( evt.dataTransfer.types.length > 0 && evt.dataTransfer.types[0] == 'text/plain' && evt.target.modValue )
@@ -113,7 +115,7 @@ export class MneWebletEmpty
   {
     this.newvalues = val;
     this.obj.run.newvalues = false;
-    this.obj.run.checkdepend = true;
+    this.obj.run.checkdepend = false;
   }
 
   set mustcheckvalues(val)
@@ -124,8 +126,8 @@ export class MneWebletEmpty
   set dependweblet(weblet)
   {
     this.obj.run.dependweblet = weblet;
-    this.obj.run.checkdepend = true;
-    if ( ! this.newvalues )
+    this.obj.run.checkdepend = ( weblet ) ? true : false;
+    if ( weblet && ! this.newvalues )
       this.newvalues = true;
   }
 
@@ -168,6 +170,7 @@ export class MneWebletEmpty
     //  this.list_weblets();
 
     //console.log('check_values: ' + this.fullid + ' ' + this.newvalues);
+    //Object.values(this.obj.weblets).forEach( ( item ) => { console.log('check_depend: ' + item.fullid + ' ' + item.obj.run.checkdepend); });
 
     if ( this.newvalues )
     {
@@ -249,12 +252,11 @@ export class MneWeblet extends MneWebletEmpty
 {
   constructor( parent, frame, id, initpar = {}, config = {} )
   {
-    super(config);
+    super( parent, config);
 
     if ( parent != null &&  ! ( parent instanceof MneWeblet ) ) throw new Error(MneText.getText("#mne_lang#Elternelement ist kein Weblet"));
     if ( ! ( frame.tagName ) ) throw new Error(MneText.getText("#mne_lang#Container ist kein HTML Element"));
 
-    this.parent = parent,
     this.frame = frame;
     this.id = id;
     this.initorig = initpar;
@@ -282,7 +284,7 @@ export class MneWeblet extends MneWebletEmpty
 
     super.reset();
     this.initpar = Object.assign({}, this.initorig )
-    this.obj  = Object.assign( this.obj, { loaded : false, weblets : {}, popups : {}, slider : {} });
+    this.obj  = Object.assign( this.obj, { loaded : false, weblets : {}, popups : {}, slider : {}, buttons : {} });
     if ( this.initpar.popup ) this.obj.popup = this.initpar.popup;
 
     this.frame.className = '';
@@ -309,20 +311,21 @@ export class MneWeblet extends MneWebletEmpty
 
     var w = this.obj.weblets[name];
     w.config.dependweblet = this;
-
+    
     if ( this.config.depend.indexOf(w) == -1 )
       this.config.depend.push(w);
 
     return w;
   }
   
-  async openpopup(name, hide = false )
+  async openpopup(name, config = {}, initpar = {} )
   {
     var self = this;
 
-    var w = await this.createpopup(name);
+    var w = await this.createpopup(name, config, initpar );
     
-    await w.show( hide );
+    await w.show( config.popuphide );
+    w.config.dependweblet = this;
     w.newvalues = true;
     await w.check_values();
     
@@ -399,13 +402,16 @@ export class MneWeblet extends MneWebletEmpty
     if ( this.obj.loaded ) throw Error('Weblet <' + this.id + '> ist schon geladen');
 
     var i;
-    var css = this.getCssPath().split(',');
+    var css = this.getCssPath()
+    css = ( css ) ? css.split(',') : [];
 
     this.obj.loaded = true;
 
     for ( i = 0; i < css.length; i++ )
       MneTheme.loadCss(css[i], MneWeblet.stylePath);
 
+    if ( this.initpar.css )
+      MneTheme.loadCss(this.initpar.css, MneWeblet.stylePath);
   }
 
   async show( hide = false )

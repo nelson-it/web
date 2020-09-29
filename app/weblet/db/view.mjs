@@ -25,6 +25,7 @@ export class MneDbView extends MneView
     var ivalues = 
     {
       selectlists : {},
+      
       selectlistids : id,
       ignore_notfound : true,
     }
@@ -60,7 +61,8 @@ export class MneDbView extends MneView
     if ( readurl == undefined )
       throw new Error("#mne_lang#keine Leseurl für <" + this.id + ":" + this.config.path + "> definiert");
     
-    if ( this.initpar.scols )  this.obj.run.readpar.scols = this.initpar.scols;
+    if ( this.initpar.scols    ) this.obj.run.readpar.scols = this.initpar.scols;
+    if ( this.initpar.distinct ) this.obj.run.readpar.distinct = 1;
     
     this.getParamAdd = function(p) { return this.getTableParamAdd(p) }
     this.getParamMod = function(p) { return this.getTableParamMod(p) }
@@ -199,11 +201,12 @@ export class MneDbView extends MneView
             query  : list.values[list.rids['query']],
             table  : list.values[list.rids['tab']],
             cols   : ( list.values[list.rids['showcols']] == '' ) ? list.values[list.rids['cols']] : list.values[list.rids['cols']].split(',').concat(list.values[list.rids['showcols']].split(',')).join(','),
-                wcol   : list.values[list.rids['wcol']],
-                wop    : list.values[list.rids['wop']],
-                wval   : list.values[list.rids['wval']],
-                scols  : list.values[list.rids['scols']],
-                sqlend : 1
+            wcol   : list.values[list.rids['wcol']],
+            wop    : list.values[list.rids['wop']],
+            wval   : list.values[list.rids['wval']],
+            scols  : list.values[list.rids['scols']],
+            distinct : 1,
+            sqlend : 1
         };
       }
       else
@@ -279,10 +282,10 @@ export class MneDbView extends MneView
       if ( ! this.obj.labels[i].noautoread ) this.obj.labels[i].setValue(res.labels[res.rids[i]]);
 
     for ( i in this.obj.inputs )
-      if ( this.obj.inputs[i] && ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]]  );
+      if ( this.obj.inputs[i] && ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setTyp(res.typs[res.rids[i]], this.initpar.regexp[i] ?? res.regexps[res.rids[i]], res.formats[res.rids[i]]  );
 
     for ( i in this.obj.outputs )
-      if ( this.obj.outputs[i] && ! this.obj.outputs[i].noautoread ) this.obj.outputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]] );
+      if ( this.obj.outputs[i] && ! this.obj.outputs[i].noautoread ) this.obj.outputs[i].setTyp(res.typs[res.rids[i]], this.initpar.regexp[i] ?? res.regexps[res.rids[i]], res.formats[res.rids[i]] );
 
   }
   
@@ -305,15 +308,17 @@ export class MneDbView extends MneView
     var config;
     var isselect = (vals[rids['element']].indexOf('?') != -1 );
     var interactive = ( vals[rids['type']] != 'frame' )
-
+    var name;
+    
     if ( vals[rids['type']] == 'weblet' )
     {
-        var name = vals[rids['weblet']];
+        name = vals[rids['weblet']];
         var popup = this.config.composeparent.obj.popups[name];
-        this.obj.popups[id + 'select']  = new MnePopup( id + 'select', Object.assign(popup.initpar, { selectok : async (sel) => { self[id + 'selected'](sel) } }), popup.config );
+        this.obj.popups[id + 'select']  = new MnePopup( name, Object.assign(popup.initpar, { selectok : async (sel) => { self[id + 'selected'](sel) } }), popup.config );
     }
     else
     {
+      name = id + 'select';
       var initpar =
       {
           addurl : '',
@@ -328,16 +333,18 @@ export class MneDbView extends MneView
           scols  : vals[list.rids['scols']],
 
           selval : vals[list.rids['selval']],
+          
+          distinct : 1,
 
           selectsingle : true,
           notitle : true,
 
-          detailmodweblet : ( this.config.composeparent.obj.popups[this.id + '_' + id + 'selectdetail'] ) ? this.id + '_' + id + 'selectdetail' : undefined
+          detailweblet : ( this.config.composeparent.obj.popups[this.id + '_' + id + 'selectdetail'] ) ? this.id + '_' + id + 'selectdetail' : undefined
       };
 
       if ( vals[rids['query']] ) initpar.query = vals[rids['query']];
       if ( vals[rids['tab']] )   initpar.table = vals[rids['tab']];
-      if ( vals[rids['showalias']] )   initpar.showids = vals[rids['showalias']].split(',');
+      if ( vals[rids['showids']] )   initpar.showids = vals[rids['showids']].split(',');
 
       config  = { path : '/weblet/allg/' + path[vals[rids['type']]], composeparent : this.config.composeparent, nointeractive : !interactive , initpar : initpar, id : id + 'select', position : 'popup', label : MneText.getText('#mne_lang#suchen') };
       initpar = Object.assign({selectok : async (sel) => { self[id + 'selected'](sel) }}, initpar )
@@ -368,15 +375,16 @@ export class MneDbView extends MneView
       {
         for ( i=0; i<element.length; i++)
         {
-          if ( this.obj.inputs[element[i]] != undefined )  this.obj.inputs[element[i]].modValue(res.values[0][res.rids[cols[i]]]);
-          if ( this.obj.outputs[element[i]] != undefined ) this.obj.outputs[element[i]].modValue(res.values[0][res.rids[cols[i]]]);
+          var val = ( cols[i][0] == '#' ) ? cols[i].substring(1) : res.values[0][res.rids[cols[i]]];
+          if ( this.obj.inputs[element[i]] != undefined )  this.obj.inputs[element[i]].modValue(val);
+          if ( this.obj.outputs[element[i]] != undefined ) this.obj.outputs[element[i]].modValue(val);
         }
       }
     }
 
     this[id + 'selectshow'] = async function()
     {
-      await self.openpopup(id + 'select');
+      await self.openpopup(name);
       return false;
     }
     
@@ -630,7 +638,7 @@ export class MneDbView extends MneView
     var i;
 
     if ( this.initpar.defalias )
-      this.initpar.defalias.forEach( (item) => { this.obj.defvalues[item] = this.config.dependweblet.obj.run.values[item]; });
+      Object.keys(this.initpar.defalias).forEach( (item) => { this.obj.defvalues[item] = this.config.dependweblet.obj.run.values[this.initpar.defalias[item]]; });
 
     if ( cols == undefined )
     {

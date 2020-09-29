@@ -42,28 +42,19 @@ class MneCrmCompanyContactTable extends MneDbTableView
 
   async assoz()
   {
-    if ( ! this.obj.weblets[this.initpar.assoz] )
+    await this.openpopup(this.initpar.assoz, {},  { selectok : async (sel) => 
     {
-      var initpar = 
-      { 
-          selectok : async (sel) => 
-                     {
-                       await this.add();
-                       sel.ids.forEach( (item,index) => 
-                       {
-                         if ( this.obj.inputs[item] )
-                           this.obj.inputs[item].modValue(sel.values[0][index]);
-                         if ( this.obj.outputs[item] )
-                           this.obj.outputs[item].modValue(sel.values[0][index]);
-                       });
-                     }
-      };
- 
-      await this.createpopup(this.initpar.assoz, {}, initpar);
-    }
-    
-    this.openpopup(this.initpar.assoz);
-    return false;
+      await this.add();
+      sel.ids.forEach( (item,index) => 
+      {
+        if ( this.obj.inputs[item] )
+          this.obj.inputs[item].modValue(sel.values[0][index]);
+        if ( this.obj.outputs[item] )
+          this.obj.outputs[item].modValue(sel.values[0][index]);
+      });
+    }});
+
+      return false;
   }
   
   async values(param)

@@ -69,7 +69,7 @@ class MneMenu extends MneView
     
     res = await MneRequest.fetch(this.obj.readurl, this.getReadParam(data));
 
-    this.mk_submenu( container, res, data);
+    await this.mk_submenu( container, res, data);
     this.obj.act_openmenu = data;
     
     return false;

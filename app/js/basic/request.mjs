@@ -140,6 +140,25 @@ class MneRequest
     return data;
   }
   
+  static async errfetch(request, parameter, errfunc = async () =>
+  {
+    return MneRequest.fetch('/db/utils/connect/end.json', { rollback : 1 });
+  }, raw)
+  {
+    var res;
+    try 
+    {
+      res = await MneRequest.fetch(request, parameter, raw);
+    }
+    catch(e)
+    {
+      await errfunc();
+      throw e;
+    }
+    
+    return res;
+  }
+  
   static async import(request)
   {
     try

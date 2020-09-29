@@ -236,9 +236,13 @@ class MneGeometrie extends MneWeblet
   async show(name, initpar)
   {
     
+   var popup = this.obj.popup;
+   this.obj.popup = undefined;
    this.reset();
-   this.obj.name = name;
-   this.obj.run.initpar = initpar;
+   if ( popup ) this.obj.popup = popup;
+   
+   if ( name ) this.obj.name = name;
+   if ( initpar ) this.obj.run.initpar = initpar;
    
    await super.show();
    

@@ -320,12 +320,11 @@ div.input-wrapper.contain-select {
 }
 
 div.input-wrapper.contain-select:after {
+	  display: inline-block; 
       pointer-events: none;
       content: "\25bc";
-      position: absolute;
-      right: 4px;
+      transform: translateX(var(--niconfontsize));
       color: var(--color);
-      
 }
 
 option {

@@ -33,7 +33,6 @@ class MnePopupWeblet
       {
         var container;
         var popup = new MnePopupFrame((container = document.createElement('div')), '', this.config.nointeractive, this.config.parentframe )
-
         var weblet =  await this.getWeblet(this.config.path + '.mjs');
         parent.obj.weblets[this.id] = new weblet(parent, container, this.id, Object.assign(Object.assign({ popup : popup }, this.initpar), initpar ), Object.assign(Object.assign({}, this.config), config) )
       }

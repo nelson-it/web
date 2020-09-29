@@ -34,7 +34,7 @@ class MneWhereSelectWeblet extends MneView
     this.obj.selpos = 0;
     this.obj.selval = '';
     
-    if ( this.initpar.selval )
+    if ( this.initpar.selval != undefined )
     {
       var selval = this.initpar.selval.split(':');
       this.obj.selpos = parseInt(selval[0]) + 1;
@@ -57,20 +57,28 @@ class MneWhereSelectWeblet extends MneView
   {
     var i;
     var wcol;
+    var str;
     
     var self = this;
     this.obj.viewpar = Object.assign({}, par);
     
-    wcol = this.obj.inputs['wcol'];
-    wcol.innerHTML = '<option value="">' + MneText.getText('#mne_lang#Gesamte Tabelle') + '</option>';
+    str = '<option value="">' + MneText.getText('#mne_lang#Gesamte Tabelle') + '</option>';
     
     for ( i =0; i<this.obj.viewpar.ids.length; ++i)
     {
-      wcol.appendChild(document.createElement('option'));
-      wcol.lastChild.appendChild(document.createTextNode( this.obj.viewpar.labels[i] ));
-      wcol.lastChild.value = this.obj.viewpar.ids[i];
-      if ( this.initpar.selcol && this.initpar.selcol == this.obj.viewpar.ids[i] ) wcol.lastChild.setAttribute('selected', 'selected');
+      str += '<option value="' + this.obj.viewpar.ids[i] + '"'
+      if ( ( this.initpar.selcol && this.initpar.selcol == this.obj.viewpar.ids[i] ) || ( this.obj.selpos == ( i + 1 ) ) )
+      {
+        this.obj.inputs.wcol.setValue(this.obj.viewpar.ids[i]);
+        str += ' selected="selected"';
+      }
+      str += '>' + this.obj.viewpar.labels[i] + '</option>'
     }
+    
+    wcol = this.obj.inputs['wcol'];
+    wcol.innerHTML = str;
+    if ( this.obj.selpos >= wcol.children.length )
+      MneLog.warning("MneTableWhereSelectWeblet: Selval zu gross")
 
     var check_change = function () 
     {
@@ -97,18 +105,7 @@ class MneWhereSelectWeblet extends MneView
     wcol.addEventListener('change', check_change );
     this.obj.wcol_observer = new MutationObserver( check_change);
     this.obj.wcol_observer.observe(wcol, { subtree: true, attributes : true, attributeFilter: [ 'selected' ] } );
-
-    if ( this.initpar.selval )
-    {
-      wcol.children[( this.obj.selpos < wcol.children.length ) ? this.obj.selpos : 0 ].setAttribute("selected", true);
-      if ( this.obj.selpos >= wcol.children.length )
-        MneLog.warning("MneTableWhereSelectWeblet: Selval zu gross")
-    }
-    else
-      {
-      check_change();
-      }
-    
+    check_change();
   }
   
   focus()
@@ -118,15 +115,18 @@ class MneWhereSelectWeblet extends MneView
   
   get wcol()
   {
-    return this.obj.inputs.wcol.getValue(true);
+    return this.obj.inputs.wcol.getValue();
   }
 
   get wop()
   {
-    return this.obj.inputs.wop.getValue(true);
+    return ( ! this.obj.inputs.wcol.getValue() ) ? '' : this.obj.inputs.wop.getValue(true);
   }
+
   get wval()
   {
+    if ( ! this.obj.inputs.wcol.getValue() ) return '';
+    
     var val = this.obj.inputs.wval.getValue();
     
     if ( this.obj.inputs.wop.getValue(false) != 'like' || val.indexOf('%') != -1 )

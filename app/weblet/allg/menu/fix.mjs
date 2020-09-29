@@ -7,6 +7,8 @@
 // datei: weblet/allg/menu/fix.mjs
 //================================================================================
 'use strict';
+import MneElement from '/js/basic/element.mjs';
+
 import MneMenu from './menu.mjs'
 
 export class MneFixMenu extends MneMenu

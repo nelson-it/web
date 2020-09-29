@@ -34,6 +34,8 @@ class MneDbTableBasic extends MneDbView
         
         selectsingle : false,
         mkrowdirect : false,
+        
+        rowselector : 'tbody tr',
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
@@ -50,18 +52,6 @@ class MneDbTableBasic extends MneDbView
     this.obj.run.btnrequest.mod = ( this.obj.run.btnrequest.mod ) ? this.obj.run.btnrequest.mod : undefined;
     this.obj.run.btnrequest.del = ( this.obj.run.btnrequest.del ) ? this.obj.run.btnrequest.del : undefined;
     
-    if ( ! this.initpar.adddetail && ( this.initpar.detailweblet || this.initpar.detailscreen ) )
-    {
-      this.obj.run.btnrequest.add = undefined;
-      this.obj.run.btnrequest.mod = undefined;
-      this.obj.run.btnrequest.del = undefined;
-    }
-
-    if ( this.initpar.detailaddweblet )
-    {
-      this.obj.run.btnrequest.add = undefined;
-    }
-
     this.obj.mkbuttons =
       [
         { id : 'select',       value : unescape("%uf0c9"), size : 'notset', classname : 'mobile', show : this.initpar.selectpopup },
@@ -69,11 +59,11 @@ class MneDbTableBasic extends MneDbView
         
         { id : 'ok',           value : MneText.getText('#mne_lang#OK'),         show : ( this.obj.run.btnrequest.add != undefined ) || ( this.obj.run.btnrequest.mod != undefined ) },
         { id : 'cancel',       value : MneText.getText('#mne_lang#Abbrechen'),  show : ( this.obj.run.btnrequest.add != undefined ) || ( this.obj.run.btnrequest.mod != undefined ) },
-        { id : 'add',          value : MneText.getText('#mne_lang#Hinzufügen'), show : ( this.obj.run.btnrequest.add != undefined ), space : 'before' },
-        { id : 'detailadd',    value : MneText.getText('#mne_lang#Hinzufügen'), show : ( this.initpar.detailaddweblet != undefined ), space : 'before' },
-        { id : 'detailmod',    value : MneText.getText('#mne_lang#Hinzufügen/Ändern'), show : ( this.initpar.detailmodweblet != undefined ), space : 'before' },
-        { id : 'detailscreen', value : MneText.getText('#mne_lang#Detail'),     show : ( this.initpar.detailscreen   != undefined ) },
-        { id : 'detail',       value : MneText.getText('#mne_lang#Detail'),     show : ( this.initpar.detailweblet   != undefined ) },
+        { id : 'add',          value : MneText.getText('#mne_lang#Hinzufügen'), show : ( this.obj.run.btnrequest.add != undefined ), },
+//        { id : 'detailadd',    value : MneText.getText('#mne_lang#Hinzufügen'), show : ( this.initpar.detailaddweblet != undefined ), },
+//        { id : 'detailmod',    value : MneText.getText('#mne_lang#Hinzufügen/Ändern'), show : ( this.initpar.detailmodweblet != undefined ) },
+        { id : 'detailscreen', value : MneText.getText('#mne_lang#Hinzufügen/Ändern'),     show : ( this.initpar.detailscreen   != undefined ) },
+        { id : 'detail',       value : MneText.getText('#mne_lang#Hinzufügen/Ändern'),     show : ( this.initpar.detailweblet   != undefined ) },
         { id : 'del',          value : MneText.getText('#mne_lang#Löschen'),    show : ( this.obj.run.btnrequest.del != undefined ) },
         { id : 'detaildel',    value : MneText.getText('#mne_lang#Löschen'),    show : ( this.initpar.detailweblet   != undefined ) },
 
@@ -133,12 +123,16 @@ class MneDbTableBasic extends MneDbView
     if ( this.obj.tbody )
         this.obj.tbody.innerHTML = '';
   }
+
   unselectRows()
   {
-    var obj = this.obj.tbody.children;
-    var i;
-    for ( i =0; i<obj.length; i++)
-      MneElement.clearClass(obj[i], 'active');
+    if ( this.obj.tbody )
+    {
+      var obj = this.obj.tbody.children;
+      var i;
+      for ( i =0; i<obj.length; i++)
+        MneElement.clearClass(obj[i], 'active');
+    }
   }
 
   mkRowStyle(rids, values)
@@ -192,7 +186,7 @@ class MneDbTableBasic extends MneDbView
       for ( j in this.obj.inputs )
       {
         var rr = this.obj.run.result.rids[j];
-        this.obj.inputs[j].setTyp(this.obj.run.result.typs[rr], this.obj.run.result.regexps[rr], this.obj.run.result.formats[rr]);
+        this.obj.inputs[j].setTyp(this.obj.run.result.typs[rr], this.initpar.regexp[j] ?? this.obj.run.result.regexps[rr], this.obj.run.result.formats[rr]);
         this.obj.inputs[j].setValue(row.values[rr]);
         if ( this.obj.run.result.rtabid[j] != undefined ) row.cells[this.obj.run.result.rtabid[j]].valueField = this.obj.inputs[j];
       }
@@ -200,7 +194,7 @@ class MneDbTableBasic extends MneDbView
       for ( j in this.obj.outputs )
       {
         var rr = this.obj.run.result.rids[j];
-        this.obj.outputs[j].setTyp(this.obj.run.result.typs[rr], this.obj.run.result.regexps[rr], this.obj.run.result.formats[rr]);
+        this.obj.outputs[j].setTyp(this.obj.run.result.typs[rr], this.initpar.regexp[j] ?? this.obj.run.result.regexps[rr], this.obj.run.result.formats[rr]);
         this.obj.outputs[j].setValue(row.values[rr]);
         if ( this.obj.run.result.rtabid[j] != undefined ) row.cells[this.obj.run.result.rtabid[j]].valueField = this.obj.outputs[j];
       }
@@ -215,7 +209,7 @@ class MneDbTableBasic extends MneDbView
     var index;
     var obj = this.obj.tbody.children;
 
-    while( row != null && row.style.display == 'none' ) row = row.nextSibling;
+    while( row != null && ( row.style.display == 'none' || row.values == undefined ) ) row = row.nextSibling;
 
     if ( data.force != true && (row == null || this.obj.run.act_row == row) )
     {
@@ -237,16 +231,22 @@ class MneDbTableBasic extends MneDbView
     if ( ! this.initpar.selectsingle && evt.shiftKey )
     {
       if ( this.obj.lastselect < index )
-        for ( i = this.obj.lastselect; i<=index; i++)
+        for ( i = ( this.obj.lastselect == -1) ? 0 : this.obj.lastselect; i<=index; i++)
         {
-          await this.mkRow(obj[i]);
-          MneElement.mkClass(obj[i], 'active');
+          if ( obj[i].values != undefined ) 
+          {
+            await this.mkRow(obj[i]);
+            MneElement.mkClass(obj[i], 'active');
+          }
         }
       else
         for ( i = index; i <= this.obj.lastselect; i++)
         {
-          await this.mkRow(obj[i]);
-          MneElement.mkClass(obj[i], 'active');
+          if ( obj[i].values != undefined ) 
+          {
+            await this.mkRow(obj[i]);
+            MneElement.mkClass(obj[i], 'active');
+          }
         }
     } 
     else
@@ -266,29 +266,8 @@ class MneDbTableBasic extends MneDbView
     this.newselect = true;
   }
 
-  get select()
+  fillres(rows)
   {
-    var rows = this.obj.tbody.children;
-    var i,j;
-    var res = JSON.parse(JSON.stringify(this.obj.run.result))
-    res.values = [];
-
-    for ( i=0; i<rows.length; i++)
-    {
-      if ( MneElement.hasClass( rows[i], 'active'))
-      {
-        var inputs=rows[i].obj.inputs;
-
-        res.values.push(rows[i].values.slice(0));
-        for ( j in inputs ) res.values[res.values.length - 1][res.rids[j]] = inputs[j].getValue(false);
-      }
-    }
-    return res;
-  }
-  
-  get all()
-  {
-    var rows = this.obj.tbody.children;
     var i,j;
     var res = JSON.parse(JSON.stringify(this.obj.run.result))
     res.values = [];
@@ -300,8 +279,19 @@ class MneDbTableBasic extends MneDbView
       res.values.push(rows[i].values.slice(0));
       for ( j in inputs ) res.values[i][res.rids[j]] = inputs[j].getValue();
     }
-
     return res;
+  }
+
+  get select()
+  {
+    var rows = this.obj.tbody.querySelectorAll('tr.active');
+    return this.fillres(rows);
+  }
+  
+  get all()
+  {
+    var rows =  this.obj.tbody.children;
+    return this.fillres(rows);
   }
   
   arrow_down(data, obj, evt)
@@ -536,8 +526,8 @@ class MneDbTableBasic extends MneDbView
       head.addEventListener('click', function(evt) { self.btnClick('headclick', {}, this, evt); }, true);
     }
 
-    var rows = this.obj.tables.content.firstChild.querySelector('tbody').children;
     this.obj.run.okaction = 'add';
+    this.obj.lastselect = -1;
 
     var enable = 'value';
     if ( this.initpar.okids != this.initpar.showids )
@@ -549,17 +539,24 @@ class MneDbTableBasic extends MneDbView
 
     this.enable(enable, enable != '' );
 
+    this.obj.tables.content.firstChild.querySelectorAll('tbody tr').forEach( ( item, index ) =>
+    {
+      item.addEventListener('click', function(evt) { if ( evt.shiftKey ) window.getSelection().removeAllRanges(); }, true);
+      item.valueindex = index;
+    });
+
+    var rows = this.obj.tables.content.firstChild.querySelectorAll(this.initpar.rowselector);
     for ( i =0; i<rows.length; i++)
     {
       var equal = false;
-      rows[i].values = this.obj.run.result.values[i];
+      rows[i].values = this.obj.run.result.values[rows[i].valueindex];
       this.obj.run.selectedkeys.forEach( (item) =>
       {
         var j;
         if ( equal == false )
         {
           var e = true;
-          for ( j in item )  { if ( this.obj.run.result.values[i][this.obj.run.result.rids[j]] != item[j] ) { e = false; break } };
+          for ( j in item )  { if ( rows[i].values[this.obj.run.result.rids[j]] != item[j] ) { e = false; break } };
           if ( e ) equal = true;
         }
       });
@@ -567,13 +564,12 @@ class MneDbTableBasic extends MneDbView
       if ( equal )
         await this.selectRow({}, rows[i], { ctrlKey : true });
 
-      rows[i].addEventListener('click', function(evt) { self.btnClick('rowclick', {}, this, evt); }, true);
+      rows[i].addEventListener('click', function(evt) { if ( evt.shiftKey ) window.getSelection().removeAllRanges(); self.btnClick('rowclick', {}, this, evt); }, true);
       rows[i].addEventListener('mousedown', function(evt) { self.mkRow(this) }, true);
     }
-
+    
     this.obj.run.result.values = [];
     
-    this.obj.lastselect = -1;
     this.obj.thead = this.obj.tables.content.firstChild.querySelector('thead');
     this.obj.tbody = this.obj.tables.content.firstChild.querySelector('tbody');
     this.obj.table = this.obj.tables.content.firstChild;
@@ -604,7 +600,7 @@ class MneDbTableBasic extends MneDbView
   
   async tab(data, obj, evt)
   {
-    if ( this.obj.fields.length > 0 ) return super.tab(data, obj, evt);
+    if ( this.obj.fields.length > 0 && evt.target.fieldnum != undefined ) return super.tab(data, obj, evt);
     
     this.obj.where.focus();
     evt.preventDefault();
