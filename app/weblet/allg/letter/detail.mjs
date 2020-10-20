@@ -66,6 +66,7 @@ class MneLetterDetail extends MneDbView
         xml0 : "lettercontent," + this.obj.inputs.data.getValue(),
         macro0 : 'havelettercontent,1',
 
+        sqlstart : 1,
         sqlend : 1,
     };
 
@@ -99,6 +100,7 @@ class MneLetterDetail extends MneDbView
         language : this.obj.inputs.language.getValue(),
         xml0 : "lettercontent," + this.obj.inputs.data.value,
         base64 : '1',
+        sqlstart : 1,
         sqlend : 1
     };
 

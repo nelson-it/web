@@ -11,11 +11,36 @@
 import MneConfig     from '/js/basic/config.mjs'
 import MneText       from '/js/basic/text.mjs'
 import MneLog        from '/js/basic/log.mjs'
-import MneElement from '/weblet/basic/element.mjs'
+import MneElement    from '/weblet/basic/element.mjs'
 import MneRequest    from '/js/basic/request.mjs'
 
-import MneWeblet  from '/weblet/basic/weblet.mjs'
-import MneDbTableBasic from './basic.mjs'
+import MneWeblet        from '/weblet/basic/weblet.mjs'
+import MnePopupWeblet   from '/weblet/basic/popup.mjs'
+import MneDbTableBasic  from './basic.mjs'
+
+class MnePopupDetail extends MnePopupWeblet
+{
+  constructor( id, initpar = {}, config = {} )
+  {
+    super(id, initpar, config);
+  }
+  
+  async getWeblet(path)
+  {
+    let { default: Weblet } = await MneRequest.import(path);
+    
+    class MyWeblet extends Weblet
+    {
+      async add(data)
+      {
+        this.config.tableweblet.unselectRows();
+        this.config.tableweblet.obj.run.selectedkeys = [];
+        return super.add(data);
+      }
+    }
+    return MyWeblet;
+  }
+}
 
 class MneDbTableView extends MneDbTableBasic
 {
@@ -146,6 +171,12 @@ class MneDbTableView extends MneDbTableBasic
   
   async detail()
   {
+    if ( this.obj.popups[this.initpar.detailweblet] == undefined )
+    {
+      var p = this.config.composeparent.obj.popups[this.initpar.detailweblet];
+      this.obj.popups[this.initpar.detailweblet] = new MnePopupDetail(p.id, p.initpar, Object.assign({ tableweblet : this }, p.config));
+    }
+
     await this.openpopup(this.initpar.detailweblet);
     this.obj.weblets[this.initpar.detailweblet].config.depend.push(this);
     return false;
@@ -167,20 +198,6 @@ class MneDbTableView extends MneDbTableBasic
     return false;
   }
   
-  async detailmod()
-  {
-    await this.openpopup(this.initpar.detailmodweblet);
-    this.obj.weblets[this.initpar.detailmodweblet].config.depend.push(this);
-    return false;
-  }
-  
-  async detailadd()
-  {
-    await this.openpopup(this.initpar.detailaddweblet);
-    this.obj.weblets[this.initpar.detailaddweblet].config.depend.push(this);
-    return false;
-  }
-
   async detaildel()
   {
     var name = this.initpar.detailweblet;

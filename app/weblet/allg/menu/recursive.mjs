@@ -35,6 +35,7 @@ class MneRecursiveMenu extends MneMenu
           cols     : this.initpar.cols,
           scols    : this.initpar.scols,
           distinct : ( this.initpar.distinct ) ? '1' : '',
+          sqlstart : 1,
           sqlend   : 1
         }
 
@@ -60,7 +61,7 @@ class MneRecursiveMenu extends MneMenu
   
   getReadParam(data)
   {
-    var par = Object.assign({sqlend : 1}, this.obj.readparam);
+    var par = Object.assign({sqlend : 1, sqlstart : 1 }, this.obj.readparam);
     if ( this.obj.lastquery ) par.lastquery = 1;
     par.wval += data.values[data.res.rids.menuid];
     return par;

@@ -73,8 +73,8 @@ class MneFileShow extends MneViewContainer
           schema : this.initpar.schema,
           table  : this.initpar.table,
           cols   : this.initpar.dataname,
-
-          sqlend : '1'
+          sqlstart : 1,
+          sqlend : 1
       };
 
       param[this.initpar.idname + "Input.old"] = this.config.dependweblet.obj.run.values[this.initpar.idname];

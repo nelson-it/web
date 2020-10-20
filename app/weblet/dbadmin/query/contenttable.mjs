@@ -42,7 +42,8 @@ class MneAdminTabletContentTable extends MneDbTableView
       
       var p = Object.assign(
           {
-            no_vals   : true,
+            no_vals  : true,
+            sqlstart : 1,
             sqlend   : 1
           }, this.obj.run.readpar);
 

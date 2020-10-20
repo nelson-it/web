@@ -71,6 +71,10 @@ div.menuopen > div.menumain {
 /* tree                                                                       */
 /* ========================================================================== */
 
+div.treemain {
+	line-height: initial;
+}
+
 div.treelink + div.treemain {
 	margin-left: 1em;
 }

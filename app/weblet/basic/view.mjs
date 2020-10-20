@@ -289,13 +289,19 @@ export class MneView extends MneViewContainer
     {
       this.setAttribute("newvalue", value);
       this.setAttribute("oldvalue", value);
-      this.innerText = MneInput.format(value, this.dpytype);
+      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' ) 
+        this.innerText = MneInput.format(value, this.dpytype);
+      else
+        this.innerHTML = MneInput.format(value, this.dpytype);
     }
 
     obj.modValue = function(value)
     {
       this.setAttribute("newvalue", value);
-      this.innerText = MneInput.format(value, this.dpytype);
+      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' ) 
+        this.innerText = MneInput.format(value, this.dpytype);
+      else
+        this.innerHTML = MneInput.format(value, this.dpytype);
     }
 
     obj.clearValue = function()
@@ -510,7 +516,10 @@ export class MneView extends MneViewContainer
     {
       var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
       if ( text[text.length - 1] == '\n') text = text + '\n';
-      this.innerText = text;
+      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' )
+        this.innerText = text;
+      else
+        this.innerHTML = text;
 
       this.setAttribute("newvalue", value);
       this.setAttribute("oldvalue", value);
@@ -520,7 +529,10 @@ export class MneView extends MneViewContainer
     {
       var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
       if ( text[text.length - 1] == '\n') text = text + '\n';
-      this.innerText = text;
+      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' )
+        this.innerText = text;
+      else
+        this.innerHTML = text;
 
       this.setAttribute("newvalue", value);
     }

@@ -193,6 +193,11 @@ div.weblet .inputsingle + .inputsingle {
     border-top: 0px;
 }
 
+div.weblet .inputsingle.spacetop {
+    margin-top: var(--qmargin);
+    border-top: var(--border);
+}
+
 div.weblet .inputsingle > * {
 	flex-grow: 0;
 }

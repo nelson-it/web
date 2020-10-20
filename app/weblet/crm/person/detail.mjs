@@ -146,7 +146,7 @@ class MneCrmPersonDetail extends MneDbView
   {
     if ( this.confirm( MneText.getText("#mne_lang#Bild wirklich löschen ?")) )
     {
-      var p = { schema : this.initpar.picschema, table : this.initpar.pictable, sqlend : 1 }
+      var p = { schema : this.initpar.picschema, table : this.initpar.pictable, sqlstart : 1, sqlend : 1 }
       p[this.initpar.picid + "Input.old"] = this.obj.run.values.personid;
       await MneRequest.fetch('/db/utils/table/delete.json', p);
       this.newvalues = true;
@@ -187,7 +187,7 @@ class MneCrmPersonDetail extends MneDbView
                                                     + this.obj.run.values.personid
                                                     + "&count="
                                                     + (new Date()).getTime()
-                                                    + "&sqlend=1')"
+                                                    + "&sqlstart=1&sqlend=1')"
               : (this.obj.run.values.sex == "1") ? "url('weblet/crm/person/male.png')" : "url('weblet/crm/person/female.png')";
     
     this.obj.container.content.querySelector('#pictureImage').style.backgroundImage = img;                                            

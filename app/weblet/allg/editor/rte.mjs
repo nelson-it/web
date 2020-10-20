@@ -21,7 +21,7 @@ class MneEditorRte extends MneView
     {
       var ivalues = 
       {
-        delbuttons : ['add', 'del'],
+        delbutton : ['add', 'del'],
         hinput : false
       };
            

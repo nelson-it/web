@@ -30,7 +30,7 @@ class MneDbAdminCommandResultTable extends MneDbTableBasic
   
   getParamShow(p, showids)
   {
-    p = { command : this.config.dependweblet.obj.run.values.command, sqlend : 1};
+    p = { command : this.config.dependweblet.obj.run.values.command, sqlstart : 1, sqlend : 1};
     return p;
   }
   

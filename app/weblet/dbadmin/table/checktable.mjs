@@ -33,7 +33,8 @@ class MneAdminTableCheckTableWeblet extends MneDbTableViewWeblet
       {
           schemaInput : this.obj.run.values.schema,
           tableInput  : this.obj.run.values.table,
-          sqlend : 1
+          sqlstart    : 1,
+          sqlend      : 1
       };
 
       p = this.getParam(p);
@@ -55,7 +56,8 @@ class MneAdminTableCheckTableWeblet extends MneDbTableViewWeblet
           'schemaInput.old' : this.obj.run.values.schema,
           'tableInput.old'  : this.obj.run.values.table,
           'nameInput.old'   : this.obj.run.values.name,
-          sqlend : 1
+          sqlstart          : 1,
+          sqlend            : 1
       };
       return p;
     }

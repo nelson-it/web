@@ -56,7 +56,7 @@ class MneTemplate extends MneDbView
 
       //delfunction : '',
       //delcols : [ '' ],
-      //deltyps : [],
+      //deltyps : {},
 
       hinput : false
     };

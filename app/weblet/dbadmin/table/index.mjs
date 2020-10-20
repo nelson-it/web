@@ -82,6 +82,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
             typ4 : 'array',
             typ7 : this.obj.inputs.custom.valuetyp,
             
+            sqlstart : 1,
             sqlend : 1
         };
 
@@ -98,7 +99,8 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
       {
         p.par0 = this.obj.run.values.schema,
         p.par1 = this.obj.run.values.index,
-        p.sqlend = 1
+        p.sqlstart = 1;
+        p.sqlend = 1;
         
         return Object.assign(p, this.obj.run.delpar )
       }
@@ -117,6 +119,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
           schema   : this.obj.run.values['schema'],
           table    : this.obj.run.values['table'],
           no_vals  : "true",
+          sqlstart : 1,
           sqlend   : 1
       };
       

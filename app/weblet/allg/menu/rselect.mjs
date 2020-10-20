@@ -54,8 +54,8 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
 
     if ( ! this.initpar.table )  return;
 
-    this.obj.container.content.innerHTML = '<div></div><div class="inputarea"><div class="inputgroup"><div class="inputsingle"><span>&nbsp;</span><span id="nameInput"></span></div></div></div>';
-    this.obj.container.tree = this.obj.container.content.firstChild;
+    this.obj.container.content.innerHTML = '<div class="inputarea"><div class="inputgroup"><div class="inputsingle"><div id="tree"></div></div></div></div><div class="inputarea"><div class="inputgroup"><div class="inputsingle"><span>&nbsp;</span><span id="nameInput"></span></div></div></div>';
+    this.obj.container.tree = this.obj.container.content.querySelector('#tree');
     
     await MneElement.mkElements(this.obj.container.content.lastChild);
     await this.findIO(this.obj.container.content.lastChild);
@@ -118,6 +118,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
             "treeidInput.old" : this.obj.drag.data.values[this.obj.drag.data.res.rids.menuid],
             parentidInput : ( evt.target.mne_data ) ? evt.target.mne_data.values[evt.target.mne_data.res.rids.menuid] : '',
 
+                sqlstart : 1,
                 sqlend : 1
         }
 
@@ -230,6 +231,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.parentidInput = ( this.obj.selectdata ) ? this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid] : '';
     p.treeidInput = '################';
     p.treenameInput = this.obj.inputs.name.getValue();
+    p.sqlstart = 1;
     p.sqlend = 1;
     
     await MneRequest.fetch('/db/utils/table/insert.json', p);
@@ -247,6 +249,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.table = this.initpar.table;
     p["treeidInput.old"] = ( this.obj.selectdata ) ? this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid] : '';
     p.treenameInput = this.obj.inputs.name.getValue();
+    p.sqlstart = 1;
     p.sqlend = 1;
     
     console.log(p)
@@ -263,6 +266,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.schema = this.initpar.schema;
     p.table = this.initpar.table;
     p["treeidInput.old"] = this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid];
+    p.sqlstart = 1;
     p.sqlend = 1;
     
     await MneRequest.fetch('/db/utils/table/delete.json', p);

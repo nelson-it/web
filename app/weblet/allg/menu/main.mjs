@@ -43,6 +43,7 @@ export class MneMainMenu extends MneRecursiveMenu
       wval   : this.name + ',',
       distinct : 1,
       lastquery : "",
+      sqlstart : 1,
       sqlend : 1
     }
 

@@ -60,8 +60,6 @@ class MneDbTableBasic extends MneDbView
         { id : 'ok',           value : MneText.getText('#mne_lang#OK'),         show : ( this.obj.run.btnrequest.add != undefined ) || ( this.obj.run.btnrequest.mod != undefined ) },
         { id : 'cancel',       value : MneText.getText('#mne_lang#Abbrechen'),  show : ( this.obj.run.btnrequest.add != undefined ) || ( this.obj.run.btnrequest.mod != undefined ) },
         { id : 'add',          value : MneText.getText('#mne_lang#Hinzufügen'), show : ( this.obj.run.btnrequest.add != undefined ), },
-//        { id : 'detailadd',    value : MneText.getText('#mne_lang#Hinzufügen'), show : ( this.initpar.detailaddweblet != undefined ), },
-//        { id : 'detailmod',    value : MneText.getText('#mne_lang#Hinzufügen/Ändern'), show : ( this.initpar.detailmodweblet != undefined ) },
         { id : 'detailscreen', value : MneText.getText('#mne_lang#Hinzufügen/Ändern'),     show : ( this.initpar.detailscreen   != undefined ) },
         { id : 'detail',       value : MneText.getText('#mne_lang#Hinzufügen/Ändern'),     show : ( this.initpar.detailweblet   != undefined ) },
         { id : 'del',          value : MneText.getText('#mne_lang#Löschen'),    show : ( this.obj.run.btnrequest.del != undefined ) },
@@ -71,12 +69,12 @@ class MneDbTableBasic extends MneDbView
         { id : 'export',    value :  MneText.getText('#mne_lang#Exportieren'), space : 'before' }
         ]
 
-    this.obj.enablebuttons.buttons = ['ok', 'add', 'detail', 'detailadd', 'detailmod', 'del', 'detaildel', 'export' ];
+    this.obj.enablebuttons.buttons = ['ok', 'add', 'detail', 'del', 'detaildel', 'detailscreen', 'print', 'export' ];
 
-    this.obj.enablebuttons.add    = [ 'ok', 'add', 'detail', 'detailadd', 'detailmod', 'export'  ];
-    this.obj.enablebuttons.del    = [ 'add', 'detail', 'detailadd', 'detailmod', 'export' ];
-    this.obj.enablebuttons.value  = [ 'add', 'detail', 'detailadd', 'detailmod', 'export'  ];
-    this.obj.enablebuttons.select = [ 'ok', 'add', 'detail', 'detailadd', 'detailmod', 'del', 'detaildel', 'export' ];
+    this.obj.enablebuttons.add    = [ 'ok', 'add', 'detail', 'detailscreen', 'export'  ];
+    this.obj.enablebuttons.del    = [ 'add', 'detail', 'export' ];
+    this.obj.enablebuttons.value  = [ 'add', 'detail', 'detailscreen', 'export'  ];
+    this.obj.enablebuttons.select = [ 'ok', 'add', 'detail', 'detailscreen', 'del', 'detaildel', 'export' ];
     
     if ( this.initpar.delbutton )
       this.delbutton(this.initpar.delbutton);
@@ -480,6 +478,7 @@ class MneDbTableBasic extends MneDbView
           wval     : (( this.initpar.wcol ) ? this.initpar.wval + ( ( this.obj.where.wcol) ? ',' : '' ) : '' ) + this.obj.where.wval,
 
           lastquery : ( this.obj.lastquery ) ? '1' : '',
+          sqlstart : 1,
           sqlend   : 1
         }, this.obj.run.readpar);
 
@@ -534,7 +533,7 @@ class MneDbTableBasic extends MneDbView
       this.initpar.showids.forEach((item, index) =>
       {
         var val = ( this.initpar.showalias && this.initpar.showalias[index] ) ? this.initpar.showalias[index]() : this.config.dependweblet.obj.run.values[item];
-        if ( ! val || val == '################') enable = '';
+        if ( val == undefined || val == null || val == '################') enable = '';
       });
 
     this.enable(enable, enable != '' );
@@ -583,7 +582,8 @@ class MneDbTableBasic extends MneDbView
     if ( this.initpar.primarykey  && this.obj.tbody )
     {
       var skey;
-      var sel = this.select;
+      var sel;
+      try { sel = this.select } catch (e) { sel = { values : [] }; };
       this.obj.run.selectedkeys = [];
       skey = {};
       sel.values.forEach((val) => 
@@ -592,7 +592,7 @@ class MneDbTableBasic extends MneDbView
         {
           skey[item] = val[sel.rids[item]]; 
         })
-        this.obj.run.selectedkeys.push(skey);
+        this.obj.run.selectedkeys.push(Object.assign({},skey));
       });
     }
     this.newvalues = true;

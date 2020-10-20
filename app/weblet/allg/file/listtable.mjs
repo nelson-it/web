@@ -71,6 +71,9 @@ class MneAllgFileListTable extends MneDbTableView
         return;
       }
       
+      row.obj.outputs.havesource.modValue(false);
+      row.obj.outputs.source.modValue('');
+      
       var out = row.obj.files.name.mne_output;
       if ( ! out.getValue(false) || out.getValue(false) == this.obj.defvalues.name )
       {
@@ -101,15 +104,16 @@ class MneAllgFileListTable extends MneDbTableView
       this.obj.inputs.description.modValue(MneText.getText("#mne_lang#Neue Notiz"));
     
     w.setValue(this.obj.run.values.source);
+    
     this.obj.buttons.ok.disabled = true;
     this.obj.run.act_row.obj.outputs[this.initpar.datatypename].modValue('application/pdf'); 
     
+    var act_row = this.obj.run.act_row;
     var ok = async () => 
     {
-      var source = w.getValue();
-      this.obj.run.act_row.ismodify = true;
+      act_row.obj.outputs.source.modValue( w.getValue());
+      act_row.ismodify = true;
       
-      this.obj.outputs.source.modValue(source);
       w.close();
       await this.ok();
     }
@@ -141,46 +145,72 @@ class MneAllgFileListTable extends MneDbTableView
   {
       await super.add();
       this.obj.buttons.data.disabled = false;
+      
+      if ( this.obj.weblets.rte && this.obj.weblets.rte.visible )
+        await this.data();
   }
 
   async ok()
   {
-    var p = {};
-    if ( this.obj.outputs.data.getModify() ) p.dataInput = this.obj.outputs.data.getValue();
-    if ( this.obj.outputs.source.getModify() ) p.sourceInput = this.obj.outputs.source.getValue();
-
-    await super.ok(p);
-    
-    if ( p.sourceInput || this.obj.run.values.havesource )
+    if ( this.obj.buttons.ok ) 
     {
-
-      p =
+      var i,j;
+      var rows = this.obj.tbody.children;
+      var retval = false;
+      
+      this.obj.run.selectedkeys = [];
+      
+      for ( i=0; i<rows.length; i++)
       {
-          schema : this.initpar.schema,
-          query : this.initpar.query,
-          wval : this.obj.run.values.fileid,
-          wop  : "=",
-          wcol : 'fileid',
-          macro0: 'reptitle,' + this.obj.run.values.description,
-          macro1: 'preprint,1',
-          xml0 : 'pretext,' + this.obj.outputs.source.getValue(),
-          sort : '',
+        if ( rows[i].ismodify || rows[i].querySelector('.modifyok') != null ) 
+        {
+          var p = {};
 
-          base64 : '1',
-          base64schema  : this.initpar.schema,
-          base64table   : this.initpar.table,
-          base64id      : 'fileid',
-          base64idvalue : this.obj.run.values.fileid,
-          base64data    : 'data',
+          retval = true;
+          await this.selectRow({force : true}, rows[i] )
+          this.primarykey();
 
-          sqlend : 1
-      };
+          if ( this.obj.outputs.data.getModify() ) p.dataInput = this.obj.outputs.data.getValue();
+          if ( this.obj.outputs.havesource.getValue() ) this.obj.outputs[this.initpar.datatypename].modValue('application/pdf'); 
+          p.sourceInput = ( this.obj.outputs.source.getModify() ) ?  this.obj.outputs.source.getValue() : this.obj.outputs.xsource.getValue();
+          
+          await super.ok(p);
+          
+          if ( p.sourceInput || this.obj.outputs.havesource.getValue() )
+          {
+            p =
+            {
+                schema : this.initpar.schema,
+                query : this.initpar.query,
+                wval : this.obj.run.values.fileid,
+                wop  : "=",
+                wcol : 'fileid',
+                macro0: 'reptitle,' + this.obj.inputs.description.getValue(),
+                macro1: 'preprint,1',
+                xml0  : 'pretext,' + ( ( this.obj.outputs.source.getModify() ) ? this.obj.outputs.source.getValue() : this.obj.outputs.xsource.getValue() ),
+                sort : '',
 
-      var res = await MneRequest.fetch('report/' + this.initpar.report + ".pdf", p);
+                base64 : '1',
+                base64schema  : this.initpar.schema,
+                base64table   : this.initpar.table,
+                base64id      : 'fileid',
+                base64idvalue : this.obj.run.values.fileid,
+                base64data    : 'data',
+
+                sqlstart : 1,
+                sqlend : 1
+            };
+
+            var res = await MneRequest.fetch('report/' + this.initpar.report + ".pdf", p);
+          }
+
+        }
+      }
+      this.dependweblet = undefined;
     }
-    this.newvalues = true;
+    return retval;
   }
-  
+
   async values()
   {
     await super.values();

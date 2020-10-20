@@ -61,6 +61,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
       p = this.addParam(p, "htmlcomposeidInput.old", this.obj.run.values.htmlcomposeid);
       p = this.addParam(p, "schema", this.initpar.schema);
       p = this.addParam(p, "sqlend", "1");
+      p = this.addParam(p, "sqlstart", "1");
       p = this.addParam(p, "table",  'htmlcompose');
       p = this.addParam(p, "cols", "createdate,createuser,modifydate,modifyuser,htmlcomposeid,name,template,custom");
       

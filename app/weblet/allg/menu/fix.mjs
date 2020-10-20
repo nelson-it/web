@@ -31,6 +31,7 @@ export class MneFixMenu extends MneMenu
         wop    : this.initpar.wop,
         wval   : this.initpar.wval,
         distinct : 1,
+        sqlstart : 1,
         sqlend : 1
     }
     

@@ -52,6 +52,7 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
             schema : 'mne_repository',
             name   : 'fileinterests_add',
             
+            sqlstart : "1",
             sqlend : "1"
         };
 
@@ -84,6 +85,7 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
         schema : 'mne_repository',
         name   : 'fileinterests_mod',
         
+        sqlstart : "1",
         sqlend : "1"
     };
 
@@ -108,6 +110,7 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
         schema : 'mne_repository',
         name   : 'fileinterests_del',
         
+        sqlstart : "1",
         sqlend : "1"
     };
 

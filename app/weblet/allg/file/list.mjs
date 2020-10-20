@@ -28,19 +28,19 @@ class MneAllgFileList extends MneFilterTable
         schema : 'mne_crm',
         query  : 'file',
         table  : 'file',
-        cols   : 'fileid,refid,secondrefid,datatype,havesource,name,description,source,data,typ,author,createdate,secondrefname',
+        cols   : 'fileid,refid,secondrefid,datatype,havesource,name,description,source,xsource,data,typ,author,createdate,secondrefname',
         scols  : '!createdate,description',
         selcol : 'description',
         selop  : 'like',
 
-        tablehidecols : ['fileid','refid','secondrefid','data', 'datatype','havesource', 'source'],
+        tablehidecols : ['fileid','refid','secondrefid','data', 'datatype','havesource', 'source', 'xsource'],
         tablecoltype  : { name : 'file', description : 'text', typ : 'selection' },
 
         defvalues : { typ : 'notice', datatype : 'text/plain' },
 
         oktable : 'file',
         okids   : [ 'fileid' ],
-        okcols  : [ 'fileid', 'refid','secondrefid','name','typ','description', 'datatype', 'author'],
+        okcols  : [ 'fileid', 'refid','secondrefid','name','typ','description', 'datatype', 'author' ],
 
         delconfirmids : ['description'],
         

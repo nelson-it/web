@@ -80,6 +80,9 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
           wcol : 'schema,table,position',
           wop  : '=,=,>',
           wval : this.obj.run.readpar.schema + ',' + this.obj.run.readpar.table + ',0',
+          
+          sqlstart : 1,
+          sqlend : 1
       }
 
       var res = await MneRequest.fetch('/db/utils/table/data.json', p);
@@ -93,6 +96,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
           {
             cols     : this.initpar.cols,
             no_vals   : true,
+            sqlstart : 1,
             sqlend   : 1
           }, this.obj.run.readpar);
 

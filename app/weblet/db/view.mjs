@@ -42,19 +42,19 @@ export class MneDbView extends MneView
     var readurl = this.initpar.url;
     
     Object.assign(this.obj, { selectlists : {} } );
-    Object.assign(this.obj.run, { readpar : {}, addpar : {}, modpar : {}, delpar : {} } );
+    Object.assign(this.obj.run, { readpar : {sqlstart : 1, sqlend : 1}, addpar : {sqlstart : 1, sqlend : 1}, modpar : {sqlstart : 1, sqlend : 1}, delpar : {sqlstart : 1, sqlend : 1} } );
 
     if ( ! readurl )
     {
       if ( this.initpar.schema && this.initpar.query )
       {
         readurl = '/db/utils/query/data.json';
-        this.obj.run.readpar  = { schema : this.initpar.schema, query : this.initpar.query, sqlend : 1 };
+        this.obj.run.readpar  = { schema : this.initpar.schema, query : this.initpar.query, sqlstart : 1, sqlend : 1 };
       }
       else if ( this.initpar.schema && this.initpar.table )
       {
         readurl = '/db/utils/table/data.json';
-        this.obj.run.readpar = { schema : this.initpar.schema, table : this.initpar.table, sqlend : 1 };
+        this.obj.run.readpar = { schema : this.initpar.schema, table : this.initpar.table, sqlstart : 1, sqlend : 1 };
       }
     }
     
@@ -76,6 +76,7 @@ export class MneDbView extends MneView
         {
             schema : this.initpar.addschema ?? this.initpar.okschema ?? this.initpar.schema,
             name   : this.initpar.addfunction ?? this.initpar.okfunction,
+            sqlstart : 1,
             sqlend : 1
         };
         
@@ -88,6 +89,7 @@ export class MneDbView extends MneView
         {
             schema : this.initpar.addschema ?? this.initpar.okschema ?? this.initpar.schema,
              table : this.initpar.addtable ?? this.initpar.oktable ?? this.initpar.table,
+          sqlstart : 1,
             sqlend : 1
         };
         addtyp = 'table';
@@ -102,6 +104,7 @@ export class MneDbView extends MneView
         {
             schema : this.initpar.modschema ?? this.initpar.okschema ?? this.initpar.schema,
             name   : this.initpar.modfunction ?? this.initpar.okfunction,
+          sqlstart : 1,
             sqlend : 1
         };
 
@@ -114,6 +117,7 @@ export class MneDbView extends MneView
         {
             schema : this.initpar.modschema ?? this.initpar.okschema ?? this.initpar.schema,
             table  : this.initpar.modtable ?? this.initpar.oktable ?? this.initpar.table,
+          sqlstart : 1,
             sqlend : 1
         }
         modtyp = 'table';
@@ -128,6 +132,7 @@ export class MneDbView extends MneView
         {
             schema : this.initpar.delschema ?? this.initpar.okschema ?? this.initpar.schema,
             name   : this.initpar.delfunction,
+          sqlstart : 1,
             sqlend : 1
         };
         this.getParamDel = function(p) { return this.getFunctionParamDel(p) };
@@ -139,6 +144,7 @@ export class MneDbView extends MneView
         {
             schema : this.initpar.delschema ?? this.initpar.okschema ?? this.initpar.schema,
             table  : this.initpar.deltable ?? this.initpar.oktable ?? this.initpar.table,
+          sqlstart : 1,
             sqlend : 1
         };
         deltyp = 'table';
@@ -206,6 +212,7 @@ export class MneDbView extends MneView
             wval   : list.values[list.rids['wval']],
             scols  : list.values[list.rids['scols']],
             distinct : 1,
+            sqlstart : 1,
             sqlend : 1
         };
       }
@@ -220,6 +227,7 @@ export class MneDbView extends MneView
             wcol   : 'name',
             wop    : '=',
             scols  : 'num',
+            sqlstart : 1,
             sqlend : 1
         };
 
@@ -272,6 +280,7 @@ export class MneDbView extends MneView
     {
         cols     : str,
         no_vals  : "true",
+        sqlstart : 1,
         sqlend   : 1
     }, this.obj.run.readpar);
 
@@ -435,7 +444,7 @@ export class MneDbView extends MneView
       
       obj.addEventListener('blur', (evt) =>
       {
-          //if(this.obj.weblets[id + 'select'] ) this.obj.weblets[id + 'select'].close();
+          window.setTimeout(() => { if(this.obj.weblets[id + 'select'] ) this.obj.weblets[id + 'select'].close() }, 500);
           obj.noselect = false;
       });
       
@@ -452,11 +461,15 @@ export class MneDbView extends MneView
             evt.preventDefault();
 
           case "ArrowDown" :
-            this.obj.weblets[id + 'select'].obj.weblets.table.arrow_down(evt);
+            evt.stopPropagation();
+            evt.preventDefault();
+            this.obj.weblets[id + 'select'].obj.weblets.table.btnClick('arrow_down', {}, obj, evt);
             break;
 
           case  "ArrowUp" :
-            this.obj.weblets[id + 'select'].obj.weblets.table.arrow_up(evt);
+            evt.stopPropagation();
+            evt.preventDefault();
+            this.obj.weblets[id + 'select'].obj.weblets.table.btnClick('arrow_up', {}, obj, evt);
             break;
 
           case "Enter" :
@@ -588,6 +601,7 @@ export class MneDbView extends MneView
   getTableParamAdd(p)
   {
     p = this.getParam(p, ( this.initpar.addcols ?? this.initpar.okcols));
+    p.sqlstart = 1;
     p.sqlend = 1;
     return p;
   }
@@ -596,6 +610,7 @@ export class MneDbView extends MneView
   {
     p = this.getParam(p, ( this.initpar.modcols ?? this.initpar.okcols));
     p = this.getIdparam(p);
+    p.sqlstart = 1;
     p.sqlend = 1;
     return p;
   }
@@ -603,6 +618,7 @@ export class MneDbView extends MneView
   getTableParamDel(p)
   {
     p = this.getIdparam(p, this.initpar.delcols);
+    p.sqlstart = 1;
     p.sqlend = 1;
     return p;
   }
@@ -637,8 +653,10 @@ export class MneDbView extends MneView
     var cols = param.cols;
     var i;
 
-    if ( this.initpar.defalias )
-      Object.keys(this.initpar.defalias).forEach( (item) => { this.obj.defvalues[item] = this.config.dependweblet.obj.run.values[this.initpar.defalias[item]]; });
+    var dependweblet = this.obj.run.act_dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
+    
+    if ( dependweblet != this && this.initpar.defalias )
+      Object.keys(this.initpar.defalias).forEach( (item) => { this.obj.defvalues[item] = dependweblet.obj.run.values[this.initpar.defalias[item]]; });
 
     if ( cols == undefined )
     {
@@ -653,6 +671,7 @@ export class MneDbView extends MneView
     var p = Object.assign(
     {
       cols     : cols,
+      sqlstart : 1,
       sqlend   : 1,
       lastquery : ( this.obj.lastquery ) ? '1' : '',
     }, this.obj.run.readpar);
@@ -703,6 +722,11 @@ export class MneDbView extends MneView
       });
 
     this.enable(enable, enable != '' );
+    
+    if ( dependweblet == this && this.initpar.defalias )
+      Object.keys(this.initpar.defalias).forEach( (item) => { this.obj.defvalues[item] = dependweblet.obj.run.values[this.initpar.defalias[item]]; });
+
+
   }
   
   async ok(param = {} )
@@ -759,7 +783,7 @@ export class MneDbView extends MneView
     this.title = this.obj.run.title.add;
 
     for ( i in this.obj.inputs )
-      this.obj.inputs[i].setValue((this.obj.defvalues[i]) ? this.obj.defvalues[i] : '');
+      this.obj.inputs[i].setValue((this.obj.defvalues[i] != undefined ) ? this.obj.defvalues[i] : '');
 
     this.obj.run.result = undefined;
     this.obj.run.values = {};

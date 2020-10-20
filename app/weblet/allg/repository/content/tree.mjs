@@ -120,7 +120,7 @@ class MneRepositoryTree extends MneMenuRecursive
   
   getReadParam(data)
   {
-    var par = Object.assign({sqlend : 1}, this.obj.run.readpar);
+    var par = Object.assign({sqlend : 1, sqlstart : 1}, this.obj.run.readpar);
     par['dirInput.old'] = data.values[data.res.rids.menuid];
     
     return par;

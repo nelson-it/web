@@ -49,7 +49,7 @@ class MneSubweblet extends MneGeometrie
     await super.mkDepend();
     for ( i in this.obj.weblets )
     {
-      if ( ! this.obj.weblets[i].config.dependweblet && ! this.obj.weblets[i] instanceof MneRegister ) 
+      if ( ! this.obj.weblets[i].config.dependweblet && ! ( this.obj.weblets[i] instanceof MneRegister ) ) 
       {
         this.obj.weblets[i].config.dependweblet = this;
         this.config.depend.push(this.obj.weblets[i]);

@@ -36,6 +36,7 @@ class MneTableFilter extends MneTable
         {
           cols     : this.initpar.cols,
           no_vals   : true,
+          sqlstart   : 1,
           sqlend   : 1
         }, this.obj.weblets.table.obj.run.readpar);
 

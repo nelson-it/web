@@ -179,6 +179,7 @@ class MneAdminJoinTree extends MneDbView
         "scols" : "tschema,ttab",
         "fschemaInput.old" : data.schema,
         "ftabInput.old" : data.table,
+        "sqlstart" : 1,
         "sqlend" : 1
     };
 

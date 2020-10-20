@@ -57,6 +57,7 @@ class MneAdminQueryDetail extends MneDbView
         if ( this.config.composeparent.obj.weblets.where)
           p = this.config.composeparent.obj.weblets.where.getParam(p);
 
+        p.sqlstart = 1;
         p.sqlend = 1;
         return p;
       }

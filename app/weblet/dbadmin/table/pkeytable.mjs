@@ -33,9 +33,10 @@ class MneAdminTabletPkeyTableWeblet extends MneDbTableViewWeblet
 
       p = 
       {
-          schema : this.obj.run.values.schema,
-          table  : this.obj.run.values.table,
-          sqlend : 1
+          schema   : this.obj.run.values.schema,
+          table    : this.obj.run.values.table,
+          sqlstart : 1,
+          sqlend   : 1
       };
 
       for ( i=0; i<this.obj.tbody.rows.length; i++ )

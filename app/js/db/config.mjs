@@ -29,6 +29,7 @@ class MneDbConfig extends MneConfig
         "schema" : "mne_application",
         "query"  : "userpref",
         "usernameInput.old" : "session_user",
+        "sqlstart" : 1,
         "sqlend" : 1
     };
 
@@ -42,6 +43,7 @@ class MneDbConfig extends MneConfig
         "query"  : "usergroup",
         "cols"   : "group,ismember",
         "rolnameInput.old" : "session_user",
+        "sqlstart" : 1,
         "sqlend" : 1
     };
 
@@ -54,6 +56,7 @@ class MneDbConfig extends MneConfig
         "schema" : "mne_application",
         "table"  : "tableregexp",
         "cols"   : "tableregexpid,regexp,regexphelp,regexpmod",
+        "sqlstart" : 1,
         "sqlend" : 1
     };
 
@@ -107,26 +110,30 @@ class MneDbConfig extends MneConfig
         de : '^\\s*$|^\\s*(3[01]|[12][0-9]|0?[1-9])\\s*$|' +
              '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\s*$|' +
              '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:|19|20)\\d{2})\\s*$|' +
-             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2})\\s*$|' +
-             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2}:\\d{2})\\s*$',
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:|19|20)\\d{2})\\s+(\\d{1,2})\\s*$|' +
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2})\\s*$|' +
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$',
                             
         fr : '\\s*^$|^\\s*(3[01]|[12][0-9]|0?[1-9])\\s*$|' +
              '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])\\s*$|' +
              '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])-((?:|19|20)\\d{2})\\s*$|' +
-             '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])-((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2})\\s*$|' +
-             '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])-((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2}:\\d{2})\\s*$',
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])-((?:|19|20)\\d{2})\\s+(\\d{1,2})\\s*$|' +
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])-((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2})\\s*$|' +
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])-(1[012]|0?[1-9])-((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$',
                             
         en : '\\s*^$|^\\s*(3[01]|[12][0-9]|0?[1-9])\\s*$|' +
              '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\s*$|' +
              '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\/((?:|19|20)\\d{2})\\s*$|' +
-             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2})\\s*$|' +
-             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2}:\\d{2})\\s*$',
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{1,2})\\s*$|' +
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2})\\s*$|' +
+             '^\\s*(3[01]|[12][0-9]|0?[1-9])\\/(1[012]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$',
 
         US : '\\s*^$|^\\s*(1[012]|0?[1-9])\\s*$|' +
              '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\s*$|' +
              '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\/((?:|19|20)\\d{2})\\s*$|' +
-             '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2})\\s*$|' +
-             '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{2}:\\d{2}:\\d{2})\\s*$',
+             '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{1,2})\\s*$|' +
+             '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2})\\s*$|' +
+             '^\\s*(1[012]|0?[1-9])\\/(3[01]|[12][0-9]|0?[1-9])\\/((?:|19|20)\\d{2})\\s+(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$',
       };
 
       var date =
@@ -153,9 +160,10 @@ class MneDbConfig extends MneConfig
       MneInput.checktype.float       = { reg : new RegExp("[+-]?[0-9" + t + "]+" + d + "?[0-9]*"), help : MneText.sprintf(MneText.getText("#mne_lang#Bitte eine Zahl mit einem $1 eingeben"), MneConfig.locale.decimal_point) };
       MneInput.checktype.floatoempty = { reg : new RegExp("[+-]?[0-9" + t + "]*" + d + "?[0-9]*|^$"), help : MneText.sprintf(MneText.getText("#mne_lang#Bitte eine Zahl mit einem $1 eingeben oder leer lassen"), MneConfig.locale.decimal_point) };
 
-      MneInput.checktype.datetime = { reg : new RegExp(datetime[MneConfig.locale.region] ?? datetime[MneConfig.locale.language]), help : MneText.sprintf(MneText.getText("Bitte ein Datum mit Zeit in der Form $1 eingeben"), MneText.toDateTime(new Date().getTime() / 1000 )) };
-      MneInput.checktype.date     = { reg : new RegExp(    date[MneConfig.locale.region] ??     date[MneConfig.locale.language]), help : MneText.sprintf(MneText.getText("Bitte ein Datum in der Form $1 eingeben"), MneText.toDate(new Date().getTime() / 1000 )) };
-      MneInput.checktype.time     = { reg : new RegExp('\\s*^$|\\s*(\\d{2}:\\d{2})\\s*$|\\s*(\\d{2}:\\d{2}:\\d{2})\\s*$'), help : MneText.sprintf(MneText.getText("Bitte ein Zeit in der Form $1 eingeben"), MneText.toTime(new Date().getTime() / 1000 )) };
+      MneInput.checktype.datetime     = { reg : new RegExp(datetime[MneConfig.locale.region] ?? datetime[MneConfig.locale.language]), help : MneText.sprintf(MneText.getText("Bitte ein Datum mit Zeit in der Form $1 eingeben"), MneText.toDateTime(new Date().getTime() / 1000 )) };
+      MneInput.checktype.date         = { reg : new RegExp(    date[MneConfig.locale.region] ??     date[MneConfig.locale.language]), help : MneText.sprintf(MneText.getText("Bitte ein Datum in der Form $1 eingeben"), MneText.toDate(new Date().getTime() / 1000 )) };
+      MneInput.checktype.time         = { reg : new RegExp('\\s*^$|\\s*(\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$'), help : MneText.sprintf(MneText.getText("Bitte ein Zeit in der Form $1 eingeben"), MneText.toTime(new Date().getTime() / 1000 )) };
+      MneInput.checktype.timenotempty = { reg : new RegExp('\\s*(\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$'), help : MneText.sprintf(MneText.getText("Bitte ein Zeit in der Form $1 eingeben"), MneText.toTime(new Date().getTime() / 1000 )) };
       
     }
     
