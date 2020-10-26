@@ -30,6 +30,8 @@ class MneAdminJoinTree extends MneDbView
       scols   : "tabid",
       
       showids : ['queryid'],
+      
+      multiresult : true
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
@@ -212,7 +214,7 @@ class MneAdminJoinTree extends MneDbView
     var str;
     var ele;
     
-    await super.values({multiline : true, cols : this.initpar.cols } );
+    await super.values({cols : this.initpar.cols } );
     
     if ( this.obj.run.result == undefined ) return;
 

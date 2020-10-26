@@ -12,6 +12,7 @@ import MneText   from '/js/basic/text.mjs'
 import MneLog    from '/js/basic/log.mjs'
 import MneTheme  from '/js/basic/theme.mjs'
 import MneConfig from '/js/basic/config.mjs'
+import MneMutex  from '/js/basic/mutex.mjs'
 
 import MneDbConfig from '/js/db/config.mjs'
 
@@ -36,6 +37,7 @@ class MneMain extends MneGeometrie
 
     async show( name = 'main')
     {
+
       await MneDbConfig.read();
       MneTheme.setTheme(MneConfig.stylename)
       await super.show(name);
@@ -51,6 +53,23 @@ class MneMain extends MneGeometrie
       await this.obj.popups.message.create(this);
       await this.obj.weblets.message.load();
 
+      window.addEventListener('popstate', async (evt) => 
+      {
+        let unlock = await MneMain.history_mutex.lock();
+        if ( history.state == null )
+        {
+          window.history.forward();
+        }
+        else
+        {
+          window.inpopstate = true;
+          window.sessionStorage.setItem(window.mne_application + ':' + history.state.name[0], JSON.stringify(history.state.values)); 
+          await this.obj.weblets.detail.show( history.state.name ).catch( (e) => { window.inpopstate = false; unlock(); MneLog.exception('Main History', e) });
+          window.inpopstate = false;
+        }
+        unlock()
+      });
+      
       var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
       try { startweblet = JSON.parse(startweblet); } catch(e) { console.log(e); console.log(startweblet), startweblet = undefined; }
 
@@ -66,5 +85,5 @@ class MneMain extends MneGeometrie
 
     }
 }
-
+MneMain.history_mutex = new MneMutex();
 export default MneMain;

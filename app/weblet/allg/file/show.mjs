@@ -65,6 +65,14 @@ class MneFileShow extends MneViewContainer
       this.frame.querySelector('#download').click();
     }
     
+    async base64()
+    {
+      if ( this.obj.run.data )
+        return btoa(String.fromCharCode.apply(null, new Uint8Array(await this.obj.run.data.arrayBuffer())));
+
+      return '';
+    }
+    
     async getData()
     {
       var res;
@@ -95,7 +103,7 @@ class MneFileShow extends MneViewContainer
     {
       this.frame.innerHTML = '';
       
-      var data = await this.getData();
+      var data = this.obj.run.data = await this.getData();
 
       if  ( data === false )
       {

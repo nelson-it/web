@@ -71,7 +71,10 @@ export class MneWebletEmpty
       var i;
 
       for ( i in this.obj.observer )
+      {
         this.obj.observer[i].disconnect();
+        delete this.obj.observer[i];
+      }
 
     }
 

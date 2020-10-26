@@ -166,7 +166,7 @@ export class MneText
     return neu;
 
   };
-
+  
 }
 
 export default MneText

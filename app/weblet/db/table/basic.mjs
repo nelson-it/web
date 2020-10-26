@@ -131,6 +131,7 @@ class MneDbTableBasic extends MneDbView
       for ( i =0; i<obj.length; i++)
         MneElement.clearClass(obj[i], 'active');
     }
+    this.obj = Object.assign(this.obj, { inputs  : {}, outputs : {}, files : {}, fields : [] });
   }
 
   mkRowStyle(rids, values)
@@ -264,6 +265,11 @@ class MneDbTableBasic extends MneDbView
     this.newselect = true;
   }
 
+  isselected(row)
+  {
+      return MneElement.hasClass(row, 'active');  
+  }
+  
   fillres(rows)
   {
     var i,j;
@@ -461,6 +467,9 @@ class MneDbTableBasic extends MneDbView
     var str = '';
     var self = this;
 
+    for ( i in this.obj.selectlists )
+      if ( this.obj.selectlists[i].dynamic ) this.obj.selectlists[i].content = undefined;
+    
     if ( this.initpar.defalias )
     {
       for ( i in this.initpar.defalias )
@@ -575,6 +584,25 @@ class MneDbTableBasic extends MneDbView
     if ( ! this.initpar.nofocus ) this.obj.table.focus()
     
     this.obj.where.modClear();
+  }
+
+  async execute_selected(func)
+  {
+    var i,j;
+    var rows = [];
+    var retval = false;
+
+    this.obj.run.selectedkeys = [];
+
+    Array.from(this.obj.tbody.children).forEach((item) => { if ( this.isselected(item)) rows.push(item)});
+    for ( i=0; i<rows.length; i++)
+    {
+      retval = true;
+      await this.selectRow({force : true}, rows[i] )
+      this.primarykey();
+      await func();
+    }
+    return retval;
   }
 
   async refresh()

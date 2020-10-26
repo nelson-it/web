@@ -8,6 +8,7 @@
 //================================================================================
 'use strict';
 import MneElement from '/js/basic/element.mjs';
+import MneInput   from '/js/basic/input.mjs';
 
 import MneMenu from './menu.mjs'
 
@@ -97,7 +98,7 @@ export class MneFixMenu extends MneMenu
       }
       div.className = classname;
       div.innerHTML = '<div class="' + this.initpar.classname + 'link"></div><div class="' + this.initpar.classname + 'main"></div>'
-      div.firstChild.innerHTML = res.values[i][0];
+      div.firstChild.innerHTML = MneInput.format(res.values[i][0], res.typs[0], res.formats[0]);
 
       this.mkButton(res.values[i][0], div.firstChild, { menu : div, frame : div.lastChild, values : [ values ], parent : data, res : { rids : { action : 0 }} } , 'action');
       container.appendChild(div);

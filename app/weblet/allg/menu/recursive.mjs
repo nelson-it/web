@@ -10,6 +10,7 @@
 
 import MneElement from '/weblet/basic/element.mjs'
 import MneRequest from '/js/basic/request.mjs'
+import MneInput   from '/js/basic/input.mjs'
 
 import MneMenu from './menu.mjs'
 
@@ -79,7 +80,7 @@ class MneRecursiveMenu extends MneMenu
       try { res.values[i][res.rids.action] = JSON.parse(res.values[i][res.rids.action]) } catch(e) { console.log(res.values[i][res.rids.action]); throw e }
       div.className = this.initpar.classname + (( res.values[i][res.rids.action].action == 'submenu' || res.values[i][res.rids['typ']] != 'leaf' ) ? '' : 'leaf');
       div.innerHTML = '<div class="' + this.initpar.classname + 'link"></div><div class="' + this.initpar.classname + 'main"></div>'
-      div.firstChild.innerHTML = res.values[i][1];
+      div.firstChild.innerHTML =  MneInput.format(res.values[i][1], res.typs[1], res.formats[1]);
       if ( res.rids.status && res.values[i][res.rids.status] ) MneElement.mkClass(div.firstChild, 'treelink' + res.values[i][res.rids.status] );
       this.mkButton('treelink', div.firstChild, { parent : data, menu : div, frame : div.lastChild, values : res.values[i], res : r }, 'action');
       container.appendChild(div);

@@ -36,6 +36,8 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
         classname : 'border padding',
         
         ignore_notfound : true,
+        multiresult : true,
+
         hinput : false
       };
            
@@ -140,7 +142,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
     {
       var i,j;
 
-      await super.values({multiline : true });
+      await super.values();
       
       var res = this.obj.run.result;
       var str = '<table class="' + this.initpar.classname + ' disable-select relative" tabindex=1><thead><tr>';

@@ -241,6 +241,7 @@ class MneGeometrie extends MneWeblet
    this.reset();
    if ( popup ) this.obj.popup = popup;
    
+   console.log(name)
    if ( name ) this.obj.name = name;
    if ( initpar ) this.obj.run.initpar = initpar;
    

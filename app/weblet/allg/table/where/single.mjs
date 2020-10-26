@@ -56,26 +56,32 @@ class MneWhereSelectWeblet extends MneView
   set viewpar(par)
   {
     var i;
-    var wcol;
     var str;
-    
+    var wcol = this.obj.inputs['wcol'];
+    var value = wcol.getValue(false);
+    var found = false;
     var self = this;
+
     this.obj.viewpar = Object.assign({}, par);
     
     str = '<option value="">' + MneText.getText('#mne_lang#Gesamte Tabelle') + '</option>';
     
     for ( i =0; i<this.obj.viewpar.ids.length; ++i)
     {
+      if ( this.obj.viewpar.ids[i] == value ) found = true;
+      
       str += '<option value="' + this.obj.viewpar.ids[i] + '"'
       if ( ( this.initpar.selcol && this.initpar.selcol == this.obj.viewpar.ids[i] ) || ( this.obj.selpos == ( i + 1 ) ) )
       {
-        this.obj.inputs.wcol.setValue(this.obj.viewpar.ids[i]);
+        found = true;
+        wcol.setValue(this.obj.viewpar.ids[i]);
         str += ' selected="selected"';
       }
       str += '>' + this.obj.viewpar.labels[i] + '</option>'
     }
     
-    wcol = this.obj.inputs['wcol'];
+    if ( found == false ) wcol.setValue('');
+    
     wcol.innerHTML = str;
     if ( this.obj.selpos >= wcol.children.length )
       MneLog.warning("MneTableWhereSelectWeblet: Selval zu gross")

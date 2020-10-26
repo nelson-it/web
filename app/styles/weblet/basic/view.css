@@ -50,14 +50,31 @@ div.weblet div#buttonContainer, div.weblet div#contentContainer {
 	margin: var(--dmargin);
 }
 
-div.weblet div#buttonContainer {
+div.weblet div#buttonFrame {
 	position: sticky;
+	top: 0px;
+	left: 0px;
+	min-width: max-content;
+
 	flex-grow: 0;
-	top: var(--dmargin);
-	left: var(--dmargin);
+
+	z-index: 1;
+}
+
+div.weblet div#buttonFrame.scroll {
+    border-right: solid var(--dmargin) var(--bordercolor);
+}
+
+div.weblet div#buttonFrame.scroll:hover {
+	overflow: auto;
+	padding-right: var(--qmargin);
+	border-right: inherit;
+}
+}
+
+div.weblet div#buttonContainer {
 	padding-bottom: var(--dmargin);
 	min-width: max-content;
-	z-index: 1;
 }
 
 div.weblet div#buttonContainer.mneoverflow {

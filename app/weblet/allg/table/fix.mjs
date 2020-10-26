@@ -64,13 +64,12 @@ class MneTable extends MneViewContainer
     var initpar;
     var config;
     var whereframe;
+    var tableframe;
     
     this.obj.wherenum = MneTable.wherecount++;
     await super.load();
 
     this.frame.insertBefore(( whereframe = document.createElement('div')), this.obj.container.weblet);
-    whereframe.id = 'tablewhere';
-    whereframe.className = 'tablewhere';
     this.obj.whereobserver = new MutationObserver( (mutations, server) => { if ( this.obj.container.weblet ) this.obj.container.weblet.style.top = whereframe.offsetHeight + 'px' });
     this.obj.whereobserver.observe(whereframe, { attributes: true, childList: true, characterData: true, subtree : true });
     
@@ -80,7 +79,7 @@ class MneTable extends MneViewContainer
     config = Object.assign(Object.assign({},  this.config ), { path : path, depend : [...this.config.depend], dependweblet : this } );
 
     var TableWeblet =  await this.getTableWeblet(path, ( reload ) ? '?date=' + Date.now() : '');
-    this.obj.weblets.table = new TableWeblet(this, this.frame.querySelector('#tablecontent'), 'table', initpar, config );
+    this.obj.weblets.table = new TableWeblet(this, ( tableframe = this.frame.querySelector('#tablecontent')), 'table', initpar, config );
     this.obj.weblets.table.obj.run.newvalues = true;
     this.config.depend.push(this.obj.weblets.table);
     await this.obj.weblets.table.load();
@@ -96,12 +95,15 @@ class MneTable extends MneViewContainer
       this.obj.weblets.where.obj.run.newvalues = true;
       this.config.depend.push(this.obj.weblets.where);
       await this.obj.weblets.where.load();
-
+ 
       this.obj.weblets.table.obj.where = this.obj.weblets.where;
       this.obj.weblets.where.obj.table = this.obj.weblets.table;
       
       this.obj.webletsort.push('where');
     }
+
+    MneElement.mkClass(whereframe, 'tablewhere' );
+    MneElement.mkClass(tableframe, 'tablecontent' );
     this.obj.webletsort.push('table');
   }
   

@@ -3,6 +3,9 @@ div.tablewhere {
 	overflow: hidden;
 	flex-shrink: 0;
 }
+div.tablewhere:empty {
+	margin: 0px;
+}
 
 div.tablecontent > div.webletmain #contentContainer {
 	position : unset;

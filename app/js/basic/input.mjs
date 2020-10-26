@@ -127,13 +127,13 @@ export class MneInput
         return "binary";
 
       case "datetime":
-        return (raw ) ? parseInt(value) : MneInput.parseDateTime(value);
+        return (raw ) ? (( !! value ) ? parseInt(value) : '') : MneInput.parseDateTime(value);
       case "date":
-        return (raw ) ? parseInt(value) : MneInput.parseDate(value);
+        return (raw ) ? (( !! value ) ? parseInt(value) : '') : MneInput.parseDate(value);
       case "time":
-        return (raw ) ? parseInt(value) : MneInput.parseTime(value, true);
+        return (raw ) ? (( !! value ) ? parseInt(value) : '') : MneInput.parseTime(value, true);
       case "interval":
-        return (raw ) ? parseInt(value) : MneInput.parseTime(value, false);
+        return (raw ) ? (( !! value ) ? parseInt(value) : '') : MneInput.parseTime(value, false);
       case "day":
         return parseInt(value);
       case "quarter":
@@ -167,7 +167,7 @@ export class MneInput
     switch(MneInput.getTyp(typ))
     {
       case "bool":
-        return (( value != false && value != '' && value != '0' && value != MneText.getText("#mne_lang#falsch")) ? '&#10004;' : '' );
+        return (( value != '' && value != '0' && value != 0 && value != false && value != 'false' && value != MneText.getText("#mne_lang#falsch") ) ? '&#10004;' : '' );
 
       case "binary":
         return "binary";

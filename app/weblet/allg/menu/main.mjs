@@ -69,6 +69,8 @@ export class MneMainMenu extends MneRecursiveMenu
     var aid = data.res.rids.action;
     
     window.sessionStorage.setItem(window.mne_application + ':startweblet', JSON.stringify(data.values[aid].parameter));
+    //window.history.pushState(data.values[aid].parameter, '');
+    
     await this.obj.weblet.show(...data.values[aid].parameter);
   }
   

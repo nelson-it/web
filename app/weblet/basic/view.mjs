@@ -27,8 +27,8 @@ export class MneViewContainer extends MneWeblet
     {
         title   : {},
         regexp  : {},
-        
-        showids : []
+        links   : {},
+        linkspar : {},
     }
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config )
@@ -39,6 +39,7 @@ export class MneViewContainer extends MneWeblet
   reset()
   {
     var i;
+    
     
     super.reset();
     
@@ -78,6 +79,7 @@ export class MneViewContainer extends MneWeblet
     for ( i in this.initpar.regexp )
       this.initpar.regexp[i] = MneInput.checktype[this.initpar.regexp[i]] ?? this.initpar.regexp[i];
     
+    this.initpar.showids = this.initpar.showids ?? [];
     this.initpar.okids  = this.initpar.okids  ?? this.initpar.showids;
     this.initpar.delids = this.initpar.delids ?? this.initpar.okids ?? this.initpar.showids;
 
@@ -120,8 +122,11 @@ export class MneViewContainer extends MneWeblet
       MneElement.mkClass(this.obj.container.title, 'notitleframe', this.initpar.notitleframe == true );
     }
 
+    this.obj.buttonframe = frame.querySelector('#buttonFrame');
     if ( this.initpar.nobuttonframe )
-        this.obj.container.button = undefined;
+      this.obj.container.button = undefined;
+    else if ( this.obj.buttonframe && this.obj.container.button )
+      ( this.obj.observer.buttonframe = new MutationObserver((mut) => { MneElement.mkClass(this.obj.buttonframe, 'scroll', this.obj.buttonframe.scrollHeight > this.obj.buttonframe.offsetHeight); })).observe(this.obj.container.button, { childList: true, subtree: true, attributes : true } );
     
     obj = frame.querySelectorAll("[id$='Button']");
     for ( i = 0; i< obj.length; i++)
@@ -261,7 +266,7 @@ export class MneView extends MneViewContainer
     obj.setTyp = function(dpytype, regexp, format)
     {
       this.dpytype =  MneInput.getTyp( dpytype );
-      this.regexp = regexp; 
+      this.regexp = self.initpar.regexp[id] ?? regexp; 
       this.format = format;
       MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
     };
@@ -355,7 +360,7 @@ export class MneView extends MneViewContainer
     MneElement.mkClass(obj, 'link');
     obj.addEventListener('click', (evt) =>
     {
-      if ( this.initpar.links[id] )
+      if ( this.initpar.links && this.initpar.links[id] )
       {
         var values = {};
         Object.keys(this.initpar.links[id].values).forEach( ( item ) => { values[item] = this.obj.run.values[this.initpar.links[id].values[item]] ?? this.obj.defvalues[this.initpar.links[id].values[item]] })
@@ -473,7 +478,7 @@ export class MneView extends MneViewContainer
     obj.setTyp = function(dpytype, regexp, format)
     {
       this.dpytype = MneInput.getTyp(dpytype);
-      this.regexp = ( MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] != undefined  && regexp.reg.toString() == MneInput.checktype.ok.reg.toString() ) ? MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] : regexp;
+      this.regexp = self.initpar.regexp[id] ?? (( MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] != undefined  && regexp.reg.toString() == MneInput.checktype.ok.reg.toString() ) ? MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] : regexp );
       this.format = format;
       MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
 
@@ -633,6 +638,7 @@ export class MneView extends MneViewContainer
 
   async mkInputINPUT (id, obj )
   {
+    var self = this;
     if ( this.initpar.hinput && obj.type == 'hidden') { obj.type = "text";}
 
     obj.setTyp = function(dpytype, regexp, format)
@@ -641,7 +647,7 @@ export class MneView extends MneViewContainer
       this.format   = format;
       MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
 
-      this.regexp = ( MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] != undefined  && regexp.reg.toString() == MneInput.checktype.ok.reg.toString() ) ? MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] : regexp;
+      this.regexp = self.initpar.regexp[id] ?? (( MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] != undefined  && regexp.reg.toString() == MneInput.checktype.ok.reg.toString() ) ? MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] : regexp );
       if ( this.regexp.help  && this.type != 'checkbox' )
       {
         this.help = document.createElement('span');
@@ -694,13 +700,14 @@ export class MneView extends MneViewContainer
 
   async mkInputSELECT (id, obj)
   {
+    var self = this;
     obj.setTyp = function(dpytype, regexp, format)
     {
       this.dpytype  = dpytype;
       this.format   = format;
       MneElement.mkClass(obj, "dpytype" + MneInput.getTyp(this.dpytype), true, "dpytype");
 
-      this.regexp   = regexp;
+      this.regexp   = self.initpar.regexp[id] ?? regexp;
       this.oldvalue = this.value
     };
 
@@ -765,7 +772,7 @@ export class MneView extends MneViewContainer
       this.format   = format;
       MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
 
-      this.regexp   = regexp;
+      this.regexp   = self.initpar.regexp[id] ?? regexp;
     };
 
     obj.setValue = function(value)
@@ -1278,6 +1285,25 @@ export class MneView extends MneViewContainer
     await w.show();
     w.newvalues = true;
     await w.check_values();
+    
+    return false;
+  }
+  
+  async links()
+  {
+    var i;
+    for ( i in this.initpar.linkspar )
+    {
+      var j;
+      var havevalues = true;
+      for ( j in this.initpar.linkspar[i] )
+      {
+        if ( ! ( this.obj.run.values[this.initpar.linkspar[i][j]] && this.obj.run.values[this.initpar.linkspar[i][j]] != '################' ) )
+          havevalues = false;
+      }
+      if ( havevalues ) this.initpar.links[i] = { name : this.initpar[i + 'screen'], values : this.initpar.linkspar[i] };
+      else this.initpar.links[i] = undefined;
+    }
   }
 }
 
