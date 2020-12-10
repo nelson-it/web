@@ -54,20 +54,21 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
   async values()
   {
     var i;
+    var depend = this.parent.config.dependweblet;
     
-    if ( this.obj.run.readpar.schema != this.config.dependweblet.obj.run.values.schema || this.obj.run.readpar.table  != this.config.dependweblet.obj.run.values.table )
+    if ( this.obj.run.readpar.schema != depend.obj.run.values.schema || this.obj.run.readpar.table  != depend.obj.run.values.table )
     {
-      this.obj.run.readpar.schema = this.config.dependweblet.obj.run.values.schema;
-      this.obj.run.readpar.table  = this.config.dependweblet.obj.run.values.table;
+      this.obj.run.readpar.schema = depend.obj.run.values.schema;
+      this.obj.run.readpar.table  = depend.obj.run.values.table;
 
-      this.obj.run.addpar.schema = this.config.dependweblet.obj.run.values.schema;
-      this.obj.run.addpar.table  = this.config.dependweblet.obj.run.values.table;
+      this.obj.run.addpar.schema = depend.obj.run.values.schema;
+      this.obj.run.addpar.table  = depend.obj.run.values.table;
 
-      this.obj.run.modpar.schema = this.config.dependweblet.obj.run.values.schema;
-      this.obj.run.modpar.table  = this.config.dependweblet.obj.run.values.table;
+      this.obj.run.modpar.schema = depend.obj.run.values.schema;
+      this.obj.run.modpar.table  = depend.obj.run.values.table;
 
-      this.obj.run.delpar.schema = this.config.dependweblet.obj.run.values.schema;
-      this.obj.run.delpar.table  = this.config.dependweblet.obj.run.values.table;
+      this.obj.run.delpar.schema = depend.obj.run.values.schema;
+      this.obj.run.delpar.table  = depend.obj.run.values.table;
       
       var okids = [];
       var p =

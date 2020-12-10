@@ -8,7 +8,9 @@
 //================================================================================
 'use strict';
 
+import MneConfig   from '/js/basic/config.mjs'
 import MneText     from '/js/basic/text.mjs'
+import MneInput    from '/js/basic/input.mjs'
 import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
 

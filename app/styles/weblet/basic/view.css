@@ -30,15 +30,15 @@ div.popupcontent > div.weblet > div.weblettitle > div.weblettitleright {
     display: none;
 }
 
-div.weblet div.webletmain.modifyok {
+div.weblet > div.webletmain.modifyok {
 	border-top: 3px solid var(--modifyokbackgroundcolor);
 }
 
-div.weblet div.webletmain.modifywarning {
+div.weblet  > div.webletmain.modifywarning {
 	border-top: 3px solid var(--modifywarningbackgroundcolor);
 }
 
-div.weblet div.webletmain.modifywrong {
+div.weblet > div.webletmain.modifywrong {
 	border-top: 3px solid var(--modifywrongbackgroundcolor);
 }
 
@@ -49,6 +49,13 @@ div.weblet div#buttonContainer, div.weblet div#contentContainer {
 	vertical-align: top;
 	margin: var(--dmargin);
 }
+
+div.webletmain.modifyok      > div#buttonContainer, div.webletmain.modifyok      > div#contentContainer,
+div.webletmain.modifywarning > div#buttonContainer, div.webletmain.modifywarning > div#contentContainer,
+div.webletmain.modifywrong   > div#buttonContainer, div.webletmain.modifywrong   > div#contentContainer {
+    margin-top: calc(var(--dmargin) - 3px);
+}
+
 
 div.weblet div#buttonFrame {
 	position: sticky;
@@ -223,12 +230,12 @@ div.weblet .inputsingle :nth-child(2), div.weblet .inputsingle :nth-child(4), di
   flex-basis: 200%
 }
 
-div.weblet .inputsingle input, div.weblet .inputsingle span[contenteditable="true"], div.weblet .inputsingle select {
+div.weblet .inputsingle .ele-wrapper:last-child input, div.weblet .inputsingle .ele-wrapper:last-child span[contenteditable="true"], div.weblet .inputsingle .ele-wrapper:last-child select {
     width: calc(100% - var(--iconfontsize));
 }
 
 div.weblet .inputsingle .ele-wrapper span:empty::after {
-    content: ' ';
+    content: '     ';
     white-space: pre;
 }
 

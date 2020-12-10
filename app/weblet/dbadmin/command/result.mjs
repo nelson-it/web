@@ -29,9 +29,10 @@ class MneDbAdminCommandResult extends MneFixTableWeblet
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
   }
   
-  async values()
+  async values(param)
   {
     this.obj.run.values.command = this.config.dependweblet.obj.inputs.command.getValue();
+    return this.obj.weblets.table.values(param);
   }
 }
 

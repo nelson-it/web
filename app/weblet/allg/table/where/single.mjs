@@ -126,13 +126,17 @@ class MneWhereSelectWeblet extends MneView
 
   get wop()
   {
-    return ( ! this.obj.inputs.wcol.getValue() ) ? '' : this.obj.inputs.wop.getValue(true);
+    var wcol = this.obj.inputs['wcol'];
+    return ( ! wcol.getValue() ) ? '' : (( this.obj.viewpar.typs[parseInt(wcol.selectedIndex) -1] == '1' ) ? '=' : this.obj.inputs.wop.getValue(true));
   }
 
   get wval()
   {
-    if ( ! this.obj.inputs.wcol.getValue() ) return '';
+    var wcol = this.obj.inputs['wcol'];
     
+    if ( this.obj.viewpar.typs[parseInt(wcol.selectedIndex) -1] == '1' ) return this.obj.inputs.wop.getValue(true);
+    if ( ! wcol.getValue() ) return '';
+
     var val = this.obj.inputs.wval.getValue();
     
     if ( this.obj.inputs.wop.getValue(false) != 'like' || val.indexOf('%') != -1 )

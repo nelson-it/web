@@ -16,7 +16,7 @@ export class MneElement
     if ( node.nodeType == 3 ) return;
     
     if ( clear_name )
-      MneElement.mkClass(node, clear_name + '[a-z,A-Z,_,\-]*', false);
+      MneElement.mkClass(node, clear_name + '[0-9,a-z,A-Z,_,\-]*', false);
 
     if ( value !== false )
     {
@@ -36,6 +36,11 @@ export class MneElement
   static clearClass(node, name)
   {
     MneElement.mkClass(node, name, false )
+  }
+
+  static clearClassAll(node, name)
+  {
+    MneElement.mkClass(node,  name + '[0-9,a-z,A-Z,_,\-]*', false )
   }
   
   static hasClass(node, name )
@@ -60,8 +65,8 @@ export class MneElement
     var oval = 0;
     var pval = 0;
 
-    try { while ( obj ) { oval += ( obj.offsetTop - obj.scrollTop ); obj = obj.offsetParent; } } catch (e ) {}; 
-    try { while ( prt ) { pval += ( parent.offsetTop - parent.scrollTop ); parent = parent.offsetParent; } } catch (e ) {}; 
+    try { while ( obj    ) { oval += ( obj.offsetTop - obj.scrollTop ); obj = obj.offsetParent; } } catch (e ) {}; 
+    try { while ( parent ) { pval += ( parent.offsetTop - parent.scrollTop ); parent = parent.offsetParent; } } catch (e ) {}; 
 
     return oval - pval;
   }
@@ -78,12 +83,23 @@ export class MneElement
     return obj.offsetHeight;
   }
   
+  /*
+  static setTop(obj, ref, parent )
+  {
+    obj.style.top = MneElement.getTop(ref, parent )
+  }
+  */
   static insertAfter( neu, node)
   {
     if ( node.nextSibling == null ) node.parentNode.appendChild(neu);
     else node.parentNode.insertBefore(neu, node.nextSibling);
   }
   
+  static getEditor(str)
+  {
+    return '<span class="ele-wrapper contain-span contain-editor">' + str + '</span>';
+  }
+
   static getSpan(str)
   {
     return '<span class="ele-wrapper contain-span">' + str + '</span>';

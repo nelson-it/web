@@ -17,7 +17,7 @@ class MneMutex {
         return this._locks > 0;
     }
 
-    lock() {
+    async lock() {
         this._locks += 1;
         let unlockNext;
         let willLock = new Promise(resolve => unlockNext = () => {

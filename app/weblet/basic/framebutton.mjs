@@ -8,8 +8,10 @@
 //================================================================================
 'use strict';
 
-import MneElement from '/weblet/basic/element.mjs'
+import MneTheme   from '/js/basic/theme.mjs'
 import MneRequest from '/js/basic/request.mjs'
+
+import MneElement from '/weblet/basic/element.mjs'
 import MneWeblet  from '/weblet/basic/view.mjs'
 
 class MneFrameButtonWeblet extends MneWeblet
@@ -20,14 +22,6 @@ class MneFrameButtonWeblet extends MneWeblet
     this.num = MneFrameButtonWeblet.num++;
   }
   
-  reset()
-  {
-    if ( this.obj && this.obj.style )
-      this.head.removeChild(this.obj.style);
-    
-    super.reset();
-  }
-  
   getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
 
   async load()
@@ -35,11 +29,7 @@ class MneFrameButtonWeblet extends MneWeblet
     var self = this;
     await super.load();
     
-    this.obj.style = document.createElement("style");
-    this.obj.style.type="text/css";
-    this.obj.style.id='framebutton' + this.num;
-    document.head.appendChild(this.obj.style);
-    this.obj.sheet = this.obj.style.sheet;
+    this.obj.styles.push( MneTheme.createStyle());
 
     this.frame.innerHTML = '<div class="framebutton-button"> </div>'
     this.frame.firstChild.addEventListener('click', () => { self.openclose(); } );
@@ -73,22 +63,18 @@ class MneFrameButtonWeblet extends MneWeblet
   
   insertRule(str, pos)
   {
-    if ( typeof pos == 'undefined' ) pos = this.obj.sheet.cssRules.length;
-    this.obj.sheet.insertRule(str, pos);
+    MneTheme.insertRule(this.obj.styles[0], str, pos)
   }
 
   deleteRule(pos)
   {
-    if ( pos < this.obj.sheet.cssRules.length )
-      this.obj.sheet.deleteRule(pos);
+    MneTheme.deleteRule(this.obj.styles[0], pos)
   }
 
   deleteRules()
   {
-    while ( this.obj.sheet.cssRules.length != 0 )
-      this.deleteRule(0);
+    MneTheme.deleteRules(this.obj.styles[0])
   }
-
   
   animationend(evt)
   {

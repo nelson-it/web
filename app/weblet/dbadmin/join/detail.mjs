@@ -56,9 +56,9 @@ class MneDbadminJoin extends MneDbView
       this.obj.opparent.removeChild(this.obj.op);
       
       this.obj.tables.content.innerHTML = '<table class="border padding top disable-select relative" tabindex=1><thead><tr>'
-                                       + '<td>' + MneText.getText('#mne_lang#erste Tabelle') + '</td>'
-                                       + '<td>' + MneText.getText('#mne_lang#Operator') + '</td>'
-                                       + '<td>' + MneText.getText('#mne_lang#zweite Tabelle') + '</td>'
+                                       + '<th>' + MneText.getText('#mne_lang#erste Tabelle') + '</th>'
+                                       + '<th>' + MneText.getText('#mne_lang#Operator') + '</th>'
+                                       + '<th>' + MneText.getText('#mne_lang#zweite Tabelle') + '</th>'
                                        + '</tr></thead><tbody></tbody></table>';
       
       this.obj.tbody = this.obj.tables.content.firstChild.lastChild;

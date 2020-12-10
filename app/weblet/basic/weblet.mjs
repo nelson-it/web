@@ -75,13 +75,14 @@ export class MneWebletEmpty
         this.obj.observer[i].disconnect();
         delete this.obj.observer[i];
       }
-
+      
+      this.obj.styles.forEach( ( item ) => { document.head.removeChild(item)});
     }
 
     this.config = Object.assign({}, this.configorig );
     this.config.webletnum = MneWeblet.webletnum++;
     
-    this.obj  =  { run : { values : {}, newvalues : false }, observer : {} };
+    this.obj  =  { run : { values : {}, newvalues : false }, observer : {}, styles : [] };
     this.deldrop(this.frame);
   }
 
@@ -291,12 +292,13 @@ export class MneWeblet extends MneWebletEmpty
     if ( this.initpar.popup ) this.obj.popup = this.initpar.popup;
 
     this.frame.className = '';
+    this.config.cssName = this.config.path.replace(/\.mjs$/, '').replace(/^\//,'').replace(/\//g,'-');
     MneElement.mkClass(this.frame, 'weblet');
-    MneElement.mkClass(this.frame, this.config.path.replace(/\/[^\/]+\.mjs$/, '').replace(/^\//,'').replace(/\//g,'-'));
+    MneElement.mkClass(this.frame, this.config.cssName);
     MneElement.mkClass(this.frame, 'weblet' + this.config.webletnum);
     if ( this.initpar.frameclass ) MneElement.mkClass(this.frame, this.initpar.frameclass );
     
-    this.frame.id = this.config.id;
+    this.frame.id = this.id;
   }
 
   
@@ -310,13 +312,14 @@ export class MneWeblet extends MneWebletEmpty
   async createpopup(name, config, initpar )
   {
     var p = ( this.obj.popups[name] ) ? this.obj.popups[name] : this.config.composeparent.obj.popups[name];
-    await p.create(this, config, initpar );
+    var parent = ( this.initpar.popupparent) ? this.initpar.popupparent : this;
+    await p.create(parent, config, initpar );
 
-    var w = this.obj.weblets[name];
+    var w = parent.obj.weblets[name];
     w.config.dependweblet = this;
     
-    if ( this.config.depend.indexOf(w) == -1 )
-      this.config.depend.push(w);
+    if ( parent.config.depend.indexOf(w) == -1 )
+      parent.config.depend.push(w);
 
     return w;
   }
@@ -364,7 +367,7 @@ export class MneWeblet extends MneWebletEmpty
     var i,w;
     var weblets = this.obj.weblets
 
-    console.info(this.fullid)
+    //console.info(this.fullid + ' ' + this.newvalues )
 
     for ( i in weblets )
       weblets[i].list_weblets();
@@ -434,19 +437,29 @@ export class MneWeblet extends MneWebletEmpty
       this.obj.buttons.query = this.obj.popup.frame.querySelector('#querybutton');
     }
   }
+  
+  showWaitframe()
+  {
+    MneElement.mkClass(MneWeblet.waitframe, 'show');
+  }
+  
+  hideWaitframe()
+  {
+    MneElement.mkClass(MneWeblet.waitframe, 'show', false);
+  }
 
   async btnClick (clickid, data = {}, obj, evt )
   {
     let unlock = await MneWeblet.click_mutex.lock();
-
     var timeout = window.setTimeout(() => { MneElement.mkClass(MneWeblet.waitframe, 'show') }, 500);
+    
     try
     {
       var res;
       
       if ( ( res = await this[clickid](data, obj, evt)) !== false )
         await window.main_weblet.check_values();
-      console.log(clickid + " ready " + ( res ) );
+      console.log(clickid + " ready " + this.id + " " + res );
       window.clearTimeout(timeout);
       MneElement.mkClass(MneWeblet.waitframe, 'show', false);
       unlock()

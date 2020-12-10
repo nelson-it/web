@@ -7,6 +7,7 @@
 input[type="button"].modifyok,
 input.modifyok,
 select.modifyok,
+select.modifyok,
 [contenteditable="true"].modifyok,
 .modifyok > span[contenteditable="true"],
 .modifyok > span.output,
@@ -49,23 +50,6 @@ select.modifywarning,
 .modifywarning.editor .mne-rte-buttonframe {
     background-color: var(--modifywarningbackgroundcolor);
     color: var(--modifywarningcolor);
-}
-
-.label.modifywait,
-.output.modifywait,
-input.modifywait,
-select.modifywait,
-[contenteditable="true"].modifywait,
-.modifywait > [contenteditable="true"].modifywait,
-.modifywait > span.output,
-.modifywait > span.label,
-.modifywait > input,
-.modifywait > label:after,
-.modifywait > select,
-.modifywait.editor .mne-rte-buttonframe {
-    background-color: var(--modifywaitbackgroundcolor);
-    color: var(--modifywaitcolor);
- 
 }
 
 tr.modifyok > td {
@@ -212,12 +196,44 @@ td span.selectlisti:after, td span.selectlistfi:after  {
     margin-right: var(--dmargin);
 }
 
-tr.active td span.selectlisti:after, tr.active td .selectlistfi span.input:after, tr.active div.selectlistfs::after, tr.active span.selectlistfs::after, tr.active .contain-file label:after
+tr.active td span.selectlisti:after, tr.active td span.selectlistfi:after, tr.active td .selectlistfi span.input:after, tr.active div.selectlistfs::after, tr.active span.selectlistfs::after, tr.active .contain-file label:after
 {
 	color: var(--background);
 }
 
-td span.selectlisti > span {
+tr.active .contain-editor {
+    padding: var(--dmargin);
+    white-space: nowrap;
+    display: inline-block;
+    background: var(--background);
+}
+
+tr:not(.active) .mne-rte .mne-rte-buttonframe {
+  display: none;
+}
+
+tr:not(.active) .mne-rte .mne-rte-editarea {
+  border: none;
+  padding: 0px;
+  margin: 0px;
+  max-width: unset;
+  min-width: unset;
+}
+
+tr:not(.active) .mne-rte .mne-rte-active {
+    background: unset;
+}
+
+tr:not(.active) .mne-rte .mne-rte-editarea span:empty:after {
+  content: '';
+}
+
+tr.active td span.contain-input.selectlisti:after
+{
+	color: var(--lightcolor1);
+}
+
+td span.selectlisti > span, td span.selectlistfi > span {
     padding-right: var(--iconsize);
 }
 
@@ -239,15 +255,29 @@ td span.selectlisti > span {
 	border-radius: var(--borderradius);
 }
 
-span.dpytypecolor, input.dpytypecolor {
+.dpytypecolor > *, .dpytypecolor > input.color, .dpytypecolor > input[type="text"].color {
     display: inline-block;
     color: transparent !important;
 
-    min-width: var(--lineheight_normal);
-    max-width: var(--lineheight_normal);
-    min-height: var(--lineheight_normal);
-    max-height: var(--lineheight_normal);
+    min-width: var(--tablineheight_normal);
+    max-width: var(--tablineheight_normal);
+    min-height: var(--tablineheight_normal);
+    max-height: var(--tablineheight_normal);
 
     border-radius: var(--borderradius);
-    box-shadow: var(--boxshadow);
+}
+td .dpytypecolor > * {
+    display: block;
+    margin: auto;
+}
+
+.dpytypecolor > span:after {
+	content: 'x';
+}
+
+.dpytypecolor > [contenteditable="true"] {
+  color: unset !important;
+}
+.dpytypecolor > span[contenteditable="true"]::after {
+  content: unset;
 }

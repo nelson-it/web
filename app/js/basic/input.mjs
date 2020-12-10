@@ -110,6 +110,8 @@ export class MneInput
 
   static getValue(value, typ, raw)
   {
+    value = value ?? '';
+    
     switch(MneInput.getTyp(typ))
     {
       case "bool":
@@ -119,8 +121,10 @@ export class MneInput
       case "long":
         return ( value !== '') ? parseInt(value) : 0;
       case "float":
+        if ( typeof value == 'number') return value;
         return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : 0.0;
       case "double":
+        if ( typeof value == 'number') return value;
         return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : 0.0;
 
       case "binary":
@@ -184,10 +188,20 @@ export class MneInput
         return MneText.toDay(value, format);
       case "quarter":
         return MneText.toQuater(value, format);
+      
+      case "cdate":
+        return MneText.toDate((new Date(value.substr(4,4), parseInt(value.substr(2,2)) - 1, value.substr(0,2)).getTime()/1000));
 
       default: 
         return value;
     }
+  }
+  
+  static mkCdate(value)
+  {
+      var d = new Date();
+      d.setTime(value * 1000);
+      return MneText.addNull(d.getDate(),2) + MneText.addNull((d.getMonth() + 1),2) + d.getFullYear();
   }
   
   static parseDateTime(value)

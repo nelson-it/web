@@ -65,6 +65,13 @@ class MneAdminQueryDetail extends MneDbView
       this.obj.enablebuttons.buttons = [];
     }
 
+    async copy()
+    {
+      this.obj.inputs.queryid.modValue('################');
+      this.obj.inputs.query.modValue(this.obj.run.values.query + 'Copy');
+      return this.ok();
+    }
+    
     async ok()
     {
       this.obj.run.okaction = 'mod';

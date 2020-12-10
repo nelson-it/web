@@ -97,7 +97,7 @@ class MneColor extends MneDbView
     {
       for ( b = 0; b < 4; b++)
       {
-        color = colorval[g] + colorval[r] + colorval[b];
+        var color = colorval[g] + colorval[r] + colorval[b];
         body.rows[b].cells[g].style.backgroundColor = "#" + color;
         body.rows[b].cells[g].colorval = color;
       }

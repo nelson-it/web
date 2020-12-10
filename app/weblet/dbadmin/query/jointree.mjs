@@ -260,6 +260,8 @@ class MneAdminJoinTree extends MneDbView
 
       frame.tables[values[i][res.rids.joindefid]] = ele.action.tabnum;
     }
+    
+    this.obj.tabnum = max_tabnum + 1;
   }
   
   async values_table(p)

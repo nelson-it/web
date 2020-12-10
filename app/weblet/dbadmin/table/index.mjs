@@ -150,7 +150,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
       var rtabid = this.obj.run.result.rtabid = {};
       ['column', 'position'].forEach( (item, index ) =>
       {
-        str += '<td>' + res.labels[res.rids[item]] + '</td>';
+        str += '<th>' + res.labels[res.rids[item]] + '</th>';
         rtabid[item] = index;
       });
 

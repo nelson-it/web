@@ -167,7 +167,7 @@ class MneAllgFileListTable extends MneDbTableView
           var p = {};
 
           retval = true;
-          await this.selectRow({force : true}, rows[i] )
+          await this.selectRow({force : true, type : 'ok'}, rows[i] )
           this.primarykey();
 
           if ( this.obj.outputs.data.getModify() ) p.dataInput = this.obj.outputs.data.getValue();

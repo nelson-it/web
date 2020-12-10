@@ -77,7 +77,8 @@ class MneMenu extends MneView
 
   async action(data, obj, evt )
   {
-    try { return await this['action_' + data.values[data.res.rids.action].action](data, evt.detail == 2 ) } catch(e) { console.error(data); e.message += "\nMenu::action: " +  data.values[0].action; throw e }
+    var actioncol = this.initpar.actioncol ?? data.res.rids.action;
+    try { return await this['action_' + data.values[actioncol].action](data, evt.detail == 2 ) } catch(e) { console.error(data); e.message += "\nMenu::action: " +  data.values[actioncol].action; throw e }
   }
   
   async query()

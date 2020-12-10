@@ -17,10 +17,12 @@ import MneMutex  from '/js/basic/mutex.mjs'
 import MneDbConfig from '/js/db/config.mjs'
 
 import MneGeometrie from './geometrie.mjs'
+import MneWeblet    from './weblet.mjs'
 
 MneTheme.loadCss('variable.css');
 MneTheme.loadCss('tag.css');
 MneTheme.loadCss('class.css');
+MneTheme.loadCss('db/table/month.css', MneWeblet.stylePath);
 
 class MneMain extends MneGeometrie
 {
@@ -35,16 +37,38 @@ class MneMain extends MneGeometrie
     
     getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
 
+    async check_values()
+    {
+      var observer = new MutationObserver( async (mut) =>
+      {
+        observer.disconnect();
+        var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
+        try { startweblet = JSON.parse(startweblet); } catch(e) { console.log(e); console.log(startweblet), startweblet = undefined; }
+
+        if ( startweblet )
+          this.obj.weblets.detail.show( startweblet).catch( (e) => { MneLog.exception('Main Startweblet', e); });
+        else if ( this.startweblet && MneConfig.startweblet )
+          this.obj.weblets.detail.show([ MneConfig.startweblet] ).catch( (e) => { MneLog.exception('Main Startweblet', e) });
+
+      });
+      
+      observer.observe(this.obj.weblets.menumain.frame, { attributes : true, attributeFilter : ['menuready']} );
+      return super.check_values();
+    }
+    
     async show( name = 'main')
     {
-
+      
+ 
       await MneDbConfig.read();
       MneTheme.setTheme(MneConfig.stylename)
       await super.show(name);
 
       window.main_weblet = this.obj.weblets.detail;
-      this.obj.newvalues = true;
-      await this.check_values();
+      //this.obj.newvalues = true;
+      //await this.check_values();
+      
+
     }
     
     async load()
@@ -70,15 +94,7 @@ class MneMain extends MneGeometrie
         unlock()
       });
       
-      var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
-      try { startweblet = JSON.parse(startweblet); } catch(e) { console.log(e); console.log(startweblet), startweblet = undefined; }
-
-      if ( startweblet )
-        await this.obj.weblets['detail'].show( startweblet).catch( (e) => { MneLog.exception('Main Startweblet', e); });
-      else if ( this.startweblet && MneConfig.startweblet )
-        await this.obj.weblets['detail'].show([ MneConfig.startweblet] ).catch( (e) => { MneLog.exception('Main Startweblet', e) });
         
-      this.obj.weblets['detail'].newvalues = true;
       
       this.frame.addEventListener('dragover', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })
       this.frame.addEventListener('drop', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })

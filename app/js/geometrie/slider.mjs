@@ -20,6 +20,7 @@ class MneSlider
     MneTheme.loadCss('slider.css');
     
     frame = ( typeof frame == 'string' ) ? document.getElementById(frame) : frame;
+    MneElement.mkClass(frame, 'slider' + typ);
     this.typ = ( typ ) ? typ : "move";
     
     this.num = MneSlider.slidercount++;
@@ -210,7 +211,7 @@ export class MneHSlider extends MneSlider
         if ( size != this.autosize )
         {
           this.autosize = size;
-          size = size + this.frame0.offsetWidth - this.container0.parentNode.offsetWidth;
+          size = size + this.frame0.offsetHeight - this.container0.parentNode.offsetHeight;
           this.frame0.style['height'] = size + "px";
           this.frame1.style['top'] = size + "px";
           window.setInterval(function() { self.checksize(); }, 500);

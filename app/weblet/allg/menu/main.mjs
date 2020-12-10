@@ -8,6 +8,7 @@
 //================================================================================
 'use strict';
 
+import MneConfig        from '/js/basic/config.mjs'
 import MneRequest       from '/js/basic/request.mjs'
 import MneRecursiveMenu from './recursive.mjs'
 
@@ -38,9 +39,8 @@ export class MneMainMenu extends MneRecursiveMenu
       query  : 'menu',
       cols   : "action,item,menuid,typ,pos",
       scols  : "pos",
-      wcol   : 'menuname,parentid',
-      wop    : "=,=",
-      wval   : this.name + ',',
+      wcol   : 'mymenu,menuname,parentid',
+      wop    : "=,=,=",
       distinct : 1,
       lastquery : "",
       sqlstart : 1,
@@ -54,24 +54,23 @@ export class MneMainMenu extends MneRecursiveMenu
   getReadParam(data)
   {
     var par = Object.assign({}, this.obj.readparam);
-    par.wval = this.initpar.name + "," + data.values[data.res.rids.menuid];
+    par.wval = 'true,' + this.initpar.name + "," + data.values[data.res.rids.menuid];
     
     return par;
   }
   
   async values()
   {
-    this.action_submenu( { menu : null, values : ['','',''], res : { rids : { action : 0, menuid : 2 }}, frame : this.obj.container.content})
+    await this.action_submenu( { menu : null, values : ['','',''], res : { rids : { action : 0, menuid : 2 }}, frame : this.obj.container.content});
+    this.frame.setAttribute('menuready', true);
   }
   
   async action_show(data)
   {
     var aid = data.res.rids.action;
     
-    window.sessionStorage.setItem(window.mne_application + ':startweblet', JSON.stringify(data.values[aid].parameter));
-    //window.history.pushState(data.values[aid].parameter, '');
-    
-    await this.obj.weblet.show(...data.values[aid].parameter);
+    window.sessionStorage.setItem(window.mne_application + ':startweblet', JSON.stringify(data.values[aid].parameter[0]));
+    await this.obj.weblet.show(data.values[aid].parameter[0]);
   }
   
   async action_request(data)

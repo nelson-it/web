@@ -66,7 +66,7 @@ class MneDbTableView extends MneDbTableBasic
   
   async add()
   {
-     var row = this.obj.tbody.insertRow(this.obj.lastselect);
+     var row = this.obj.tbody.insertRow(( this.obj.lastselect ?? -2) + 1);
      var str = '';
      var i;
      var res = this.select;
@@ -95,11 +95,15 @@ class MneDbTableView extends MneDbTableBasic
      await this.selectRow({type : 'add'}, row, {});
      
      for ( i=0; i<this.obj.cols.length; ++i)
+     {
        if ( this.obj.inputs[this.obj.cols[i]] ) { this.obj.inputs[this.obj.cols[i]].setAttribute('oldvalue', ''); }
-     
-     for ( i=0; i<this.obj.cols.length; ++i)
-       if ( this.obj.inputs[this.obj.cols[i]] ) { this.obj.inputs[this.obj.cols[i]].focus(); break; }
-     
+       if ( this.obj.outputs[this.obj.cols[i]] ) { this.obj.outputs[this.obj.cols[i]].setAttribute('oldvalue', ''); }
+     }
+
+     if ( ! this.initpar.nofocus )
+       for ( i=0; i<this.obj.cols.length; ++i)
+         if ( this.obj.inputs[this.obj.cols[i]] ) { this.obj.inputs[this.obj.cols[i]].focus(); break; }
+
      this.obj.run.okaction = 'add';
   }
 
@@ -132,7 +136,7 @@ class MneDbTableView extends MneDbTableBasic
         if ( rows[i].ismodify || rows[i].querySelector('.modifyok') != null ) 
         {
           retval = true;
-          await this.selectRow({force : true}, rows[i] )
+          await this.selectRow({force : true, type : 'ok'}, rows[i] )
           this.primarykey();
           await super.ok(param);
         }
@@ -178,7 +182,7 @@ class MneDbTableView extends MneDbTableBasic
     }
 
     await this.openpopup(this.initpar.detailweblet);
-    this.obj.weblets[this.initpar.detailweblet].config.depend.push(this);
+    this.initpar.popupparent.obj.weblets[this.initpar.detailweblet].config.depend.push(this);
     return false;
   }
 
@@ -214,9 +218,9 @@ class MneDbTableView extends MneDbTableBasic
         for ( j = 0; j<this.obj.run.result.ids.length; ++j)
           this.obj.run.values[this.obj.run.result.ids[j]] = sel.values[i][j];
 
-        await this.obj.weblets[name].values();
-        await this.obj.weblets[name].del({noask : true});
-        this.obj.weblets[name].dependweblet = undefined;
+        await this.initpar.popupparent.obj.weblets[name].values();
+        await this.initpar.popupparent.obj.weblets[name].del({noask : true});
+        this.initpar.popupparent.obj.weblets[name].dependweblet = undefined;
       }
       this.dependweblet = undefined;
     }

@@ -75,13 +75,17 @@ export class MneText
 
   static toInterval(value, format)
   {
+    if ( value == '' ) return '';
     var sign = "";
     
-    if ( value == '0' ) { if ( format != 'l' ) return "00:00";  return "00:00:00"; }
-    if ( value == '' ) return "";
+    value = parseInt(value);
+    if ( value == 0 ) { if ( format != 'l' ) return "00:00";  return "00:00:00"; }
     if ( value < 0 ) { sign = "-"; value = -value; }
     if ( format != 'l' )
-      return sign + MneText.addNull(parseInt(value/3600),2) + ":" + MneText.addNull(parseInt((value - (parseInt(( value / 3600))*3600))/60),2);
+    {
+      if ( value < 30 ) sign = '';
+      return sign + MneText.addNull(parseInt(value/3600),2) + ":" + MneText.addNull(parseInt(((value - (parseInt(( value / 3600))*3600)) + 30)/60),2);
+    }
     
     return sign + MneText.addNull(parseInt(value/3600),2) + ":" + MneText.addNull(parseInt((value - (parseInt(( value / 3600))*3600))/60),2) + ":" + MneText.addNull(value % 60,2);
 

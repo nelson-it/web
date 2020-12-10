@@ -26,14 +26,16 @@ class MneCalendarSelectDay extends MneDbView
         modurl : 'dummy',
         
         delbutton: [ 'add', 'del'],
-        selectlists : { month : 'monthname' }
+        selectlists : { month : 'monthname' },
+        
+        notitleframe : true
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
   }
 
   getViewPath() { return this.getView(import.meta.url) }
-  getCssPath()  { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
+  getCssPath()  { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url) + ',/db/table/basic.css'; }
 
   reset()
   {
@@ -54,7 +56,7 @@ class MneCalendarSelectDay extends MneDbView
     this.obj.inputs.month.setValue(month);
     this.obj.inputs.year.setValue(year);
     
-    str = '<table class="border padding"><thead><tr><td>' + MneText.getText('#mne_lang#So') + '</td><td>' + MneText.getText('#mne_lang#Mo') + '</td><td>' + MneText.getText('#mne_lang#Di') + '</td><td>' + MneText.getText('#mne_lang#Mi') + '</td><td>' + MneText.getText('#mne_lang#Do') + '</td><td>' + MneText.getText('#mne_lang#Fr') + '</td><td>' + MneText.getText('#mne_lang#Sa') + '</td></tr></thead>';
+    str = '<table class="border padding"><thead><tr><th>' + MneText.getText('#mne_lang#So') + '</th><th>' + MneText.getText('#mne_lang#Mo') + '</th><th>' + MneText.getText('#mne_lang#Di') + '</th><th>' + MneText.getText('#mne_lang#Mi') + '</th><th>' + MneText.getText('#mne_lang#Do') + '</th><th>' + MneText.getText('#mne_lang#Fr') + '</th><th>' + MneText.getText('#mne_lang#Sa') + '</th></tr></thead>';
     
     str += '<tbody><tr>'
     for ( i=0; i<m.getDay(); i++ )
@@ -75,6 +77,7 @@ class MneCalendarSelectDay extends MneDbView
         kc = k;
         this.obj.run.values.date = m.getTime() / 1000;
         this.obj.run.values.daytext = MneInput.format("" + (parseInt(m.getDay()) + 1), 'day'); 
+        this.obj.run.values.cdate =   MneText.addNull(m.getDate(),2) + MneText.addNull(m.getMonth() + 1,2) + MneText.addNull(m.getFullYear(),4);
       }
  
       m.setTime(m.getTime() + 86400000);
@@ -96,7 +99,15 @@ class MneCalendarSelectDay extends MneDbView
     str += '</tr></tbody></table>';
     
     this.obj.tables.month.innerHTML = str;
-    this.obj.tables.month.querySelectorAll('td.day').forEach((item) => { item.addEventListener('click',  (evt) => {  this.btnClick('day', {}, evt.target, evt); this.btnClick('ok', {}, this.obj.buttons.ok, evt) }) });
+    this.obj.tables.month.querySelectorAll('td.day').forEach((item) =>
+    {
+      item.addEventListener('click',  async (evt) => 
+      { 
+        await this.btnClick('day', {}, evt.target, evt);
+        if ( evt.detail == 2 )
+          this.btnClick('ok', {}, this.obj.buttons.ok, evt);
+      });
+    });
     MneElement.mkClass(this.obj.tables.month.querySelector('td#day' + day), 'active');
     
   }
@@ -121,13 +132,13 @@ class MneCalendarSelectDay extends MneDbView
   async ok()
   {
     var res = {
-        ids     : [ 'date', 'daytext' ],
-        rids    : { 'date' : 0 , 'daytext' : 1},
-        labels  : [ 'date', 'daytext' ],
-        typs    : [ '4', '2' ],
-        formats : [ '', '' ],
-        regexps : [ [ '', '', ''],  [ '', '', ''] ], 
-        values  : [[ this.obj.run.values.date, this.obj.run.values.daytext ]]
+        ids     : [ 'date', 'daytext', 'cdate' ],
+        rids    : { date : 0 , daytext : 1, cdate : 2},
+        labels  : [ 'date', 'daytext', 'cdate' ],
+        typs    : [ '4', '2', '1006' ],
+        formats : [ '', '', '' ],
+        regexps : [ [ '', '', ''],  [ '', '', ''],  [ '', '', ''] ], 
+        values  : [[ this.obj.run.values.date, this.obj.run.values.daytext, this.obj.run.values.cdate ]]
     }
 
     if ( this.initpar.selectok)
@@ -185,8 +196,10 @@ class MneCalendarSelectDay extends MneDbView
 
     this.obj.run.values.date = d.getTime() / 1000;
     this.obj.run.values.daytext = MneInput.format("" + (parseInt(d.getDay()) + 1), 'day'); 
-    
-    this.showMonth( this.obj.run.values.month, this.obj.run.values.year, this.obj.run.values.day);
+    this.obj.run.values.cdate =   MneText.addNull(d.getDate(),2) + MneText.addNull(d.getMonth() + 1,2) + MneText.addNull(d.getFullYear(),4);
+
+    this.obj.tables.month.querySelectorAll('td.active').forEach( ( item) => {MneElement.mkClass(item, 'active', false)});
+    MneElement.mkClass(this.obj.tables.month.querySelector('td#day' + this.obj.run.values.day), 'active');
   }
   
   async month ()
@@ -205,8 +218,11 @@ class MneCalendarSelectDay extends MneDbView
   
   async values()
   {
-    var date = new Date();
-    this.showMonth(date.getMonth(), date.getFullYear(), date.getDate());
+    if ( this.obj.run.values.year == undefined || this.obj.run.values.month == undefined || this.obj.run.values.day == undefined )
+    {
+      var date = new Date();
+      this.showMonth(date.getMonth(), date.getFullYear(), date.getDate());
+    }
   }
 }
 

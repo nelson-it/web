@@ -14,9 +14,9 @@ import MneLog        from '/js/basic/log.mjs'
 import MneElement from '/weblet/basic/element.mjs'
 import MneRequest    from '/js/basic/request.mjs'
 
-import MneDbTableBasicWeblet from './basic.mjs'
+import MneDbTableBasic from './basic.mjs'
 
-class MneDbTableViewWeblet extends MneDbTableBasicWeblet
+class MneDbTableFrame extends MneDbTableBasic
 {
   constructor(parent, frame, id, initpar = {}, config = {} )
   {
@@ -42,7 +42,7 @@ class MneDbTableViewWeblet extends MneDbTableBasicWeblet
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
   }
-
+  
   async check_values()
   {
     var mustcheck = false;
@@ -69,10 +69,24 @@ class MneDbTableViewWeblet extends MneDbTableBasicWeblet
     await super.rowclick(data, row, evt);
 
     if ( this.initpar.selectok)
-      await this.initpar.selectok(this.select);
+      await this.initpar.selectok(this.fillres([ row ]));
 
-    return this.parent.close();
+    await this.parent.close();
+    return false;
   }
+
+  arrow_down(data, obj, evt)
+  {
+    super.arrow_down(data, obj, evt);
+    return false;
+  }
+
+  arrow_up(data, obj, evt)
+  {
+    super.arrow_up(data, obj, evt);
+    return false;
+  }
+
 }
 
-export default MneDbTableViewWeblet
+export default MneDbTableFrame

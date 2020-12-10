@@ -39,6 +39,7 @@ class MneTable extends MneViewContainer
  
   async getTableWeblet(path, par = '')
   {
+    var self = this;
     let { default: TableWeblet } =  await MneRequest.import(path + '.mjs' + par);
     class MyTableWeblet extends TableWeblet
     {
@@ -73,49 +74,47 @@ class MneTable extends MneViewContainer
     this.obj.whereobserver = new MutationObserver( (mutations, server) => { if ( this.obj.container.weblet ) this.obj.container.weblet.style.top = whereframe.offsetHeight + 'px' });
     this.obj.whereobserver.observe(whereframe, { attributes: true, childList: true, characterData: true, subtree : true });
     
-    this.obj.webletsort = [];
     path = ( this.initpar.tableweblet[0] == '/' ) ? this.initpar.tableweblet : '/weblet/' + this.initpar.tableweblet;
-    initpar = Object.assign(Object.assign({}, this.initorig), { popup : undefined, notitleframe : true, selectlistids : this.initpar.selectlistids ?? this.id });
-    config = Object.assign(Object.assign({},  this.config ), { path : path, depend : [...this.config.depend], dependweblet : this } );
+    initpar = Object.assign(Object.assign(Object.assign({}, this.initorig), { popup : undefined, notitleframe : true, selectlistids : this.initpar.selectlistids ?? this.id }), this.initpar.tableinit ?? {} );
+    config = Object.assign(Object.assign({},  this.config ), { path : path, depend : this.config.depend, dependweblet : this } );
 
     var TableWeblet =  await this.getTableWeblet(path, ( reload ) ? '?date=' + Date.now() : '');
     this.obj.weblets.table = new TableWeblet(this, ( tableframe = this.frame.querySelector('#tablecontent')), 'table', initpar, config );
     this.obj.weblets.table.obj.run.newvalues = true;
-    this.config.depend.push(this.obj.weblets.table);
     await this.obj.weblets.table.load();
 
     if ( this.initpar.whereweblet != undefined )
     {
       path = ( this.initpar.whereweblet[0] == '/' ) ? this.initpar.whereweblet : this.getPath(import.meta.url) + '/where/' + this.initpar.whereweblet;
-      initpar = Object.assign(Object.assign({}, this.initorig), { popup : undefined, nowebletframe : true, selectlistids : this.initpar.selectlistids ?? this.id  });
+      initpar = Object.assign(Object.assign(Object.assign({}, this.initorig), { popup : undefined, nowebletframe : true, selectlistids : this.initpar.selectlistids ?? this.id  }), this.initpar.whereinit ?? {} );
       config = Object.assign(Object.assign({}, this.config ), { path : path, depend : [], dependweblet : this  });
 
       var WhereWeblet =  await this.getWhereWeblet(path, ( reload ) ? '?date=' + Date.now() : '');
       this.obj.weblets.where = new WhereWeblet(this, whereframe, 'where', initpar, config );
       this.obj.weblets.where.obj.run.newvalues = true;
-      this.config.depend.push(this.obj.weblets.where);
       await this.obj.weblets.where.load();
  
       this.obj.weblets.table.obj.where = this.obj.weblets.where;
       this.obj.weblets.where.obj.table = this.obj.weblets.table;
-      
-      this.obj.webletsort.push('where');
     }
 
     MneElement.mkClass(whereframe, 'tablewhere' );
     MneElement.mkClass(tableframe, 'tablecontent' );
-    this.obj.webletsort.push('table');
   }
   
-  async values()
+  async values(param)
   {
-    this.obj.run.values = ( this.config.dependweblet ) ? this.config.dependweblet.obj.run.values : {};
+    this.obj.run.origvalues = Object.assign({}, (( this.config.dependweblet ) ? this.config.dependweblet.obj.run.values : {}));
+    this.obj.run.values = Object.assign({}, this.obj.run.origvalues);
+    
+    if ( this.obj.weblets.where ) await this.obj.weblets.where.values(param);
+    return this.obj.weblets.table.values(param);
   }
   
   async query()
   {
     this.obj.lastquery = ! this.obj.lastquery;
-    this.obj.webletsort.forEach((item) => { this.obj.weblets[item].obj.lastquery = this.obj.lastquery });
+    Array.from(Object.keys(this.obj.weblets)).forEach((item) => { this.obj.weblets[item].obj.lastquery = this.obj.lastquery });
     
     MneElement.mkClass(this.obj.buttons.query, 'active', this.obj.lastquery );
   }

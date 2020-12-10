@@ -72,13 +72,15 @@ class MneRecursiveMenu extends MneMenu
   {
     var i;
     var r = Object.assign({}, res);
+    var actioncol = this.initpar.actioncol ?? res.rids.action;
+    
     r.values = [];
     
     for ( i=0; i<res.values.length; i++)
     {
       var div = document.createElement('div');
-      try { res.values[i][res.rids.action] = JSON.parse(res.values[i][res.rids.action]) } catch(e) { console.log(res.values[i][res.rids.action]); throw e }
-      div.className = this.initpar.classname + (( res.values[i][res.rids.action].action == 'submenu' || res.values[i][res.rids['typ']] != 'leaf' ) ? '' : 'leaf');
+      try { res.values[i][actioncol] = JSON.parse(res.values[i][actioncol]) } catch(e) { console.log(res.values[i][actioncol]); throw e }
+      div.className = this.initpar.classname + (( res.values[i][actioncol].action == 'submenu' || res.values[i][res.rids['typ']] != 'leaf' ) ? '' : 'leaf');
       div.innerHTML = '<div class="' + this.initpar.classname + 'link"></div><div class="' + this.initpar.classname + 'main"></div>'
       div.firstChild.innerHTML =  MneInput.format(res.values[i][1], res.typs[1], res.formats[1]);
       if ( res.rids.status && res.values[i][res.rids.status] ) MneElement.mkClass(div.firstChild, 'treelink' + res.values[i][res.rids.status] );
@@ -90,6 +92,12 @@ class MneRecursiveMenu extends MneMenu
   async values()
   {
     var i;
+    var actioncol = this.initpar.actioncol ?? 0;
+    var values = [{}, '', '', '', ''];
+    var rids = { action : 0, menuid : 2 };
+    
+    values[actioncol] = {};
+    
     for( i =0; i<this.initpar.showids.length - 1; i++)
     {
       var val;
@@ -97,17 +105,17 @@ class MneRecursiveMenu extends MneMenu
       if ( this.initpar.showalias && this.initpar.showalias[i] )
         val = this.initpar.showalias[i]();
       else
-        val = w.obj.run.values[showids[i]];
+        val = w.obj.run.values[this.initpar.showids[i]];
       this.obj.readparam.wval = val + ',';
     }
     
-    await this.action_submenu( { menu : null, values : [{}, '', '', '', ''], res : { rids : { action : 0, menuid : 2 }}, frame : this.obj.container.tree});
+    await this.action_submenu( { menu : null, values : values, res : { rids : rids }, frame : this.obj.container.tree});
   }
   
   async action_show(data)
   {
     var rids = data.res.rids;
-    var action = data.values[rids.action];
+    var action = data.values[this.initpar.actioncol ?? rids.action];
     
     if ( data.values[rids.typ] != 'leaf' )
       await this.action_submenu(data);

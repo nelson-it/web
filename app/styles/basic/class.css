@@ -27,6 +27,10 @@
 	-webkit-user-select: initial;
 }
 
+.matchno {
+	display: none;
+}
+
 .mne_bold {
 	font-weight: bold;
 }

@@ -1,23 +1,26 @@
+div.weblet.weblet-allg-etc-color #colorOutput {
+	box-shadow: var(--boxshadow);
+}
 
-.colorselecttable td {
+div.weblet.weblet-allg-etc-color .colorselecttable td {
     line-height: 0px;
     height: auto;
 }
 
-.colorselecttable div.colorshow {
+div.weblet.weblet-allg-etc-color .colorselecttable div.colorshow {
 	position: relative;
 	width: 2em;
 	height: 3ex;
 }
 
-.colorselecttable table {
+div.weblet.weblet-allg-etc-color .colorselecttable table {
 	margin-left: auto;
 }
 
-table.colorselect {
+div.weblet.weblet-allg-etc-color table.colorselect {
 	width: 100%;
 	margin: var(--dmargin);
 }
-table.colorselect td {
+div.weblet.weblet-allg-etc-color table.colorselect td {
 	padding: var(--dmargin);
 }

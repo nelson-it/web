@@ -142,7 +142,7 @@ class MneRepositoryTreeEdit extends MneView
 
     MneElement.mkClass(this.obj.container.weblet, 'repository-select', true, 'repository')
     
-    this.obj.files.name.clearModify();
+    this.obj.files.name.modClear();
     for ( i in this.obj.outputs ) this.obj.outputs[i].setValue('');
     for ( i in this.obj.inputs  ) this.obj.inputs[i].setValue('');
   }

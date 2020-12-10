@@ -5,9 +5,17 @@ div.slidermain {
     top : 0px;
     bottom : 0px;
 }
+div.slidermain .sliderauto {
+	position: absolute;
+	overflow: auto;
+}
 /* ================================================================== */
 /* VSlider                                                            */
 /* ================================================================== */
+div.sliderV > div.sliderframe0 > .slidercontentframe .sliderauto {
+	height: 100%;
+}
+
 div.sliderV > div.sliderframe0 {
     position: absolute;
     top: 0px;
@@ -87,6 +95,10 @@ div.sliderV.sliderinvis > div.sliderframe0 > div:last-child {
 /* ================================================================== */
 /* HSlider                                                            */
 /* ================================================================== */
+div.sliderH > div.sliderframe0 > .slidercontentframe .sliderauto {
+	width: 100%;
+}
+
 div.sliderH > div.sliderframe0 {
     position: absolute;
     top: 0px;

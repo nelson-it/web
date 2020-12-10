@@ -61,7 +61,7 @@ class MneDbTableSelect extends MneDbTableBasic
     
     showcols.forEach((item, index) =>
     {
-      if ( cols.indexOf(item) == -1 )
+      if ( cols.indexOf(item) == -1 && item[0] != '#')
       {
         cols.push(item);
         hide.push(item);      
@@ -77,7 +77,7 @@ class MneDbTableSelect extends MneDbTableBasic
   reset()
   {
     super.reset();
-    this.obj.enablebuttons.value.push('ok');
+    this.obj.enablebuttons.values.push('ok');
   }
 
   async ok()

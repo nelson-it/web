@@ -10,6 +10,10 @@
 
 class MneTheme
 {
+  static cssPath(href, root)
+  {
+  }
+  
   static loadCss(href, root)
   {
     if ( ! href ) return;
@@ -58,13 +62,42 @@ class MneTheme
     for ( i=0; i < s.length; i++)
       this.loadCss(s[i].href, s[i].root);
   };
+  
+  static createStyle()
+  {
+    var style;
+    
+    style = document.createElement("style");
+    style.type="text/css";
+    style.id='style' + MneTheme.stylenum++;
+    document.head.appendChild(style);
+    
+    return style;
+  }
+  
+  static insertRule(style, str, pos)
+  {
+    if ( typeof pos == 'undefined' ) pos = style.sheet.cssRules.length;
+    style.sheet.insertRule(str, pos);
+  }
 
+  static deleteRule(style, pos)
+  {
+    if ( pos < style.sheet.cssRules.length )
+      style.sheet.deleteRule(pos);
+  }
+
+  static deleteRules(style)
+  {
+    while ( style.sheet.cssRules.length != 0 )
+      MneTheme.deleteRule(style, 0);
+  }
 };
 
 MneTheme.theme = '/';
-MneTheme.stylesnum = new Array()
-MneTheme.styles = {}
-MneTheme.stylePath = "styles/basic"
-
+MneTheme.stylesnum = new Array();
+MneTheme.styles = {};
+MneTheme.stylePath = "styles/basic";
+MneTheme.stylenum = 0;
 
 export default MneTheme;

@@ -163,6 +163,7 @@ class MneDbConfig extends MneConfig
       MneInput.checktype.datetime     = { reg : new RegExp(datetime[MneConfig.locale.region] ?? datetime[MneConfig.locale.language]), help : MneText.sprintf(MneText.getText("Bitte ein Datum mit Zeit in der Form $1 eingeben"), MneText.toDateTime(new Date().getTime() / 1000 )) };
       MneInput.checktype.date         = { reg : new RegExp(    date[MneConfig.locale.region] ??     date[MneConfig.locale.language]), help : MneText.sprintf(MneText.getText("Bitte ein Datum in der Form $1 eingeben"), MneText.toDate(new Date().getTime() / 1000 )) };
       MneInput.checktype.time         = { reg : new RegExp('\\s*^$|\\s*(\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$'), help : MneText.sprintf(MneText.getText("Bitte ein Zeit in der Form $1 eingeben"), MneText.toTime(new Date().getTime() / 1000 )) };
+      MneInput.checktype.interval     = MneInput.checktype.time;
       MneInput.checktype.timenotempty = { reg : new RegExp('\\s*(\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$'), help : MneText.sprintf(MneText.getText("Bitte ein Zeit in der Form $1 eingeben"), MneText.toTime(new Date().getTime() / 1000 )) };
       
     }

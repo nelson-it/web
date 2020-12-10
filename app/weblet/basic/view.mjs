@@ -43,7 +43,7 @@ export class MneViewContainer extends MneWeblet
     
     super.reset();
     
-    Object.assign(this.obj, { title : {}, container : {}, htmlcontent : '' })
+    Object.assign(this.obj, { title : {}, container : {}, htmlcontent : this.initpar.htmlcontent ?? '' })
     this.obj.run.title =
     {
         add : ( this.initpar.title.add ) ? this.initpar.title.add : (( MneConfig.language == 'en' ) ? MneText.getText("#mne_lang#hinzufügen") + " " : '' ) + this.config.label + (( MneConfig.language != 'en' ) ? " " + MneText.getText("#mne_lang#hinzufügen") : '' ),
@@ -90,7 +90,6 @@ export class MneViewContainer extends MneWeblet
     var self = this;
 
     clickid = ( clickid ) ? clickid : id;
-    this.obj.buttons[id] = obj;
     if ( this.initpar.buttonlabel && this.initpar.buttonlabel[id]) obj.value = this.initpar.buttonlabel[id];
 
     obj.mne_data = data;
@@ -98,39 +97,48 @@ export class MneViewContainer extends MneWeblet
     obj.setAttribute('shortid', id);
   }
 
-  async findIO(frame)
+  getFindIOObject()
+  {
+    return Object.assign({}, { title : {}, container : {} });
+  }
+
+  async findIO(frame, saveobj )
   {
     var i;
     var obj;
     var p = [];
 
-    frame = ( frame ) ? frame : this.frame;
+    frame   = frame   ?? this.frame;
+    saveobj = saveobj ?? this.obj;
 
     obj = frame.querySelectorAll("[id$='Container']");
     for ( i = 0; i< obj.length; i++)
-      this.obj.container[obj[i].id.substr(0, obj[i].id.indexOf("Container"))] = obj[i];
+      saveobj.container[obj[i].id.substr(0, obj[i].id.indexOf("Container"))] = obj[i];
    
-    if ( this.obj.container.title )
+    if ( saveobj.container.title )
     {
-      this.obj.title.left       = this.obj.container.title.querySelector("#weblettitleleft");
+      saveobj.title.left       = saveobj.container.title.querySelector("#weblettitleleft");
 
-      this.obj.title.middle     = this.obj.container.title.querySelector("#weblettitlemiddle");
-      this.obj.title.right      = this.obj.container.title.querySelector("#weblettitleright");
+      saveobj.title.middle     = saveobj.container.title.querySelector("#weblettitlemiddle");
+      saveobj.title.right      = saveobj.container.title.querySelector("#weblettitleright");
 
       this.title = ( this.config.label ) ? this.config.label : this.id;
-      MneElement.mkClass(this.obj.container.title, 'notitle',      this.initpar.notitle == true );
-      MneElement.mkClass(this.obj.container.title, 'notitleframe', this.initpar.notitleframe == true );
+      MneElement.mkClass(saveobj.container.title, 'notitle',      this.initpar.notitle == true );
+      MneElement.mkClass(saveobj.container.title, 'notitleframe', this.initpar.notitleframe == true );
     }
 
-    this.obj.buttonframe = frame.querySelector('#buttonFrame');
+    saveobj.buttonframe = frame.querySelector('#buttonFrame');
     if ( this.initpar.nobuttonframe )
-      this.obj.container.button = undefined;
-    else if ( this.obj.buttonframe && this.obj.container.button )
-      ( this.obj.observer.buttonframe = new MutationObserver((mut) => { MneElement.mkClass(this.obj.buttonframe, 'scroll', this.obj.buttonframe.scrollHeight > this.obj.buttonframe.offsetHeight); })).observe(this.obj.container.button, { childList: true, subtree: true, attributes : true } );
+      saveobj.container.button = undefined;
+    else if ( saveobj.buttonframe && saveobj.container.button )
+      ( saveobj.observer.buttonframe = new MutationObserver((mut) => { MneElement.mkClass(saveobj.buttonframe, 'scroll', saveobj.buttonframe.scrollHeight > saveobj.buttonframe.offsetHeight); })).observe(saveobj.container.button, { childList: true, subtree: true, attributes : true } );
     
     obj = frame.querySelectorAll("[id$='Button']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.buttons[obj[i].id.substr(0, obj[i].id.indexOf("Button"))] = obj[i];
       p.push(this.mkButton(obj[i].id.substr(0, obj[i].id.indexOf("Button")), obj[i], {}));
+    }
     
     return Promise.all(p);
   }
@@ -161,9 +169,9 @@ export class MneViewContainer extends MneWeblet
       this.obj.container.content.innerHTML = data;
     }
     else
-      {
+    {
       this.obj.container.content.innerHTML = this.obj.htmlcontent;
-      }
+    }
 
     MneElement.mkElements(this.frame);
     return this.findIO();
@@ -230,11 +238,8 @@ export class MneView extends MneViewContainer
       self.obj.enablebuttons.buttons.push(item.id);
     });
 
-    this.obj.enablebuttons.value = this.obj.enablebuttons.buttons.slice(0);
+    this.obj.enablebuttons.values = this.obj.enablebuttons.buttons.slice(0);
     this.obj.enablebuttons.add = ['ok', 'cancel', 'add']
-
-    if ( this.initpar.delbutton )
-      this.delbutton(this.initpar.delbutton);
 
     Object.assign(this.obj.defvalues, this.initpar.defvalues );
   }
@@ -242,9 +247,10 @@ export class MneView extends MneViewContainer
   async mkLabel (id, obj )
   {
     var self = this;
-    this.obj.labels[id] = obj;
 
     MneElement.mkClass(obj, 'label');
+    MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-label');
+
     obj.setAttribute('shortid',id);
     obj.setValue = obj.modValue = function(text) { this.textContent = text };
   }
@@ -252,9 +258,9 @@ export class MneView extends MneViewContainer
   async mkOutput(id, obj )
   {
     var self = this;
-    this.obj.outputs[id] = obj;
 
     MneElement.mkClass(obj, 'output');
+    MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-output');
 
     obj.setAttribute('shortid',  id);
     obj.setAttribute('newvalue', '');
@@ -268,45 +274,31 @@ export class MneView extends MneViewContainer
       this.dpytype =  MneInput.getTyp( dpytype );
       this.regexp = self.initpar.regexp[id] ?? regexp; 
       this.format = format;
-      MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
+      MneElement.mkClass(obj.closest('.ele-wrapper'), "dpytype" + this.dpytype, true, "dpytype");
     };
 
     Object.defineProperty(obj, 'valuetyp', { get: function() { return this.dpytype; } });
 
-    obj.checkInput = ( ok = 'ok') =>
-    {
-      if ( obj.getAttribute('newvalue') == obj.getAttribute("oldvalue") ) ok = 'no';
-
-      var r = obj.textContent.match(obj.regexp.reg);
-      if ( ! r || r[0] != obj.textContent )
-      {
-        MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifywrong', true, 'modify');
-        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modifywrong', true, 'modify');
-      }
-      else
-      {
-        MneElement.mkClass(obj.closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
-        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
-      }
-    }
 
     obj.setValue = function(value)
     {
-      this.setAttribute("newvalue", value);
-      this.setAttribute("oldvalue", value);
-      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' ) 
-        this.innerText = MneInput.format(value, this.dpytype);
+      this.setAttribute("newvalue", value ?? '');
+      this.setAttribute("oldvalue", value ?? '');
+      if ( this.dpytype != 'bool' && this.format != 'xhtml' ) 
+      {
+        this.innerText = MneInput.format(value, this.dpytype, this.format);
+      }
       else
-        this.innerHTML = MneInput.format(value, this.dpytype);
+        this.innerHTML = MneInput.format(value, this.dpytype, this.format);
     }
 
     obj.modValue = function(value)
     {
-      this.setAttribute("newvalue", value);
-      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' ) 
-        this.innerText = MneInput.format(value, this.dpytype);
+      this.setAttribute("newvalue", value ?? '');
+      if ( this.dpytype != 'bool' && this.format != 'xhtml' ) 
+        this.innerText = MneInput.format(value, this.dpytype, this.format);
       else
-        this.innerHTML = MneInput.format(value, this.dpytype);
+        this.innerHTML = MneInput.format(value, this.dpytype, this.format);
     }
 
     obj.clearValue = function()
@@ -321,14 +313,13 @@ export class MneView extends MneViewContainer
 
     obj.getValue = function( error = true )
     {
-      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
+      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') || MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
       {
         if ( error ) 
         {
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.textContent : this.id ));
         }
-        return this.getAttribute('newvalue');
       }
 
       return MneInput.getValue(this.getAttribute('newvalue'), this.dpytype, true );
@@ -339,25 +330,41 @@ export class MneView extends MneViewContainer
       return ( this.getAttribute('newvalue') != this.getAttribute('oldvalue') );
     }
 
-    obj.observer = new MutationObserver((mut) => 
+    obj.checkInput = () =>
     {
-      var i;
-      for ( i =0; i<mut.length; ++i )
-        obj.checkInput( ( mut[i].type == "attributes" ) ? 'no' : 'ok');
+      var ok = ( obj.getAttribute('newvalue') != obj.getAttribute("oldvalue") ) ? 'ok' : 'no';
+      var ele;
       
-      if ( obj.dpytype == 'color')
+      var r = obj.textContent.match(obj.regexp.reg);
+      if ( ! r || r[0] != obj.textContent )
+      {
+        MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifywrong', true, 'modify');
+        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] && ( ele = this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper')) ) MneElement.mkClass(ele, 'modifywrong', true, 'modify');
+      }
+      else
+      {
+        MneElement.mkClass(obj.closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
+        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] &&  ( ele = this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper')) ) MneElement.mkClass(ele, 'modify' + ok, true, 'modify');
+      }
+      
+      if ( obj.dpytype == 'color' )
       {
         obj.style.background = '';
         obj.style.background = '#' + obj.getAttribute('newvalue');
       }
-    });
+    }
+    
+    obj.observer = new MutationObserver((mut) => { obj.checkInput() });
     obj.observer.observe(obj, { childList: true, subtree: true, attributes : true, attributeFilter: [ 'oldvalue',  'newvalue' ] } );
   }
   
   async mkLink(id, obj)
   {
     await this.mkLabel(id, obj);
+
     MneElement.mkClass(obj, 'link');
+    MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-link');
+
     obj.addEventListener('click', (evt) =>
     {
       if ( this.initpar.links && this.initpar.links[id] )
@@ -373,8 +380,6 @@ export class MneView extends MneViewContainer
   {
     var self = this;
 
-    this.obj.inputs[id] = obj;
-
     if ( obj.type != 'hidden' && obj.type != 'checkbox' )
     {
       obj.fieldnum = this.obj.fields.length;
@@ -385,6 +390,7 @@ export class MneView extends MneViewContainer
       obj.placeholder = id;
 
     MneElement.mkClass(obj, 'input');
+    MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-input');
 
     obj.setAttribute('shortid',  id);
     obj.setAttribute('newvalue', '');
@@ -400,14 +406,14 @@ export class MneView extends MneViewContainer
       if ( this.type == "checkbox" )
       {
         this.checked = MneInput.getValue(value, 'bool');
-        this.setAttribute('newvalue', this.checked);
-        this.setAttribute('oldvalue', this.checked);
+        this.setAttribute('newvalue', this.checked );
+        this.setAttribute('oldvalue', this.checked );
       }
       else
       {
         this.value = MneInput.format(value, this.dpytype, this.format );
-        this.setAttribute('newvalue', value);
-        this.setAttribute('oldvalue', value);
+        this.setAttribute('newvalue', value ?? '');
+        this.setAttribute('oldvalue', value ?? '');
       }
     }
 
@@ -421,7 +427,7 @@ export class MneView extends MneViewContainer
       else
       {
         this.value = MneInput.format(value, this.dpytype, this.format );
-        this.setAttribute('newvalue', value);
+        this.setAttribute('newvalue', value ?? '');
       }
     }
 
@@ -437,14 +443,13 @@ export class MneView extends MneViewContainer
 
     obj.getValue = function(error = true)
     {
-      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
+      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') || MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
       {
         if ( error ) 
         {
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.textContent : this.id ));
         }
-        return this.getAttribute('newvalue');
       }
 
       switch(this.type)
@@ -480,7 +485,7 @@ export class MneView extends MneViewContainer
       this.dpytype = MneInput.getTyp(dpytype);
       this.regexp = self.initpar.regexp[id] ?? (( MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] != undefined  && regexp.reg.toString() == MneInput.checktype.ok.reg.toString() ) ? MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] : regexp );
       this.format = format;
-      MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
+      MneElement.mkClass(obj.closest('.ele-wrapper'), "dpytype" + this.dpytype, true, "dpytype");
 
       if ( this.regexp.help )
       {
@@ -497,22 +502,23 @@ export class MneView extends MneViewContainer
       }
     };
 
-    obj.checkInput = ( ok = 'ok') =>
+    obj.checkInput = () =>
     {
-      if ( obj.getAttribute('newvalue') == obj.getAttribute('oldvalue') ) ok = 'no';
-
+      var ok = ( obj.getAttribute('newvalue') != obj.getAttribute('oldvalue') ) ? 'ok' : 'no';
+      var ele;
+      
       var text = obj.innerText.replace(/\n$/,'');
       var r = text.match(obj.regexp.reg);
       if ( ! r || r[0] != text )
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifywrong', true, 'modify');
-        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modifywrong', true, 'modify');
+        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] && ( ele = this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper')) ) MneElement.mkClass(ele, 'modifywrong', true, 'modify');
 
       }
       else
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
-        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modify' + 'ok', true, 'modify');
+        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] && ( ele = this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper')) ) MneElement.mkClass(ele, 'modify' + ok, true, 'modify');
 
       }
     }
@@ -521,25 +527,25 @@ export class MneView extends MneViewContainer
     {
       var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
       if ( text[text.length - 1] == '\n') text = text + '\n';
-      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' )
+      if ( this.dpytype != 'bool' && this.format != 'xhtml' )
         this.innerText = text;
       else
         this.innerHTML = text;
 
-      this.setAttribute("newvalue", value);
-      this.setAttribute("oldvalue", value);
+      this.setAttribute("newvalue", value ?? '');
+      this.setAttribute("oldvalue", value ?? '');
     }
 
     obj.modValue = function(value)
     {
       var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
       if ( text[text.length - 1] == '\n') text = text + '\n';
-      if ( this.dpytype != 'bool' && this.dpytype != 'xhtml' )
+      if ( this.dpytype != 'bool' && this.format != 'xhtml' )
         this.innerText = text;
       else
         this.innerHTML = text;
 
-      this.setAttribute("newvalue", value);
+      this.setAttribute("newvalue", value ?? '');
     }
 
     obj.clearValue = function()
@@ -554,14 +560,13 @@ export class MneView extends MneViewContainer
 
     obj.getValue = function( error = true )
     {
-      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
+      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') || MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
       {
         if ( error ) 
         {
           var l = self.obj.labels[this.getAttribute('shortid')];
           throw new Error(MneText.sprintf(MneText.getText('#mne_lang#Bitte einen Wert für \<$1\> angeben'), ( l ) ? l.innerText : this.id ));
         }
-        return this.getAttribute('newvalue').replace(/\u00A0/g,' ');
       }
       return MneInput.getValue(this.getAttribute('newvalue').replace(/\u00A0/g,' '), this.dpytype, true );
     }
@@ -645,7 +650,7 @@ export class MneView extends MneViewContainer
     {
       this.dpytype  = MneInput.getTyp(dpytype);
       this.format   = format;
-      MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
+      MneElement.mkClass(obj.closest('.ele-wrapper'), "dpytype" + this.dpytype, true, "dpytype");
 
       this.regexp = self.initpar.regexp[id] ?? (( MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] != undefined  && regexp.reg.toString() == MneInput.checktype.ok.reg.toString() ) ? MneInput.checktype[MneInput.getRegexptyp(this.dpytype)] : regexp );
       if ( this.regexp.help  && this.type != 'checkbox' )
@@ -663,8 +668,10 @@ export class MneView extends MneViewContainer
       }
     };
 
-    obj.checkInput = ( ok = 'ok') =>
+    obj.checkInput = () =>
     {
+      var ele;
+      
       if ( obj.type == 'checkbox' )
         obj.setAttribute('newvalue', obj.checked );
       
@@ -674,18 +681,18 @@ export class MneView extends MneViewContainer
         obj.style.background = '#' + obj.getAttribute('newvalue');
       }
 
-      var ok = (( obj.getAttribute('newvalue') == obj.getAttribute('oldvalue') ) ? 'no' : ok );
+      var ok = ( obj.getAttribute('newvalue') == obj.getAttribute('oldvalue') ) ? 'no' : 'ok';
       var r = obj.value.match(obj.regexp.reg);
       if ( obj.type != 'checkbox'  && (! r || r[0] != obj.value) )
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifywrong', true, 'modify');
-        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modifywrong', true, 'modify');
+        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] && ( ele = this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper')) ) MneElement.mkClass(ele, 'modifywrong', true, 'modify');
         if ( this.initpar.checklabel && this.initpar.checklabel[obj.getAttribute('shortid')]) MneElement.mkClass(this.obj.labels[this.initpar.checklabel[obj.getAttribute('shortid')]],'modifywrong', true, 'modify');
       }
       else
       {
         MneElement.mkClass(obj.closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
-        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] ) MneElement.mkClass(this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper'), 'modify' + ok, true, 'modify');
+        if ( obj.dpytype == 'color' && this.obj.labels[obj.getAttribute('shortid')] && ( ele = this.obj.labels[obj.getAttribute('shortid')].closest('.ele-wrapper')) ) MneElement.mkClass(ele, 'modify' + ok, true, 'modify');
         if ( this.initpar.checklabel && this.initpar.checklabel[obj.getAttribute('shortid')]) MneElement.mkClass(this.obj.labels[this.initpar.checklabel[obj.getAttribute('shortid')]],'modify' + ok, true, 'modify');
       }
       
@@ -705,13 +712,27 @@ export class MneView extends MneViewContainer
     {
       this.dpytype  = dpytype;
       this.format   = format;
-      MneElement.mkClass(obj, "dpytype" + MneInput.getTyp(this.dpytype), true, "dpytype");
+      MneElement.mkClass(obj.closest('.ele-wrapper'), "dpytype" + MneInput.getTyp(this.dpytype), true, "dpytype");
 
       this.regexp   = self.initpar.regexp[id] ?? regexp;
       this.oldvalue = this.value
     };
+    
+    obj.setValue = function(value)
+    {
+        this.setAttribute('newvalue', value ?? '');
+        this.setAttribute('oldvalue', value ?? '');
+        this.value = this.getAttribute('newvalue');
+    }
 
-    obj.checkMutation = function(mut)
+    obj.modValue = function(value)
+    {
+        this.setAttribute('newvalue', value ?? '');
+        this.value = this.getAttribute('newvalue');
+    }
+
+
+    obj.checkInput = function()
     {
       var i;
       var r;
@@ -724,7 +745,7 @@ export class MneView extends MneViewContainer
         MneElement.mkClass(this.closest('.ele-wrapper'), 'modifywrong', true, 'modify')
     }
 
-    obj.observer = new MutationObserver((mut) => { obj.checkMutation(mut) });
+    obj.observer = new MutationObserver(() => { obj.checkInput() });
     obj.observer.observe(obj, { childList: true, subtree: true, attributes : true, attributeFilter: [ 'newvalue', 'oldvalue' ]} );
 
     obj.addEventListener('change', function() { this.setAttribute('newvalue', this.value); })
@@ -732,14 +753,13 @@ export class MneView extends MneViewContainer
 
   async mkFile (id, obj )
   {
-    this.obj.files[id] = obj;
     obj.addEventListener('change', () => { MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifyok', true, 'modify') });
     obj.getModify = function()
     {
       return ( obj.closest('.ele-wrapper').className.indexOf('modifyok') != -1 );
     }
 
-    obj.clearModify = function()
+    obj.modClear = function()
     {
       MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifyok', false, 'modify');
       obj.value = '';
@@ -751,9 +771,8 @@ export class MneView extends MneViewContainer
   {
     var self = this;
 
-    this.obj.inputs[id] = obj;
-
     MneElement.mkClass(obj, 'editor');
+    MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-editor');
 
     obj.setAttribute('aria-multiline',  'true');
     obj.setAttribute('shortid',  id);
@@ -770,7 +789,7 @@ export class MneView extends MneViewContainer
     {
       this.dpytype  = dpytype;
       this.format   = format;
-      MneElement.mkClass(obj, "dpytype" + this.dpytype, true, "dpytype");
+      MneElement.mkClass(obj.closest('.ele-wrapper'), "dpytype" + this.dpytype, true, "dpytype");
 
       this.regexp   = self.initpar.regexp[id] ?? regexp;
     };
@@ -800,7 +819,7 @@ export class MneView extends MneViewContainer
 
     obj.getValue = function(error = true)
     {
-      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
+      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') || MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
       {
         if ( error ) 
         {
@@ -824,7 +843,7 @@ export class MneView extends MneViewContainer
 
   async mkSlider(id, obj )
   {
-    this.obj.sliders[id] = obj;
+
     obj.innerHTML = '<div class="slider" id="slider' + id + '"></div>';
     MneElement.mkClass(obj, 'slidervalue ele-wrapper');
     
@@ -925,7 +944,7 @@ export class MneView extends MneViewContainer
 
     obj.getValue = function(error = true)
     {
-      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
+      if ( MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') || MneElement.hasClass(this.closest('.ele-wrapper'), 'modifywrong') )
       {
         if ( error ) 
         {
@@ -943,11 +962,10 @@ export class MneView extends MneViewContainer
       return ( this.getAttribute('newvalue') != this.getAttribute('oldvalue') );
     }
     
-    obj.checkInput = function( ok = 'ok')
+    obj.checkInput = function()
     {
-        MneElement.mkClass(this.closest('.ele-wrapper'), 'modify' + (( this.getAttribute('newvalue') == this.getAttribute('oldvalue') ) ? 'no' : ok ), true, 'modify');
+        MneElement.mkClass(this.closest('.ele-wrapper'), 'modify' + (( this.getAttribute('newvalue') == this.getAttribute('oldvalue') ) ? 'no' : 'ok' ), true, 'modify');
         slider.style.left = this.getAttribute('newvalue') + "px";
-
     }
 
     obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
@@ -956,59 +974,88 @@ export class MneView extends MneViewContainer
 
   async mkCheckbox(id, obj)
   {
-      this.obj.checkboxs[id] = obj;
       obj.nextSibling.addEventListener('click', (evt) =>
       {
          this.btnClick(id, {}, obj, evt);
       });
   }
   
-  async findIO(frame)
+  getFindIOObject()
+  {
+    return Object.assign(super.getFindIOObject(), { labels : {}, fields : [], inputs  : {}, outputs : {},  tables : {},  sliders : {}, checkboxs : {},  files : {} });
+  }
+
+  async findIO(frame, saveobj)
   {
     var i;
     var obj;
     var self = this;
     var p = [];
 
-    frame = ( frame ) ? frame : this.frame;
+    frame   = frame   ?? this.frame;
+    saveobj = saveobj ?? this.obj;
 
-    p.push(super.findIO(frame));
+    p.push(super.findIO(frame, saveobj));
 
     obj = frame.querySelectorAll("[id$='Label']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.labels[obj[i].id.substr(0, obj[i].id.indexOf("Label"))] = obj[i];
       p.push(this.mkLabel(obj[i].id.substr(0, obj[i].id.indexOf("Label")), obj[i]));
+    }
 
     obj = frame.querySelectorAll("[id$='Link']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.labels[obj[i].id.substr(0, obj[i].id.indexOf("Link"))] = obj[i];
       p.push(this.mkLink(obj[i].id.substr(0, obj[i].id.indexOf("Link")), obj[i], {} ));
-
+    }
+    
     obj = frame.querySelectorAll("[id$='Output']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.outputs[obj[i].id.substr(0, obj[i].id.indexOf("Output"))] = obj[i];
       p.push(this.mkOutput(obj[i].id.substr(0, obj[i].id.indexOf("Output")), obj[i]));
-
+    }
+    
     obj = frame.querySelectorAll("[id$='Input']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.inputs[obj[i].id.substr(0, obj[i].id.indexOf("Input"))] = obj[i];
       p.push(this.mkInput(obj[i].id.substr(0, obj[i].id.indexOf("Input")), obj[i]));
+    }
     
     obj = frame.querySelectorAll("[id$='File']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.files[obj[i].id.substr(0, obj[i].id.indexOf("File"))] = obj[i];
       p.push(this.mkFile(obj[i].id.substr(0, obj[i].id.indexOf("File")), obj[i]));
-
+    }
+    
     obj = frame.querySelectorAll("[id$='Editor']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.inputs[obj[i].id.substr(0, obj[i].id.indexOf("Editor"))] = obj[i];
       p.push(this.mkEditor(obj[i].id.substr(0, obj[i].id.indexOf("Editor")), obj[i]));
-
+    }
+    
     obj = frame.querySelectorAll("[id$='Slider']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.sliders[obj[i].id.substr(0, obj[i].id.indexOf("Slider"))] = obj[i];
       p.push(this.mkSlider(obj[i].id.substr(0, obj[i].id.indexOf("Slider")), obj[i]));
-
+    }
+    
     obj = frame.querySelectorAll("[id$='Checkbox']");
     for ( i = 0; i< obj.length; i++)
+    {
+      saveobj.checkboxs[obj[i].id.substr(0, obj[i].id.indexOf("Checkbox"))] = obj[i];
       p.push(this.mkCheckbox(obj[i].id.substr(0, obj[i].id.indexOf("Checkbox")), obj[i]));
-
+    }
+    
     obj = frame.querySelectorAll("[id$='Table']");
     for ( i = 0; i< obj.length; i++)
-      this.obj.tables[obj[i].id.substr(0, obj[i].id.indexOf("Table"))] = obj[i];
+      saveobj.tables[obj[i].id.substr(0, obj[i].id.indexOf("Table"))] = obj[i];
 
     await Promise.all(p);
   }
@@ -1102,6 +1149,7 @@ export class MneView extends MneViewContainer
 
         this.obj.buttons[id] = ele;
         ele.id = id + "Button";
+        this.obj.buttons[id] = ele;
         this.mkButton(id, ele )
         ele.value = value;
         ele.disabled = b[i].disable;
@@ -1184,6 +1232,10 @@ export class MneView extends MneViewContainer
         MneElement.mkClass(this.obj.container.weblet, 'modify', false, 'modify');
     });
     this.obj.observer.content.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
+    
+    if ( this.initpar.delbutton )
+      this.delbutton(this.initpar.delbutton);
+
     await this.loadbutton();
   }
   
@@ -1227,6 +1279,8 @@ export class MneView extends MneViewContainer
     if ( evt.target.fieldnum != undefined )
     {
       var field = evt.target.fieldnum + 1;
+      var event = new CustomEvent("tabblur", { detail : { weblet : this }});
+      document.activeElement.dispatchEvent(event);
       this.obj.fields[ ( field < this.obj.fields.length ) ? field : 0].focus();
     }
 
@@ -1237,14 +1291,13 @@ export class MneView extends MneViewContainer
   {
   }
   
-  async print( data )
+  getPrintParam(data)
   {
     var i,n;
     var r = ( data.report) ?  data.report : this.initpar.report;
     var t = ( this.initpar.reptyp == undefined ) ? 'pdf' : this.initpar.reptyp;
     var param = ( data.param ) ? data.param : {};
-    var w;
-
+ 
     for ( n = 0; 1; n++ )
       if ( param["macro" + n] == undefined ) break;
 
@@ -1271,13 +1324,20 @@ export class MneView extends MneViewContainer
     }
 
     this.obj.printparam = { url : 'report/' + r + "." + t, param : param };
+  }
+  
+  async print( data )
+  {
+    var w;
 
+    
     if ( ! ( w = this.obj.weblets['show'] ) )
     {
       var self = this;
       w = await this.createpopup('show');
       w.getData = async function()
       {
+        self.getPrintParam(data);
         var res = await MneRequest.fetch(self.obj.printparam.url, self.obj.printparam.param, true);
         return await res.blob();
       }

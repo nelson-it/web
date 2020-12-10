@@ -51,7 +51,7 @@ class MneAdminQueryWhereTable extends MneDbTableBasic
     {
       var ele = evt.target;
       while ( ele != null && ele.tagName != 'TR' ) ele = ele.parentNode;
-      if ( ele != null ) this.selectRow({force : true }, ele);
+      if ( ele != null ) this.selectRow({force : true, type : 'drop' }, ele);
       else return;
     }
 
@@ -113,7 +113,7 @@ class MneAdminQueryWhereTable extends MneDbTableBasic
       r1.parentNode.removeChild(r1);
       r2.parentNode.insertBefore(r1,r2);
       
-      this.selectRow({force : true }, r1);
+      this.selectRow({force : true, type : 'up' }, r1);
       
       MneElement.mkClass(this.obj.buttons.up,'modifyok');
     }
@@ -130,7 +130,7 @@ class MneAdminQueryWhereTable extends MneDbTableBasic
       r1.parentNode.insertBefore(r2,r1);
 
       this.obj.act_row = undefined;
-      this.selectRow({force : true }, r1);
+      this.selectRow({force : true, type : 'down' }, r1);
       
       MneElement.mkClass(this.obj.buttons.down,'modifyok');
     }

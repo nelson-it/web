@@ -47,6 +47,7 @@ export class MneRegister extends MneWeblet
     {
       var i;
       var bf;
+      var ele;
       var self = this;
 
       await super.load();
@@ -64,8 +65,9 @@ export class MneRegister extends MneWeblet
       }
 
       bf = this.obj.container.menu
-      bf.className = 'registermain';
+      MneElement.mkClass(bf, 'registermain');
 
+      var str = '';
       for ( i = 0; i<this.config.register.length; i++)
       {
         this.obj.webletdata[this.config.register[i]['id']] = this.config.register[i];
@@ -76,21 +78,11 @@ export class MneRegister extends MneWeblet
           this.obj.loaddirect = this.config.register[i].id
         }
 
-        bf.appendChild(document.createElement('div'));
-        bf.lastChild.className = 'register registerlink'
-          bf.lastChild.innerText = this.config.register[i]['label'];
-        bf.lastChild.id = this.config.register[i]['id'];
-
-        bf.lastChild.addEventListener('click', function(evt) { self.btnClick('register', this.id); });
+        str += '<div id="' + this.config.register[i]['id'] + '" class="register registerlink">'  + this.config.register[i]['label'] + '</div>';
       }
-
-      var mwidth = 10;
-      for ( i = 0; i<bf.children.length; ++i)
-        mwidth = ( bf.children[i].offsetWidth > mwidth ) ? bf.children[i].offsetWidth : mwidth;
-
-        for ( i = 0; i<bf.children.length; ++i)
-          bf.children[i].style.minWidth = mwidth + "px";
-
+      
+      this.obj.container.menu.innerHTML = str;
+      this.obj.container.menu.querySelectorAll('.registerlink').forEach( ( item ) => { item.addEventListener('click', function(evt) { self.btnClick('register', this.id); }); });
     }
 
     async register( id )
@@ -106,14 +98,14 @@ export class MneRegister extends MneWeblet
           var weblet;
           var config;
           
-          config = Object.assign({ dependweblet : this.config.dependweblet, dependid : [] }, data);
+          config = Object.assign( (data.initpar.notdepend ) ? { dependid : [] } : { dependweblet : this.config.dependweblet, dependid : [] }, data);
           config.depend.forEach((item, index) => { config.dependid[index] = item; config.depend[index] = ( composeparent.obj.weblets[( item[0] != '#') ? item : item.substring(1)] ) ?? { composeparent : composeparent, depend : ( item[0] != '#') ? item : item.substring(1) } });
           if ( composeparent.obj.run.depend && composeparent.obj.run.depend[id] ) composeparent.obj.run.depend[id].split(',').forEach( ( item ) => { config.depend.push( { composeparent : composeparent.config.composeparent, depend : ( item[0] != '#') ? item : item.substring(1) }) });
 
           let { default: Weblet } =  await MneRequest.import(data['path'] + '.mjs');
           weblet = this.config.composeparent.obj.weblets[id] = new Weblet(this.config.composeparent, document.createElement('div'), id, data['initpar'], config );
           
-          if ( this.config.dependweblet ) this.config.dependweblet.config.depend.push(weblet);
+          if ( this.config.dependweblet && ! data.initpar.notdepend ) this.config.dependweblet.config.depend.push(weblet);
           
           await weblet.load();
           weblet.obj.run.newvalues = true;

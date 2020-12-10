@@ -54,6 +54,8 @@ class MneRteBasic
   
   moveCursor(ele, begin = false )
   {
+    if ( ! ele ) return;
+    
     var r = document.createRange();
     r.selectNodeContents(ele);
     r.collapse(begin);

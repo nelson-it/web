@@ -38,16 +38,16 @@ thead td.active {
 	background: linear-gradient(to bottom, var(--background), var(--darkcolor1));
 }
 
-table.border, table.border > tr > td, table.border > thead > tr > td, table.border > tbody > tr > td {
+table.border, table.border > tr > td, table.border > thead > tr > th, table.border > tbody > tr > td {
     border: var(--border);
 	border-collapse: collapse;
 }
 
-table.padding > tr > td, table.padding > thead > tr > td, table.padding > tbody > tr > td {
+table.padding > tr > td, table.padding > thead > tr > th, table.padding > tbody > tr > td {
     padding: var(--margin);
 }
 
-table.relative > tr > td, table.relative > thead > tr > td, table.relative > tbody > tr > td {
+table.relative > tr > td, table.relative > thead > tr > th, table.relative > tbody > tr > td {
     position: relative;
 }
 
@@ -56,25 +56,29 @@ table.top > tbody > tr > td {
     line-height: var(--tablineheight_normal);
 }
 
-td {
+td,th {
 	white-space: nowrap;
 	empty-cells: show;
 	height: var(--tablineheight_normal);
 }
 
-td.center {
-	text-align: center;
-}
-
-td.left {
+th {
 	text-align: left;
 }
 
-td.right {
+tr.center td, tr.center th, td.center, th.center {
+	text-align: center;
+}
+
+tr.left td, tr.left th, td.left, th.left {
+	text-align: left;
+}
+
+tr.right td, tr.right th, td.right, th.right {
 	text-align: right;
 }
 
-td.justify {
+tr.justify td, tr.justify th, td.justify, th.justify {
 	text-align: justify;
 }
 
@@ -90,6 +94,14 @@ tr.enable0 td {
 
 tr.enable1  td {
 	color: var(--table_enablecolor1)
+}
+
+tr.ok0  td {
+	color: var(--table_enablecolor1)
+}
+
+tr.ok1 td {
+	color: var(--table_enablecolor0)
 }
 
 tr.sum1 {
@@ -129,19 +141,19 @@ tbody td.selectlist {
     border-right-width: 3px;
 }
 
-td.padding {
+td.padding, th.padding {
 	padding: var(--margin);
 }
-td.paddingb {
+td.paddingb, th.paddingb {
 	padding-bottom: var(--margin);
 }
-td.paddingt {
+td.paddingt, th.paddingt {
 	padding-top: var(--margin);
 }
-td.paddingl {
+td.paddingl, th.paddingl {
 	padding-left: var(--margin);
 }
-td.paddingr {
+td.paddingr, th.paddingr {
 	padding-right: var(--margin);
 }
 
@@ -154,23 +166,23 @@ td.buttonfirst {
 td.buttonlast {
 }
 
-table.fixheight td {
+table.fixheight td, table.fixheight th {
     height: 20px;
     padding-top: 0px;
     padding-bottom : 0px;
 }
 
-td.height1, td.height1 :first-child {
+td.height1, td.height1:first-child {
     height : 16px;
     overflow : hidden;
 }
 
-td.height2, td.height2 :first-child {
+td.height2, td.height2:first-child {
     height : 16px;
     overflow : hidden;
 }
 
-td.height3, td.height3 :first-child {
+td.height3, td.height3:first-child {
     height : 16px;
     overflow : hidden;
 }
@@ -179,75 +191,3 @@ div.weblet .inputsingle table {
 	line-height: initial;
 	margin-top: var(--dmargin);
 }
-
-
-table.mneajaxmonthtable > thead > tr > td, table.mneajaxmonthtable > tbody > tr > td
-{
-    padding: 0px;
-	height: 20px;
-}
-
-table.mneajaxmonthtable.description > tbody > tr > td {
-	padding-left: var(--margin);
-	padding-right: var(--margin);
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td {
-	width : var(--mneajaxmonthtable_monthtdwidth);
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td.day0 {
-	width : var(--mneajaxmonthtable_so_color);
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td.day6 {
-	width : var(--mneajaxmonthtable_sa_color);
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.timepast {
-    background-color: var(--lightbordercolor);
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.slot {
-    position: relative;
-    height: 100%;
-    width: var(--mneajaxmonthtable_monthtdwidth);
-
-    font-size: var(--font_small);
-    overflow : hidden;
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.slotelement {
-    width: 25%;
-    height: 100%;
-    position: absolute;
-    top: 0px;
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.slotelement0 {
-    left: 0%;
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.slotelement1 {
-    left: 25%;
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.slotelement2 {
-    left: 50%;
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.slotelement3 {
-    left: 75%;
-}
-
-table.mneajaxmonthtable.month > tbody > tr > td div.resize {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    left: 66%;
-
-    cursor: e-resize;
-}
-
-

@@ -1,0 +1,19 @@
+div.weblet.weblet-dbadmin-user-group #contentContainer {
+	flex-direction: row;
+}
+
+div.weblet.weblet-dbadmin-user-group #contentContainer > div {
+	flex-grow: 1
+}
+
+div.weblet.weblet-dbadmin-user-group #contentContainer > div.buttons {
+	flex-grow: 0
+}
+
+div.weblet.weblet-dbadmin-user-group #contentContainer div#group table {
+	margin-left: auto
+}
+
+div.weblet.weblet-dbadmin-user-group #contentContainer div#member table {
+	margin-right: auto
+}

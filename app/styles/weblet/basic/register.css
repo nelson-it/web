@@ -3,12 +3,15 @@
 /* ========================================================================== */
 div.registermain {
 	border-bottom: var(--border);
-	padding-left: var(--qmargin);
-	padding-top: var(--dmargin);
+	padding: var(--dmargin);
+	
+	display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(100px, max-content));
 }
 
 div.registermain div.register {
 	display: inline-block;
+	white-space: nowrap;
 }
 body[aria-view-mode="mobile"] div.registermain {
 	border-bottom-width: var(--qmargin);

@@ -115,7 +115,7 @@ class MneDbAdminQueryColumnTable extends MneDbTableBasic
       r1.parentNode.removeChild(r1);
       r2.parentNode.insertBefore(r1,r2);
       
-      this.selectRow({force : true }, r1);
+      this.selectRow({force : true, type : 'up' }, r1);
 
       MneElement.mkClass(this.obj.buttons.up,'modifyok');
     }
@@ -132,7 +132,7 @@ class MneDbAdminQueryColumnTable extends MneDbTableBasic
       r1.parentNode.insertBefore(r2,r1);
 
       this.obj.act_row = undefined;
-      this.selectRow({force : true }, r1);
+      this.selectRow({force : true, type : 'down'}, r1);
 
       MneElement.mkClass(this.obj.buttons.down,'modifyok');
     }

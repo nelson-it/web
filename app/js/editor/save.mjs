@@ -53,7 +53,7 @@ class MneRteSave extends MneRtePlugin
                                     .replace(/class="([^"]*)"/g, (match, p1) => { return 'class="' + p1.trim() + '"'; })
                                     .replace(/<br[^>]*>/g, '');
     else
-      return this.save_xml("", this.editarea);
+      return ( this.editarea.innerText != '' ) ? this.save_xml("", this.editarea) : '';
   }
 
   undo_add(sel)

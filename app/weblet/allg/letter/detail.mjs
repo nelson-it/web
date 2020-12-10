@@ -47,7 +47,7 @@ class MneLetterDetail extends MneDbView
     
     this.obj.mkbuttons.push( { id: 'send', value : MneText.getText("#mne_lang#Versenden#")});
     this.obj.enablebuttons.buttons.push('send');
-    this.obj.enablebuttons.value.push('send');
+    this.obj.enablebuttons.values.push('send');
 
 
   }
