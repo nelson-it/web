@@ -69,11 +69,15 @@ class MneAdminQueryWhere extends MneTable
         {
             if ( res.ids[i] == 'leftvalue' || res.ids[i] ==  'rightvalue' )
               val = checkval(val);
+            if ( res.ids[i] == 'leftbrace' || res.ids[i] ==  'rightbrace' )
+              val = ( val == true ) ? '1' : '';
             
             p['w' + res.ids[i] + "Input" + index] = val;
           
         });
       });
+      
+      console.log(p);
       return p;
     }
     

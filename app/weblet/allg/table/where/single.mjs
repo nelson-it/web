@@ -39,6 +39,7 @@ class MneWhereSelectWeblet extends MneView
       var selval = this.initpar.selval.split(':');
       this.obj.selpos = parseInt(selval[0]) + 1;
       this.obj.selval = selval[1];
+      this.obj.selop  = selval[2];
     }
   }
   
@@ -92,17 +93,17 @@ class MneWhereSelectWeblet extends MneView
       {
         case '1':
           self.obj.inputs['wop'].innerHTML = '<option value="true">' + MneText.getText("#mne_lang#wahr") + '</option><option value="false">' + MneText.getText("#mne_lang#falsch") + '</option>';
-          self.obj.inputs['wop'].setValue(( self.initpar.selop ) ? self.initpar.selop : 'true')
+          self.obj.inputs['wop'].modValue( self.obj.selop ?? self.initpar.selop ?? 'true')
           break;
           
         case '2':
           self.obj.inputs['wop'].innerHTML = '<option value="=">=</option><option value="<>">&lt;&gt;</option><option value="<">&lt;</option><option value=">">&gt;</option><option value="<=">&lt;=</option><option value=">=">&gt;=</option><option value="isnull">' + MneText.getText('#mne_lang#leer') + '</option><option value="is not null">' + MneText.getText('#mne_lang#nicht leer') + '</option><option value="like">' + MneText.getText('#mne_lang#änhlich') + '</option>'
-          self.obj.inputs['wop'].setValue(( self.initpar.selop ) ? self.initpar.selop : 'like')
+          self.obj.inputs['wop'].modValue(self.obj.selop ?? self.initpar.selop ?? 'like' )
           break;
           
         default:
           self.obj.inputs['wop'].innerHTML = '<option value="=">=</option><option value="<>">&lt;&gt;</option><option value="<">&lt;</option><option value=">">&gt;</option><option value="<=">&lt;=</option><option value=">=">&gt;=</option><option value="isnull">' + MneText.getText('#mne_lang#leer') + '</option><option value="is not null">' + MneText.getText('#mne_lang#nicht leer') + '</option>'
-          self.obj.inputs['wop'].setValue(( self.initpar.selop ) ? self.initpar.selop : '=')
+          self.obj.inputs['wop'].modValue(self.obj.selop ?? self.initpar.selop ?? '=' )
           break;
       }
       wcol.modClear();
@@ -112,6 +113,7 @@ class MneWhereSelectWeblet extends MneView
     this.obj.wcol_observer = new MutationObserver( check_change);
     this.obj.wcol_observer.observe(wcol, { subtree: true, attributes : true, attributeFilter: [ 'selected' ] } );
     check_change();
+    this.obj.selop = this.initpar.selop = undefined;
   }
   
   focus()

@@ -42,6 +42,14 @@ div.weblet > div.webletmain.modifywrong {
 	border-top: 3px solid var(--modifywrongbackgroundcolor);
 }
 
+div.weblet > div.webletmain.modifywrong.ignorewrong {
+  border-top-color: transparent;
+}
+
+div.weblet > div.webletmain.modifywrong.ignorewrong .modifywrong * {
+  background-color: transparent;
+}
+
 div.weblet div#buttonContainer, div.weblet div#contentContainer {
 	display: flex;
 	flex-direction: column;
@@ -160,6 +168,10 @@ div.weblet div#buttonContainer div.webletbutton {
 	position: relative;
 	background: var(--background_transparent);
 	height: 2ex;
+}
+
+div.weblet div#buttonContainer div.webletspace + .webletspace {
+    display: none;
 }
 
 .fullscreen > div.weblet  {

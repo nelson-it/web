@@ -58,17 +58,11 @@ class MneMain extends MneGeometrie
     
     async show( name = 'main')
     {
-      
- 
       await MneDbConfig.read();
       MneTheme.setTheme(MneConfig.stylename)
       await super.show(name);
 
       window.main_weblet = this.obj.weblets.detail;
-      //this.obj.newvalues = true;
-      //await this.check_values();
-      
-
     }
     
     async load()
@@ -93,8 +87,6 @@ class MneMain extends MneGeometrie
         }
         unlock()
       });
-      
-        
       
       this.frame.addEventListener('dragover', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })
       this.frame.addEventListener('drop', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })

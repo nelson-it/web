@@ -83,6 +83,8 @@ export class MneViewContainer extends MneWeblet
     this.initpar.okids  = this.initpar.okids  ?? this.initpar.showids;
     this.initpar.delids = this.initpar.delids ?? this.initpar.okids ?? this.initpar.showids;
 
+    this.initpar.showops = this.initpar.showops ?? {};
+
   }
 
   async mkButton (id, obj, data = {}, clickid )
@@ -710,7 +712,7 @@ export class MneView extends MneViewContainer
     var self = this;
     obj.setTyp = function(dpytype, regexp, format)
     {
-      this.dpytype  = dpytype;
+      this.dpytype  = MneInput.getTyp(dpytype);
       this.format   = format;
       MneElement.mkClass(obj.closest('.ele-wrapper'), "dpytype" + MneInput.getTyp(this.dpytype), true, "dpytype");
 
@@ -720,6 +722,7 @@ export class MneView extends MneViewContainer
     
     obj.setValue = function(value)
     {
+      if ( this.dpytype == 'bool' ) value = MneInput.getValue(value, 'bool', true);
         this.setAttribute('newvalue', value ?? '');
         this.setAttribute('oldvalue', value ?? '');
         this.value = this.getAttribute('newvalue');
@@ -727,6 +730,7 @@ export class MneView extends MneViewContainer
 
     obj.modValue = function(value)
     {
+      if ( this.dpytype == 'bool' ) value = MneInput.getValue(value, 'bool', true);
         this.setAttribute('newvalue', value ?? '');
         this.value = this.getAttribute('newvalue');
     }
@@ -1137,7 +1141,7 @@ export class MneView extends MneViewContainer
         if ( b[i].space == 'before' )
         {
           ele = document.createElement('div');
-          ele.className = 'webletbutton';
+          ele.className = 'webletbutton webletspace';
           this.obj.container.button.insertBefore(ele, behind);
           behind = ele.nextSibling;
         }
@@ -1163,7 +1167,7 @@ export class MneView extends MneViewContainer
         if ( b[i].space == 'behind' )
         {
           ele = document.createElement('div');
-          ele.className = 'webletbutton';
+          ele.className = 'webletbutton webletspace';
           this.obj.container.button.insertBefore(ele, behind);
         }
       }
@@ -1291,13 +1295,15 @@ export class MneView extends MneViewContainer
   {
   }
   
-  getPrintParam(data)
+  getPrintParam()
   {
     var i,n;
-    var r = ( data.report) ?  data.report : this.initpar.report;
-    var t = ( this.initpar.reptyp == undefined ) ? 'pdf' : this.initpar.reptyp;
-    var param = ( data.param ) ? data.param : {};
+    var t = this.initpar.reptyp ?? 'pdf';
+    var param = this.obj.printparam ?? Object.assign({}, this.obj.run.readpar);
  
+    if ( ! this.obj.printparam )
+      this.initpar.showids.forEach((item) => { param[item + "Input.old"] = this.obj.run.values[item]});
+    
     for ( n = 0; 1; n++ )
       if ( param["macro" + n] == undefined ) break;
 
@@ -1323,22 +1329,24 @@ export class MneView extends MneViewContainer
       }
     }
 
-    this.obj.printparam = { url : 'report/' + r + "." + t, param : param };
+    param.sqlstart = 1;
+    param.sqlend = 1;
+    
+    this.obj.print = { url : 'report/' + this.initpar.report + "." + t, param : param };
   }
   
-  async print( data )
+  async print()
   {
     var w;
 
-    
     if ( ! ( w = this.obj.weblets['show'] ) )
     {
       var self = this;
       w = await this.createpopup('show');
       w.getData = async function()
       {
-        self.getPrintParam(data);
-        var res = await MneRequest.fetch(self.obj.printparam.url, self.obj.printparam.param, true);
+        self.getPrintParam();
+        var res = await MneRequest.fetch(self.obj.print.url, self.obj.print.param, true);
         return await res.blob();
       }
     }

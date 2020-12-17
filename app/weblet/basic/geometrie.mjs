@@ -159,7 +159,7 @@ class MneGeometrie extends MneWeblet
     res.values.forEach( (item, i) =>
     {
       var s = { composeparent : this };
-      eval('res.values[i][initpar] = { ' + res.values[i][initpar] + '}');
+      try { eval('res.values[i][initpar] = { ' + res.values[i][initpar] + '}') } catch(e) { console.log(res.values[i][initpar]); throw e};
       if ( this.obj.run.initpar && this.obj.run.initpar[res.values[i][res.rids.id]] ) res.values[i][initpar] = Object.assign(res.values[i][initpar], this.obj.run.initpar[res.values[i][res.rids.id]]);
       
       res.values[i][res.rids.depend] = ( res.values[i][res.rids.depend] ) ? res.values[i][res.rids.depend].split(',') : [];
@@ -220,7 +220,7 @@ class MneGeometrie extends MneWeblet
         else if ( d[j] instanceof MneWeblet )
           this.obj.weblets[i].config.depend.push(d[j]);
         else
-          throw new Error(MneText.sprintf(MneText.getText("#mne_lang#Weblet <$1> nicht gefunden"), d[j]));
+          console.log(MneText.sprintf(MneText.getText("#mne_lang#Weblet <$1> nicht gefunden"), d[j]));
       }
     }
   }
@@ -266,6 +266,8 @@ class MneGeometrie extends MneWeblet
    if ( initpar ) this.obj.run.initpar = initpar;
    
    await super.show();
+   
+   if ( this.initpar.settitle ) document.title = this.obj.run.config.label + ' - Nelson technische Informatik';
    
    if ( this.obj.mainweblet )
    {

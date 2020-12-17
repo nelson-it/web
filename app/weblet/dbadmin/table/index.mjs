@@ -109,13 +109,13 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
 
     }
 
-    async add(nomod)
+    async add(data)
     {
       this.obj.defvalues.schema = this.config.dependweblet.obj.run.values.schema;
       this.obj.defvalues.table  = this.config.dependweblet.obj.run.values.table;
       this.obj.defvalues.index  = this.obj.defvalues.schema + "_" + this.obj.defvalues.table + '_idx_' + (new Date()).getTime();
       
-      await super.add(nomod);
+      await super.add(data);
       var p =
       {
           schema   : this.obj.run.values['schema'],

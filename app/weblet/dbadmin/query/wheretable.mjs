@@ -67,7 +67,7 @@ class MneAdminQueryWhereTable extends MneDbTableBasic
     }
   }
   
-  async add()
+  async add(data)
   {
     var row = this.obj.tbody.insertRow(-1);
     var i;

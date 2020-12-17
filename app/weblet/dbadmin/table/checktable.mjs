@@ -63,10 +63,10 @@ class MneAdminTableCheckTableWeblet extends MneDbTableViewWeblet
     }
   }
   
-  async add()
+  async add(data)
   {
     this.obj.defvalues.name  = this.obj.defvalues.schema + "_" + this.obj.defvalues.table + '_check_' + (new Date()).getTime();
-    return super.add();
+    return super.add(data);
   }
 }
 

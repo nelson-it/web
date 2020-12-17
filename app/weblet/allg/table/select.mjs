@@ -25,7 +25,9 @@ class MneTableSelectWeblet extends MneTableWeblet
       selectsingle : true,
       whereweblet  : 'single',
       tableweblet  : 'db/table/select',
-      modurl       : 'select'
+      modurl       : 'select',
+      
+      okids : [],
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );

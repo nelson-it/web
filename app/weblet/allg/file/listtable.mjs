@@ -141,9 +141,9 @@ class MneAllgFileListTable extends MneDbTableView
       return this.download();
   }
 
-  async add()
+  async add(data)
   {
-      await super.add();
+      await super.add(data);
       this.obj.buttons.data.disabled = false;
       
       if ( this.obj.weblets.rte && this.obj.weblets.rte.visible )

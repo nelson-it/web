@@ -41,7 +41,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
         res.ids[index]  = item;
         res.rids[item] = index;
         
-        if ( ! cols.includes(item) )
+        if ( ! cols.includes(item)  && item[0] != '#')
           this.obj.readparam.cols += ',' + item;
         
       });
@@ -222,7 +222,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     return retval;
   }
   
-  async add()
+  async add(data)
   {
     var p = {};
     

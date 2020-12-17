@@ -31,10 +31,9 @@ class MnePopupDetail extends MnePopupWeblet
     
     class MyWeblet extends Weblet
     {
-      async add(data)
+      async add(data, obj, evt)
       {
-        this.config.tableweblet.unselectRows();
-        this.config.tableweblet.obj.run.selectedkeys = [];
+        if ( obj == this.obj.buttons.add ) this.config.tableweblet.unselectRows();
         return super.add(data);
       }
     }
@@ -64,7 +63,7 @@ class MneDbTableView extends MneDbTableBasic
     return super.check_values();
   }
   
-  async add()
+  async add(data)
   {
      var row = this.obj.tbody.insertRow(( this.obj.lastselect ?? -2) + 1);
      var str = '';
@@ -107,20 +106,6 @@ class MneDbTableView extends MneDbTableBasic
      this.obj.run.okaction = 'add';
   }
 
-  primarykey()
-  {
-    var skey;
-    if ( this.initpar.primarykey )
-    {
-      skey = {};
-      this.initpar.primarykey.forEach((item) =>
-      {
-        skey[item] = this.obj.run.values[item]; 
-      })
-    this.obj.run.selectedkeys.push(skey);
-    }
-  }
-  
   async ok(param)
   {
     if ( this.obj.buttons.ok ) 
@@ -178,11 +163,23 @@ class MneDbTableView extends MneDbTableBasic
     if ( this.obj.popups[this.initpar.detailweblet] == undefined )
     {
       var p = this.config.composeparent.obj.popups[this.initpar.detailweblet];
-      this.obj.popups[this.initpar.detailweblet] = new MnePopupDetail(p.id, p.initpar, Object.assign({ tableweblet : this }, p.config));
+      if ( p )
+      {
+        this.obj.popups[this.initpar.detailweblet] = new MnePopupDetail(p.id, p.initpar, Object.assign({ tableweblet : this }, p.config));
+      }
+      else
+      {
+        var p = this.config.composeparent.obj.weblets[this.initpar.detailweblet];
+        if ( p )
+        {
+          p.obj.run.dependweblet = this;
+          p.newvalues = true;
+          return true;
+        }
+      }
     }
 
     await this.openpopup(this.initpar.detailweblet);
-    this.initpar.popupparent.obj.weblets[this.initpar.detailweblet].config.depend.push(this);
     return false;
   }
 
@@ -230,9 +227,9 @@ class MneDbTableView extends MneDbTableBasic
   
   async dblclick()
   {
-    if ( this.initpar.detailweblet )
+    if ( this.initpar.detailweblet && this.obj.buttons.detail )
       return this.detail();
-    else if ( this.initpar.detailscreen )
+    else if ( this.initpar.detailscreen && this.obj.buttons.detailscreen )
       return this.detailscreen()
   }
 }

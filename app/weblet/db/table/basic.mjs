@@ -125,6 +125,20 @@ class MneDbTableBasic extends MneDbView
         this.obj.tbody.innerHTML = '';
   }
 
+  primarykey()
+  {
+    var skey;
+    if ( this.initpar.primarykey &&  this.initpar.primarykey.length )
+    {
+      skey = {};
+      this.initpar.primarykey.forEach((item) =>
+      {
+        skey[item] = this.obj.run.values[item]; 
+      })
+    this.obj.run.selectedkeys.push(skey);
+    }
+  }
+
   unselectRows()
   {
     if ( this.obj.tbody )
@@ -138,6 +152,7 @@ class MneDbTableBasic extends MneDbView
     this.obj.lastselect = undefined;
     this.obj.run.act_row = undefined;
     this.obj.run.values = this.parent.obj.run.values = Object.assign({}, this.parent.obj.run.origvalues);
+    this.obj.run.selectedkeys = [];
   }
 
   mkRowStyle(rids, values)
@@ -268,6 +283,7 @@ class MneDbTableBasic extends MneDbView
     for ( i = 0; i<this.obj.run.result.ids.length; ++i)
       this.parent.obj.run.values[this.obj.run.result.ids[i]] = this.obj.run.values[this.obj.run.result.ids[i]] = MneInput.getValue(row.values[i], this.obj.run.result.typs[i], true);
     
+    this.primarykey();
     this.obj.lastselect = index;
     this.newselect = true;
   }
@@ -436,7 +452,7 @@ class MneDbTableBasic extends MneDbView
     else if ( evt.detail == 2 )
     {
       if ( evt.target.tagName != 'INPUT' && evt.target.isContentEditable != true )
-       await this.dblclick();
+       return await this.dblclick();
       else
         return false;
     }
@@ -493,7 +509,7 @@ class MneDbTableBasic extends MneDbView
         this.obj.defvalues[i] = this.config.dependweblet.obj.run.values[this.initpar.defalias[i]];
     }
 
-    this.obj.run.values = ( this.initpar.savedependvalues ) ? Object.assign({}, this.config.dependweblet.obj.run.values) : {};
+    this.obj.run.values = Object.assign({}, this.config.dependweblet.obj.run.values);
     this.obj.run.act_row = undefined;
     
     var p = Object.assign(
@@ -570,12 +586,16 @@ class MneDbTableBasic extends MneDbView
       item.valueindex = index;
     });
 
+    var selectedkeys = this.obj.run.selectedkeys;
+    this.obj.run.selectedkeys = [];
+
     var rows = this.obj.tables.content.firstChild.querySelectorAll(this.initpar.rowselector);
     for ( i =0; i<rows.length; i++)
     {
       var equal = false;
+      
       rows[i].values = this.obj.run.result.values[rows[i].valueindex];
-      this.obj.run.selectedkeys.forEach( (item) =>
+      selectedkeys.forEach( (item) =>
       {
         var j;
         if ( equal == false )

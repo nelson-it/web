@@ -101,10 +101,20 @@ export class MneWebletEmpty
       this.obj.run.newvalues = true;
       this.config.depend.forEach ( (item, index) =>
       {
-        if ( item.composeparent && item.composeparent.obj.weblets[item.depend] )
-          this.config.depend[index] = item = item.composeparent.obj.weblets[item.depend];
-        if ( item instanceof MneWeblet && item.newvalues != true )
-          item.newvalues = true;
+        if ( item instanceof MneWeblet )
+        {
+          if ( item.newvalues != true ) item.newvalues = true;
+        }
+        else if ( typeof item == 'string' && this.config.composeparent && this.config.composeparent.obj.weblets[( item[0] == '#') ? item.substr(1) : item ] )
+        {
+          this.config.depend[index] = item = this.config.composeparent.obj.weblets[( item[0] == '#') ? item.substr(1) : item];
+          if ( item.newvalues != true ) item.newvalues = true;
+        }
+        else if ( typeof item == 'object' && item.composeparent && item.composeparent.obj.weblets[( item.depend[0] == '#') ? item.depend.substr(1) : item.depend ] )
+        {
+          this.config.depend[index] = item = this.config.composeparent.obj.weblets[( item.depend[0] == '#') ? item.depend.substr(1) : item.depend];
+          if ( item.newvalues != true ) item.newvalues = true;
+        }
       });
     }
     else
@@ -235,7 +245,6 @@ export class MneWebletEmpty
   
   async drop (data)
   {
-    console.log(data);
   }
   
   adddrop(ele)
@@ -331,6 +340,7 @@ export class MneWeblet extends MneWebletEmpty
     var w = await this.createpopup(name, config, initpar );
     
     await w.show( config.popuphide );
+    w.modClear();
     w.config.dependweblet = this;
     w.newvalues = true;
     await w.check_values();
