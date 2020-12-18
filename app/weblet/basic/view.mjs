@@ -132,8 +132,11 @@ export class MneViewContainer extends MneWeblet
     saveobj.buttonframe = frame.querySelector('#buttonFrame');
     if ( this.initpar.nobuttonframe )
       saveobj.container.button = undefined;
-    else if ( saveobj.buttonframe && saveobj.container.button )
-      ( saveobj.observer.buttonframe = new MutationObserver((mut) => { MneElement.mkClass(saveobj.buttonframe, 'scroll', saveobj.buttonframe.scrollHeight > saveobj.buttonframe.offsetHeight); })).observe(saveobj.container.button, { childList: true, subtree: true, attributes : true } );
+    else if ( saveobj.buttonframe != null && saveobj.container.button != undefined )
+      ( saveobj.observer.buttonframe = new MutationObserver((mut) => 
+      {
+        MneElement.mkClass(saveobj.buttonframe, 'scroll', saveobj.buttonframe.scrollHeight > saveobj.buttonframe.offsetHeight); 
+      })).observe(saveobj.container.button, { childList: true, subtree: true, attributes : true } );
     
     obj = frame.querySelectorAll("[id$='Button']");
     for ( i = 0; i< obj.length; i++)

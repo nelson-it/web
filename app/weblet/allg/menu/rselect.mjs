@@ -46,6 +46,9 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
         
       });
       this.obj.run.result = res;
+      
+      if ( this.initpar.table )
+        this.obj.htmlcontent = '<div class="inputarea"><div class="inputgroup"><div class="inputsingle"><div id="tree"></div></div></div></div><div class="inputarea"><div class="inputgroup"><div class="inputsingle"><span>&nbsp;</span><span id="nameInput"></span></div></div></div>';
     }
   
   async load()
@@ -54,11 +57,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
 
     if ( ! this.initpar.table )  return;
 
-    this.obj.container.content.innerHTML = '<div class="inputarea"><div class="inputgroup"><div class="inputsingle"><div id="tree"></div></div></div></div><div class="inputarea"><div class="inputgroup"><div class="inputsingle"><span>&nbsp;</span><span id="nameInput"></span></div></div></div>';
     this.obj.container.tree = this.obj.container.content.querySelector('#tree');
-    
-    await MneElement.mkElements(this.obj.container.content.lastChild);
-    await this.findIO(this.obj.container.content.lastChild);
     
     this.obj.inputs.name.addEventListener('input', (evt) =>
     {
