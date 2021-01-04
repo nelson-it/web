@@ -56,7 +56,7 @@ export class MneViewContainer extends MneWeblet
       var alias = this.initpar.showalias;
       var dw = () => { return self.config.dependweblet };
 
-      this.initpar.showalias = {};
+      this.initpar.showalias = [];
       alias.forEach((item, index) =>
       {
         try { this.initpar.showalias[index] = eval(item) } catch (e) {}; 

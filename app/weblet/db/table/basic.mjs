@@ -494,7 +494,7 @@ class MneDbTableBasic extends MneDbView
     return MneRequest.fetch(request, p);
   }
 
-  async values(param)
+  async values(param = {})
   {
     var i,j;
     var str = '';
@@ -526,6 +526,8 @@ class MneDbTableBasic extends MneDbView
 
     p = this.getParamShow(p);
     if ( p.value_not_found ) p.no_vals = '1';
+    
+    for ( i in param ) p[i] = param[i];
 
     this.obj.run.result = Object.assign({}, await this.readvalues(this.obj.run.btnrequest.read, p));
 
