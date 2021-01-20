@@ -134,7 +134,7 @@ class MneLetterDetail extends MneDbView
           sqlend           : '1'
       };
       
-      await MneRequest.fetch( "/db/utils/table/insert.xml",  p);
+      await MneRequest.fetch( "db/utils/table/insert.xml",  p);
       this.newvalues = true;
       return;
   }

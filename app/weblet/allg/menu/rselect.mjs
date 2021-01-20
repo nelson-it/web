@@ -121,7 +121,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
                 sqlend : 1
         }
 
-        await MneRequest.fetch('/db/utils/table/modify.json', p);
+        await MneRequest.fetch('db/utils/table/modify.json', p);
         ( evt.target.mne_data )  ? await this.action_submenu(Object.assign({ refresh : true }, evt.target.mne_data )) : await this.values();
         this.obj.drag.element.parentNode.removeChild(this.obj.drag.element);
       }
@@ -233,7 +233,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    await MneRequest.fetch('/db/utils/table/insert.json', p);
+    await MneRequest.fetch('db/utils/table/insert.json', p);
     ( this.obj.selectdata )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata )) : await this.values();
     this.obj.inputs.name.setValue('');
     
@@ -252,7 +252,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.sqlend = 1;
     
     console.log(p)
-    await MneRequest.fetch('/db/utils/table/modify.json', p);
+    await MneRequest.fetch('db/utils/table/modify.json', p);
     ( this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.values();
     this.obj.inputs.name.setValue('');
     
@@ -268,7 +268,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    await MneRequest.fetch('/db/utils/table/delete.json', p);
+    await MneRequest.fetch('db/utils/table/delete.json', p);
     ( this.obj.selectdata && this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.refresh();
     
     return false;

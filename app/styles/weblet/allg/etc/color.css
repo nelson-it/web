@@ -1,5 +1,5 @@
 div.weblet.weblet-allg-etc-color #colorOutput {
-	box-shadow: var(--boxshadow);
+	box-shadow: var(--input_boxshadow);
 }
 
 div.weblet.weblet-allg-etc-color .colorselecttable td {

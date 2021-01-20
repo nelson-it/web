@@ -37,12 +37,7 @@ class MneMessage extends MneView
       
       await super.load();
       this.obj.buttons.clear.value = MneText.getText('#mne_lang#Löschen');
-
       MneLog.setMessageClient(this);
-      document.addEventListener('keyup', (evt) => { if ( evt.key == 'Escape') { self.clear(); self.close();} });
-      
-      if ( this.obj.popup )
-        this.obj.observer.hide = ( new MutationObserver( (mut) => { if ( ! this.visible ) this.clear(); })).observe(this.obj.popup.frame, { childList: false, subtree: false, attributes : true, attributeFilter: [ 'style' ] });
     }
 
     async clear(evt)

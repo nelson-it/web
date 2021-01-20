@@ -125,7 +125,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
           sqlend   : 1
       };
       
-      var res = await MneRequest.fetch('/db/utils/table/data.json', p);
+      var res = await MneRequest.fetch('db/utils/table/data.json', p);
       var result = { ids : [ 'column', 'position'], labels : [ MneText.getText("#mne_lang#Spalte"), MneText.getText("#mne_lang#Position") ], rids : { column : 0, position : 1}, values : [], regexps : [ '', MneInput.checktype['numoempty'] ], typs : [ 'char', 'long' ], formats : [ '', '' ] }
       res.ids.forEach((item, index) =>
       {

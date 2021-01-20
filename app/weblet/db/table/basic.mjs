@@ -109,7 +109,6 @@ class MneDbTableBasic extends MneDbView
     
     this.initpar.primarykey = this.initpar.primarykey ?? this.initpar.okids;
     this.obj.run.selectedkeys = [];
-
   }
 
   getCssPath()  { return ((( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url)); }
@@ -503,13 +502,13 @@ class MneDbTableBasic extends MneDbView
     for ( i in this.obj.selectlists )
       if ( this.obj.selectlists[i].dynamic ) this.obj.selectlists[i].content = undefined;
     
-    if ( this.initpar.defalias )
+    if ( this.config.dependweblet != undefined && this.initpar.defalias )
     {
       for ( i in this.initpar.defalias )
         this.obj.defvalues[i] = this.config.dependweblet.obj.run.values[this.initpar.defalias[i]];
     }
 
-    this.obj.run.values = Object.assign({}, this.config.dependweblet.obj.run.values);
+    this.obj.run.values = Object.assign({}, ( this.config.dependweblet != undefined ) ? this.config.dependweblet.obj.run.values : {});
     this.obj.run.act_row = undefined;
     
     var p = Object.assign(
@@ -591,12 +590,19 @@ class MneDbTableBasic extends MneDbView
     var selectedkeys = this.obj.run.selectedkeys;
     this.obj.run.selectedkeys = [];
 
-    var rows = this.obj.tables.content.firstChild.querySelectorAll(this.initpar.rowselector);
+    this.obj.thead = this.obj.tables.content.firstChild.querySelector('thead');
+    this.obj.tbody = this.obj.tables.content.firstChild.querySelector('tbody');
+    this.obj.table = this.obj.tables.content.firstChild;
+
+    for ( i =0; i<this.obj.tbody.children.length; i++)
+      this.obj.tbody.children[i].values = this.obj.run.result.values[i];
+
+    var rows = this.obj.table.querySelectorAll(this.initpar.rowselector);
     for ( i =0; i<rows.length; i++)
     {
       var equal = false;
       
-      rows[i].values = this.obj.run.result.values[rows[i].valueindex];
+      //rows[i].values = this.obj.run.result.values[rows[i].valueindex];
       selectedkeys.forEach( (item) =>
       {
         var j;
@@ -617,9 +623,6 @@ class MneDbTableBasic extends MneDbView
     
     this.obj.run.result.values = [];
     
-    this.obj.thead = this.obj.tables.content.firstChild.querySelector('thead');
-    this.obj.tbody = this.obj.tables.content.firstChild.querySelector('tbody');
-    this.obj.table = this.obj.tables.content.firstChild;
     if ( ! this.initpar.nofocus ) this.obj.table.focus()
     
     this.obj.where.modClear();
@@ -693,6 +696,46 @@ class MneDbTableBasic extends MneDbView
     evt.stopPropagation();
     
     return false;
+  }
+  
+  async export()
+  {
+    var str = '';
+    var i,j;
+    
+    if ( ! this.initpar.nohead )
+    {
+        for ( i =0; i < this.obj.run.result.labels.length; ++i)
+          if ( ! this.obj.colhide[i] ) str += '"' + (( this.initpar.labels[i] != undefined ) ? this.initpar.labels[i] : this.obj.run.result.labels[i]).replaceAll('"', '""') + '",' ;
+      str = str.substring(0, str.length - 1) + '\n';
+    }
+
+    for ( i =0; i < this.obj.tbody.children.length; ++i)
+    {
+        await this.mkRow(this.obj.tbody.children[i]);
+        
+        for ( j =0; j< this.obj.tbody.children[i].values.length; ++j)
+          if ( ! this.obj.colhide[j] ) str += '"' +  MneInput.format(this.obj.tbody.children[i].values[j], this.obj.run.result.typs[j], this.obj.run.result.formats[j] ).replaceAll('"', '""') + '",';
+          str = str.substring(0, str.length - 1) + '\n';
+    }
+    
+    str = str.replaceAll('✔', 'X');
+    
+    var blob;
+    if ( MneConfig.exportencoding != 'utf-8' )
+      blob = await (await MneRequest.fetch('/utils/iconv.txt', { data : str, iconv : MneConfig.exportencoding, content_type : 'text/csv' }, true)).blob();
+    else
+      blob = new Blob([str], {type : 'text/csv'});
+
+    var url = URL.createObjectURL(blob);
+    var hiddenElement = document.createElement('a');
+
+    hiddenElement.href = url;
+    hiddenElement.target = '_blank';
+    hiddenElement.download = this.config.label + '.csv';
+    hiddenElement.click();
+
+    URL.revokeObjectURL(url);
   }
   
   async dblclick()

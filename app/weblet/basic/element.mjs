@@ -10,7 +10,7 @@
 import MneTheme from '/js/basic/theme.mjs'
 import MneElement from '/js/basic/element.mjs'
 
-MneTheme.loadCss('basic/element.css', '/styles/weblet');
+MneTheme.loadCss('basic/element.css', 'styles/weblet');
 
 export class MneElementWeblet extends MneElement
 {

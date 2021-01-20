@@ -65,7 +65,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
       p = this.addParam(p, "table",  'htmlcompose');
       p = this.addParam(p, "cols", "createdate,createuser,modifydate,modifyuser,htmlcomposeid,name,template,custom");
       
-      res = await MneRequest.fetch("/db/utils/table/data.json", p );
+      res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
         if ( mysql ) format = "INSERT INTO mne_application_htmlcompose( createdate, createuser, modifydate, modifyuser, htmlcomposeid, name, template, custom) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', $8);";
@@ -76,7 +76,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
 
       p.table = 'htmlcomposenames';
       p.cols = "createdate,createuser,modifydate,modifyuser,htmlcomposeid,label_de,label_en";
-      res = await MneRequest.fetch("/db/utils/table/data.json", p );
+      res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
         if ( mysql ) format = "INSERT INTO mne_application_htmlcomposenames ( createdate, createuser, modifydate, modifyuser, htmlcomposeid, label_de, label_en) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7');";
@@ -86,7 +86,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
 
       p.table = 'htmlcomposetab';
       p.cols = "createdate,createuser,modifydate,modifyuser,htmlcomposeid,htmlcomposetabid,path,id,subposition,position,initpar,owner,depend,loadpos,ugroup,custom";
-      res = await MneRequest.fetch("/db/utils/table/data.json", p );
+      res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
         if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetab( createdate, createuser, modifydate, modifyuser, htmlcomposeid, htmlcomposetabid, path, id, subposition, position, initpar, owner, depend, loadpos, ugroup, custom) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', '$9', $10, '$11', '$12', '$13', '$14', $15, $16);";
@@ -96,7 +96,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
 
       p.table = 'htmlcomposetabnames';
       p.cols = "createdate,createuser,modifydate,modifyuser,htmlcomposeid,label_de,label_en,htmlcomposetabid,custom";
-      res = await MneRequest.fetch("/db/utils/table/data.json", p );
+      res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
         if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetabnames ( createdate, createuser, modifydate, modifyuser, htmlcomposeid, label_de, label_en, htmlcomposetabid, custom) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', $9);";
@@ -106,7 +106,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
 
       p.table = 'htmlcomposetabselect';
       p.cols = "createdate,createuser,modifydate,modifyuser,id,element,htmlcomposeid,htmlcomposetabid,htmlcomposetabselectid,schema,query,tab,wop,wcol,wval,scols,showcols,cols,weblet,showdynpar,custom,selval";
-      res = await MneRequest.fetch("/db/utils/table/data.json", p );
+      res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
         if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetabselect( createdate, createuser, modifydate, modifyuser, id, element, htmlcomposeid, htmlcomposetabid, htmlcomposetabselectid, schema, query, tab, wop, wcol, wval, scols, showcols, cols, weblet, showdynpar, custom, selval) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', '$9', '$10', '$11', '$12', '$13', '$14', '$15', '$16', '$17', '$18', $19, '$20', $21, E'$22');";
@@ -137,7 +137,7 @@ class MneAdminWebletDetail extends MneDbViewWeblet
 
       p.table = 'htmlcomposetabslider';
       p.cols = "createdate,createuser,modifydate,modifyuser,htmlcomposeid,slidername,sliderpos,custom";
-      res = await MneRequest.fetch("/db/utils/table/data.json", p );
+      res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
         if ( mysql ) format = "INSERT INTO mne_application.htmlcomposetabslider ( createdate, createuser, modifydate, modifyuser, htmlcomposeid, slidername, sliderpos, custom) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', $8);";

@@ -33,7 +33,7 @@ class MneDbConfig extends MneConfig
         "sqlend" : 1
     };
 
-    p.push(MneRequest.fetch("/db/utils/query/data.json", param))
+    p.push(MneRequest.fetch("db/utils/query/data.json", param))
     
     // Gruppen
     // =======
@@ -47,7 +47,7 @@ class MneDbConfig extends MneConfig
         "sqlend" : 1
     };
 
-    p.push(MneRequest.fetch("/db/utils/query/data.json", param));
+    p.push(MneRequest.fetch("db/utils/query/data.json", param));
 
     // regexp 
     // =======
@@ -60,11 +60,11 @@ class MneDbConfig extends MneConfig
         "sqlend" : 1
     };
 
-    p.push(MneRequest.fetch("/db/utils/table/data.json", param));
+    p.push(MneRequest.fetch("db/utils/table/data.json", param));
 
     // Locale
     // =======
-    p.push ( MneRequest.fetch("/utils/locale.json"));
+    p.push ( MneRequest.fetch("utils/locale.json"));
     
 
     resall = await Promise.all(p);
@@ -74,6 +74,17 @@ class MneDbConfig extends MneConfig
     {
       for ( i = 0; i<res.ids.length; i++)
         MneConfig[res.ids[i]] = res.values[0][i];
+    }
+    
+    if ( MneConfig.cstartweblet )
+    {
+      var s;
+      eval('MneConfig.startweblet = ' + MneConfig.cstartweblet);
+
+      try { s = JSON.parse(window.sessionStorage.getItem(MneConfig.startweblet.appl + ':startweblet')); } catch(e) { s = '' };
+
+      if ( !s )
+        window.sessionStorage.setItem(MneConfig.startweblet.appl + ':startweblet', JSON.stringify(MneConfig.startweblet.weblet))
     }
 
     res = resall[1];

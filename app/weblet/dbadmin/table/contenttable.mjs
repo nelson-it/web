@@ -86,7 +86,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
           sqlend : 1
       }
 
-      var res = await MneRequest.fetch('/db/utils/table/data.json', p);
+      var res = await MneRequest.fetch('db/utils/table/data.json', p);
       res.values.forEach((item, index) => { okids.push(item[res.rids['column']]); });
 
       this.initpar.okids = okids;

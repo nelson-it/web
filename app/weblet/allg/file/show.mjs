@@ -51,13 +51,19 @@ class MneFileShow extends MneViewContainer
     
     async loadview()
     {
-       var ele = this.obj.popup.frame.querySelector('#titletext');
-       var btn = document.createElement('span');
-       btn.className = 'popupbutton';
-       btn.id='downloadbutton';
-       btn.addEventListener('click', (evt) => { this.download() } );
-       
-       ele.parentNode.insertBefore(btn, ele);
+       return false;
+    }
+    
+    async loadready()
+    {
+      var btn = document.createElement('span');
+      btn.className = 'popupbutton';
+      btn.id='downloadbutton';
+      btn.addEventListener('click', (evt) => { this.download() } );
+
+      this.obj.title.button.insertBefore(btn, this.obj.title.button.firstChild);
+
+      return super.loadready();
     }
     
     async download()
@@ -89,7 +95,7 @@ class MneFileShow extends MneViewContainer
 
       try
       {
-        res = await MneRequest.fetch('/db/utils/table/' + this.config.dependweblet.obj.run.values[this.initpar.namename], param, true);
+        res = await MneRequest.fetch('db/utils/table/' + this.config.dependweblet.obj.run.values[this.initpar.namename], param, true);
         return await res.blob();
       }
       catch(e)

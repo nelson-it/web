@@ -119,10 +119,10 @@ export class MneViewContainer extends MneWeblet
    
     if ( saveobj.container.title )
     {
-      saveobj.title.left       = saveobj.container.title.querySelector("#weblettitleleft");
+      saveobj.title.text       = saveobj.container.title.querySelector("#titletext");
 
-      saveobj.title.middle     = saveobj.container.title.querySelector("#weblettitlemiddle");
-      saveobj.title.right      = saveobj.container.title.querySelector("#weblettitleright");
+      saveobj.title.middle     = saveobj.container.title.querySelector("#ttitlemiddle");
+      saveobj.title.button     = saveobj.container.title.querySelector("#titlebutton");
 
       this.title = ( this.config.label ) ? this.config.label : this.id;
       MneElement.mkClass(saveobj.container.title, 'notitle',      this.initpar.notitle == true );
@@ -152,7 +152,7 @@ export class MneViewContainer extends MneWeblet
   {
     
     if ( ! MneWeblet.contentframe )
-      MneWeblet.contentframe = await MneRequest.fetch('/view/basic/view.html');
+      MneWeblet.contentframe = await MneRequest.fetch('view/basic/view.html');
 
     if ( this.initpar.nowebletframe )
     {
@@ -184,7 +184,7 @@ export class MneViewContainer extends MneWeblet
   
   set title(title)
   {
-    if ( this.obj.title.left ) this.obj.title.left.textContent = title;
+    if ( this.obj.title.text ) this.obj.title.text.textContent = title;
   }
 
   async load()
@@ -196,12 +196,9 @@ export class MneViewContainer extends MneWeblet
   async view(data, obj, evt)
   {
     var config = this.config;
-    var popup = this.obj.popup;
-    this.obj.popup = undefined;
-    
+
     this.reset();
     this.config = config;
-    if ( popup ) this.obj.popup = popup;
     
     this.obj.run.viewnum = ( obj.checked ) ? "1" : "2";
     await this.load();

@@ -39,7 +39,7 @@ div.weblet.weblet-db-table-month div.dataview  {
 
 	border: var(--border);
 	border-radius: var(--borderradius);
-	box-shadow: var(--boxshadow);
+	box-shadow: var(--popup_boxshadow);
 	z-index: 1000;
 }
 
@@ -55,7 +55,7 @@ div.weblet.weblet-db-table-month div#buttonFrame  {
 
 	border: var(--border);
 	border-radius: var(--borderradius);
-	box-shadow: var(--boxshadow);
+	box-shadow: var(--popup_boxshadow);
 	z-index: 1000;
 }
 

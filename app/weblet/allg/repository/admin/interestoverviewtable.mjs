@@ -60,7 +60,7 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
         p = this.addParam(p, "par1", this.obj.run.values['filename']);
         p = this.addParam(p, "par2", res.values[0][res.rids.personid]);
 
-        await MneRequest.fetch('/db/utils/connect/func/execute.json', p);
+        await MneRequest.fetch('db/utils/connect/func/execute.json', p);
         
         this.newvalues = true;
       }});
@@ -93,7 +93,7 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
     p = this.addParam(p, "par1", this.obj.run.values['filename']);
     p = this.addParam(p, "par2", this.obj.act_personid);
 
-    await MneRequest.fetch('/db/utils/connect/func/execute.json', p);
+    await MneRequest.fetch('db/utils/connect/func/execute.json', p);
     
     this.newvalues = true;
 
@@ -118,7 +118,7 @@ class MneRepositoryInterestOverviewTable extends MneDbTableDynamic
     p = this.addParam(p, "par1", this.obj.run.values['filename']);
     p = this.addParam(p, "par2", this.obj.act_personid);
 
-    await MneRequest.fetch('/db/utils/connect/func/execute.json', p);
+    await MneRequest.fetch('db/utils/connect/func/execute.json', p);
     
     this.newvalues = true;
 

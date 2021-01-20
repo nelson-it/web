@@ -93,7 +93,7 @@ div.input-wrapper {
 
 input[type=text], input[type=password], div.ehtml {
     border-radius: var(--borderradius);
-	box-shadow: var(--boxshadow);
+	box-shadow: var(--input_boxshadow);
 	border: 1px;
 	-webkit-appearance: none;
 }
@@ -149,7 +149,7 @@ div.draginfo {
 
     border: var(--border);
     border-radius: var(--borderradius);
-    box-shadow: var(--boxshadow);
+    box-shadow: var(--poup_boxshadow);
     
     background: var(--background);
     z-index: 1000;
@@ -296,7 +296,7 @@ select {
     
 	background-color: var(--background);
 	color: var(--color);
-    box-shadow: var(--boxshadow);
+    box-shadow: var(--input_boxshadow);
     
     font-size: var(--font_normal);
     font-family: var(--font-family);

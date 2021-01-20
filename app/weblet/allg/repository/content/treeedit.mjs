@@ -209,7 +209,7 @@ class MneRepositoryTreeEdit extends MneView
     this.close();
     if ( this.obj.run.file )
     {
-      await MneRequest.fetch('/db/utils/repository/addfile.json', p);
+      await MneRequest.fetch('db/utils/repository/addfile.json', p);
       this.obj.run.checkdepend = true;
     }
   }
@@ -267,9 +267,9 @@ class MneRepositoryTreeEdit extends MneView
         return;
     
     if ( this.obj.run.file )
-      await MneRequest.fetch('/db/utils/repository/rmfile.json', p)
+      await MneRequest.fetch('db/utils/repository/rmfile.json', p)
     else if ( this.obj.run.dir )
-      await MneRequest.fetch('/db/utils/repository/rmdir.json', p)
+      await MneRequest.fetch('db/utils/repository/rmdir.json', p)
     
     this.obj.run.checkdepend = true;
     this.parent.newselect = true;

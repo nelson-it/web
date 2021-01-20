@@ -37,24 +37,30 @@ class MneRequest
 
     if ( parameter instanceof FormData ) return parameter;
     
-    for ( p in parameter )
-    {
-      param = param + sep + p + "=" + encodeURIComponent(parameter[p]);
-      sep = "&";
-    }
-    return param;
+    var data = new FormData();
+    for ( p in parameter ) data.append(p, encodeURIComponent(parameter[p]));
+    return data;
   };
   
   static async fetch( request, parameter, raw)
   {
     var data;
     
+    parameter = MneRequest.mkParam(parameter);
+    
     //console.info('request: ' + request + " : " + JSON.stringify(parameter));
+    if ( request[0] == '/' )
+    {
+      console.warn('request mit führendem /');
+      console.trace();
+      request = request.substr(1);
+      
+    }
 
     var res = await fetch(request, {
       method: 'POST',
       headers : MneRequest.mkHeader(parameter),
-      body: MneRequest.mkParam(parameter) 
+      body: parameter,
     })
     
      if ( res.status < 200 || res.status > 300 )
@@ -142,7 +148,7 @@ class MneRequest
   
   static async errfetch(request, parameter, errfunc = async () =>
   {
-    return MneRequest.fetch('/db/utils/connect/end.json', { rollback : 1 });
+    return MneRequest.fetch('db/utils/connect/end.json', { rollback : 1 });
   }, raw)
   {
     var res;
@@ -163,7 +169,7 @@ class MneRequest
   {
     try
     {
-      var result = await import(request);
+      var result = await import(MneRequest.baserequest + request);
       return result;
     }
     catch(e)
@@ -190,5 +196,9 @@ class MneRequest
     }
   }
 }
+
+
+MneRequest.baserequest = ((new URL(document.baseURI)).pathname);
+if ( MneRequest.baserequest[MneRequest.baserequest.length -1 ] == '/' ) MneRequest.baserequest = MneRequest.baserequest.substr(0,MneRequest.baserequest.length - 1);
 
 export default MneRequest;

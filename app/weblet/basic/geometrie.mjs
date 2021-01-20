@@ -27,7 +27,7 @@ class MneGeometrie extends MneWeblet
   reset()
   {
     super.reset();
-    Object.assign(this.obj, { container : {} });
+    Object.assign(this.obj,  { mainweblet : undefined , container : {} });
   }
 
   async getSlider()
@@ -45,7 +45,7 @@ class MneGeometrie extends MneWeblet
           cols   : 'htmlcomposeid,slidername,sliderpos',
           scols  : 'htmlcomposeid'
       }
-      res = await MneRequest.fetch('/db/utils/table/data.json', p );
+      res = await MneRequest.fetch('db/utils/table/data.json', p );
 
       MneGeometrie.slider = {};
 
@@ -67,12 +67,12 @@ class MneGeometrie extends MneWeblet
   {
     var i;
     var res;
-
-    res = await MneRequest.fetch('/htmlcompose/weblet.json', { name : this.obj.name } ); 
+    
+    res = await MneRequest.fetch('htmlcompose/weblet.json', { name : this.obj.name } ); 
     if ( res.values.length != 1 )
       throw new Error(MneText.sprintf('#mne_lang#Kein Weblet <$1> gefunden', this.obj.name ))
 
-    this.obj.run.config = [];
+    this.obj.run.config = {};
     for ( i in res.ids )
       this.obj.run.config[res.ids[i]] = res.values[0][i];
   }
@@ -86,7 +86,7 @@ class MneGeometrie extends MneWeblet
 
   async getSubWeblets()
   {
-    return await MneRequest.fetch('/htmlcompose/subweblets.json', { htmlcomposeid : this.obj.run.config.htmlcomposeid } ); 
+    return await MneRequest.fetch('htmlcompose/subweblets.json', { htmlcomposeid : this.obj.run.config.htmlcomposeid } ); 
   }
 
   async mkWeblet( position, sub )
@@ -151,10 +151,10 @@ class MneGeometrie extends MneWeblet
     var errors = '';
      
     for ( i in this.obj.container )
-      if ( i.substr(i.length - 4) != 'menu' ) sub[i] = { count : -1, values : [] };
+      if ( i.length == 4 || i.substr(i.length - 4) != 'menu' ) sub[i] = { count : -1, values : [] };
 
     for ( i in this.obj.container )
-      if ( i.substr(i.length - 4) == 'menu' ) sub[i.substr(0, i.length - 4)].menuframe = this.obj.container[i];
+      if ( i.length !=4 && i.substr(i.length - 4) == 'menu' ) sub[i.substr(0, i.length - 4)].menuframe = this.obj.container[i];
       
     res.values.forEach( (item, i) =>
     {
@@ -230,9 +230,8 @@ class MneGeometrie extends MneWeblet
     var p = [];
     var i;
 
-    if ( ! this.obj.name ) return;
-    
     this.frame.innerHTML = '';
+    if ( ! this.obj.name ) return;
     
     await super.load();
     
@@ -240,6 +239,8 @@ class MneGeometrie extends MneWeblet
     await this.mkTemplate();
     await this.mkSubWeblets(await this.getSubWeblets());
     await this.mkDepend();
+    
+    if ( this.obj.mainweblet == undefined && this.obj.weblets.detail != undefined ) this.obj.mainweblet = 'detail';
     
     for ( i in this.obj.weblets )
       p.push(this.obj.weblets[i].load());
@@ -256,18 +257,15 @@ class MneGeometrie extends MneWeblet
   
   async show(name, initpar)
   {
-    
-   var popup = this.obj.popup;
-   this.obj.popup = undefined;
+   
    this.reset();
-   if ( popup ) this.obj.popup = popup;
    
    if ( name ) this.obj.name = name;
    if ( initpar ) this.obj.run.initpar = initpar;
    
    await super.show();
    
-   if ( this.initpar.settitle ) document.title = this.obj.run.config.label + ' - Nelson technische Informatik';
+   if ( this.initpar.settitle ) document.title = ( this.obj.run.config ) ?  this.obj.run.config.label + ' - Nelson technische Informatik' : window.mne_title;
    
    if ( this.obj.mainweblet )
    {

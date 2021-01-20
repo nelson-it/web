@@ -101,7 +101,7 @@ span[contenteditable="true"] {
     vertical-align: middle;
     line-height: initial;
     border-radius: var(--borderradius);
-    box-shadow: var(--boxshadow);
+    box-shadow: var(--input_boxshadow);
     padding: var(--margin);
     overflow: hidden;
     background: var(--background);

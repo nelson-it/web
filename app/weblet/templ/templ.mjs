@@ -30,7 +30,7 @@ class MneTemplate extends MneDbView
       showids       : [''],
       delconfirmids : [ 'name'],
 
-      //okids  : [''],
+      //okids  : [''], setzen wenn ergebnis nicht showid ist
 
       //okschema    : '',
       //oktable     : '',

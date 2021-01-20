@@ -1,13 +1,13 @@
 @font-face {
   font-family: 'SymbolFont1';
-  src: url('/fonts/fa-solid-900.woff2') format('woff2'), url('/fonts/fa-solid-900.woff') format('woff');
+  src: url('#mne_base#/fonts/fa-solid-900.woff2') format('woff2'), url('#mne_base#/fonts/fa-solid-900.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'SymbolFont2';
-  src: url('/fonts/fa-regular-400.woff2') format('woff2'), url('/fonts/fa-regular-400.woff') format('woff');
+  src: url('#mne_base#/fonts/fa-regular-400.woff2') format('woff2'), url('#mne_base#/fonts/fa-regular-400.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -79,7 +79,6 @@
 
 	--checkbox_border: 1px solid #c0c0c0;
 
-	
 	--border: 1px solid #d0d0d0;
 	--bordercolor: #d0d0d0;
 	--bordersize: 1px;
@@ -92,7 +91,9 @@
 	--darkbordercolor: #404040;
 
 	--borderradius: 2px;
-	--boxshadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.3);
+
+	--input_boxshadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.3);
+	--popup_boxshadow: 0px 0px 10px 1px #ccc;
 	
 	--margin:  2px;
 	--dmargin: 4px;

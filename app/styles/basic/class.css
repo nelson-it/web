@@ -3,6 +3,10 @@
 	background-image:  linear-gradient(to bottom, var(--lightcolor1), transparent 50%);
 }
 
+.hide {
+	display : none !important;
+}
+
 .background {
 	background-color: var(--background);
 }

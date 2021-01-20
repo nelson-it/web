@@ -35,7 +35,7 @@ class MneUserPasswdWeblet extends MneDbViewWeblet
         modcols     : ['username', 'passwd1'],
         modtyps     : {},
 
-        modpost     : '/sysexec/user/passwd/setpasswd',
+        modpost     : 'sysexec/user/passwd/setpasswd',
         
         hinput : false
       };

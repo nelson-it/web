@@ -41,7 +41,7 @@ class MneCountWeblet extends MneViewWeblet
        
        if ( ++this.obj.count == 5 )
        {
-         MneRequest.fetch('/utils/time.html').then((res) => { console.log('server ping: ' + res)});
+         MneRequest.fetch('utils/time.html').then((res) => { console.log('server ping: ' + res)});
          this.obj.count = 0;
        }
 
@@ -54,13 +54,16 @@ class MneCountWeblet extends MneViewWeblet
       var self = this;
       var version = await MneRequest.fetch( window.location.protocol + '//' + MneConfig.updatehost + '/version.php', { version : MneConfig.version, x : (parseInt(parseInt(document.body.clientWidth) / 100 ) * 100), y : (parseInt(parseInt(document.body.clientHeight) / 100 ) * 100), uuid : MneConfig.uuid });
       this.obj.container.version.innerHTML = MneText.getText('#mne_lang#Neue Version# ') + version;
-      this.obj.container.version.addEventListener('animationend', function() { MneElement.mkClass(this, 'versionhide', true, 'version')} );
-
-      MneElement.mkClass(this.obj.container.version, 'versionshow');
-      window.setTimeout( () =>
+      
+      if ( version != '' )
       {
-        MneElement.mkClass(self.obj.container.version, 'versionhide');
-      }, 5000 )
+        this.obj.container.version.addEventListener('animationend', function() { MneElement.mkClass(this, 'versionhide', true, 'version')} );
+        MneElement.mkClass(this.obj.container.version, 'versionshow');
+        window.setTimeout( () =>
+        {
+          MneElement.mkClass(self.obj.container.version, 'versionhide');
+        }, 5000 )
+      }
     }
     
     async load()

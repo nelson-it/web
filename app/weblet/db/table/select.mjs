@@ -26,7 +26,8 @@ class MnePopupDetail extends MnePopupWeblet
   
   async getWeblet(path)
   {
-    let { default: Weblet } = await MneRequest.import(path);
+    var Weblet = await super.getWeblet(path);
+    var self = this;
     
     class MyWeblet extends Weblet
     {
@@ -38,8 +39,14 @@ class MnePopupDetail extends MnePopupWeblet
         if ( this.initpar.selectok)
           await this.initpar.selectok(this.obj.run.result);
         
-        this.obj.popup.close();
+        this.close();
         return false;
+      }
+      
+      async del()
+      {
+        await super.del();
+        this.check_values();
       }
     }
     return MyWeblet;
@@ -89,7 +96,7 @@ class MneDbTableSelect extends MneDbTableBasic
   
   async cancel()
   {
-    await this.parent.close();
+    return this.parent.close();
   }
   
   async opendetail(detail)

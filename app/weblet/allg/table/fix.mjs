@@ -69,6 +69,17 @@ class MneTable extends MneViewContainer
     
     this.obj.wherenum = MneTable.wherecount++;
     await super.load();
+    
+    this.obj.observer.frame = new MutationObserver((muts) =>
+    {
+      var p = this.obj.popups[this.initpar.detailweblet];
+      if ( p && ( ! ( this.frame.offsetWidth || this.frame.offsetHeight || this.frame.getClientRects().length)) )
+        p.close(true);
+      else if ( p )
+          p.show(false, false, true);
+    });
+
+    this.obj.observer.frame.observe(this.frame, { characterData: false, attributes: true, childList: false, subtree: false, characterDataOldValue : false, attributeFilter: [ 'class' ] } );
 
     this.frame.insertBefore(( whereframe = document.createElement('div')), this.obj.container.weblet);
     this.obj.whereobserver = new MutationObserver( (mutations, server) => { if ( this.obj.container.weblet ) this.obj.container.weblet.style.top = whereframe.offsetHeight + 'px' });

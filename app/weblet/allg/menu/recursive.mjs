@@ -28,7 +28,7 @@ class MneRecursiveMenu extends MneMenu
     if ( ! this.initpar.url )
     {
 
-      this.obj.readurl = ( this.initpar.query ) ? '/db/utils/query/data.json' : '/db/utils/table/data.json'
+      this.obj.readurl = ( this.initpar.query ) ? 'db/utils/query/data.json' : 'db/utils/table/data.json'
 
         this.obj.readparam =
         {

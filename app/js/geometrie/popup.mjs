@@ -37,7 +37,14 @@ export class MnePopupFrame
     else
     {
       this.frame.className += 'popup popup_main';
-      this.frame.innerHTML = '<div id="titlebar" class="popupheader"><span id="closebutton" class="popupbutton"></span><span id="fullscreenbutton" class="popupbutton"></span><span id="reloadbutton" class="popupbutton"></span><span id="querybutton" class="popupbutton"></span><span id="titletext" class="popupheadertext"></span></div><div id="content" class="popupcontent"></div><div id="resize" class="popupresize"></div>';
+      this.frame.innerHTML = '<div id="titlebar" class="popupheader">'
+                           +   '<div id="titletext" class="popupheadertext"></div>'
+                           +   '<div id="titlemiddle" class="popupheadertext"></div>'
+                           +   '<div id=titlebutton><span id="querybutton" class="popupbutton"></span>'
+                           +   '<span id="reloadbutton" class="popupbutton"></span>'
+                           +   '<span id="fullscreenbutton" class="popupbutton"></span>'
+                           +   '<span id="closebutton" class="popupbutton"></span>'
+                           + '</div></div><div id="content" class="popupcontent"></div><div id="resize" class="popupresize"></div>';
 
       this.frame.querySelector('#content').appendChild(this.container);
       this.frame.querySelector('#querybutton').onclick = (evt) => { self.query() };
@@ -96,12 +103,12 @@ export class MnePopupFrame
     return MneElement.hasClass(this.frame, "display");
   }
 
-  async show()
+  async show(repos = true)
   {
     if ( ! this.visible )
     {
       MneElement.mkClass(this.frame, "display");
-      this.repos();
+      if ( repos ) this.repos();
     }
     this.frame.style.zIndex = MnePopupFrame.zindex++;
   }

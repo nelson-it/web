@@ -25,8 +25,8 @@ class MneTemplateMain
 
     weblet.obj.container['count']      = s0.container0.querySelector('#mainright');
     weblet.obj.container['menubutton'] = s0.container0.querySelector('#mainleft');
-    weblet.obj.container['menumain']   = s1.container0
-    weblet.obj.container['detail']     = s1.container1
+    weblet.obj.container['menu']   = s1.container0
+    weblet.obj.container['detail'] = s1.container1
   }
 }
 

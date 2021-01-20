@@ -1,4 +1,4 @@
-div.weblet div.weblettitle {
+div.weblet div.title {
     position: sticky;
     top: 0px;
     left: 0px;
@@ -9,24 +9,41 @@ div.weblet div.weblettitle {
     white-space: nowrap;
     z-index: 10;
 }
-div.weblet div.weblettitlearea {
+div.weblet div.titlearea {
 	display: inline;
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-div.weblet div.weblettitleleft {
+div.weblet div.title .titleleft {
     padding-left: var(--dmargin);
 }
 
-div.weblet div.weblettitleright {
+div.weblet div.title .titleright {
     position: absolute;
     display: inline-flex;
 	right: 0px;
 	height: var(--titleheight);
 }
 
-div.popupcontent > div.weblet > div.weblettitle > div.weblettitleright {
+div.weblet div.titleright > div {
+    font-family: SymbolFont1;
+    font-size: var(--iconfontsize);
+    padding-right: var(--qmargin);
+    color: var(--darkcolor1)
+}	
+
+div.weblet div.title div.button {
+    box-shadow: none;
+    background: none;
+    border: 0px;
+    color: var(--darkcolor1);
+    font-size: var(--iconfontsize);
+    line-height: var(--titleheight);
+    width: auto;
+}
+
+div.popupcontent > div.weblet > div.title > div.titleright {
     display: none;
 }
 
@@ -108,29 +125,23 @@ div.weblet div#buttonContainer .select {
 	font-family: SymbolFont1;
 }
 
-div.weblet div.weblettitle.notitleframe {
+div.weblet div.title.notitleframe {
     display: none;
 }
 
-div.weblet div.weblettitle.notitle {
+div.weblet div.title.notitle {
     background: none;
     height: 0px;
 }
 
-div.weblet div.weblettitle.notitle div.weblettitleleft {
+div.weblet div.title.notitle div.titleleft {
     display: none;
 }
 
-div.weblet div.weblettitle.notitle div.weblettitlemiddle {
+div.weblet div.title.notitle div.titlemiddle {
     display: none;
 }
 
-div.weblet div.weblettitleright > div {
-    font-family: SymbolFont1;
-    font-size: var(--iconfontsize);
-    padding-right: var(--qmargin);
-    color: var(--darkcolor1)
-}	
 
 div.weblet div#buttonContainer input[type='button'], div#buttonContainer button {
 	display: block;
@@ -145,22 +156,13 @@ div.weblet div.buttonContainer .ele-wrapper span {
     padding-right: var(--dmargin);
 }
 
-div.weblet .weblettitle div.button {
-    box-shadow: none;
-    background: none;
-    border: 0px;
-    color: var(--darkcolor1);
-    font-size: var(--iconfontsize);
-    line-height: var(--titleheight);
-    width: auto;
-}
 
-div.weblet .weblettitle.notitle div.button {
+div.weblet .title.notitle div.button {
     font-size: var(--font_normal);
     color: var(--lightcolor1);
 }
 
-div.weblet .weblettitle div.button.active {
+div.weblet .title div.button.active {
     color: var(--titleactivecolor);
 }
 
@@ -174,13 +176,13 @@ div.weblet div#buttonContainer div.webletspace + .webletspace {
     display: none;
 }
 
-.fullscreen > div.weblet  {
-	position : absolute;
-	top: 0px;
-	left: 0px;
-	height : 100%;
-	width : 100%;
-	background-color: var(--background);
+.fullscreen > div.weblet, .fullscreen > div.popup  {
+	position : absolute !important;
+	top: 0px !important;
+	left: 0px !important;
+	height : 100% !important;
+	width : 100% !important;
+	background-color: var(--background) !important;
     display: flex;
     flex-direction: column;
 	z-index : 300;

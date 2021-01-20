@@ -89,11 +89,11 @@ class MneVcardImport extends MneView
             "sqlend" : 1
         };
 
-        var res = await MneRequest.fetch("/db/utils/table/data.json", param);
+        var res = await MneRequest.fetch("db/utils/table/data.json", param);
         if ( res.values.length == 0 )
-          await MneRequest.fetch( "/db/utils/table/insert.json",  { schema : 'mne_crm', table : 'city', nameInput : ort, postcodeInput : plz, cityidInput: '################', sqlstart : 1, sqlend : 1 } );
+          await MneRequest.fetch( "db/utils/table/insert.json",  { schema : 'mne_crm', table : 'city', nameInput : ort, postcodeInput : plz, cityidInput: '################', sqlstart : 1, sqlend : 1 } );
 
-        res = await MneRequest.fetch( "/db/utils/table/data.json",  param)
+        res = await MneRequest.fetch( "db/utils/table/data.json",  param)
 
         if ( res.values.length > 0 ) 
           this.setImport ("Adresse", { postbox : p1 + p2, street : strasse, city : ort, postcode : plz, cityid : res.values[0][0] } );

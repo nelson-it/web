@@ -48,7 +48,7 @@ class MneRepositoryLogTable extends MneDbTableView
         p.hash = ( typeof this.obj.run.values.hash != 'undefined' ) ? this.obj.run.values.hash : "";
 
         console.log(p)
-        var res = await MneRequest.fetch('/db/utils/repository/download.dat', p, true);
+        var res = await MneRequest.fetch('db/utils/repository/download.dat', p, true);
         return await res.blob();
       }
     }

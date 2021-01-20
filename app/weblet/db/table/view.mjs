@@ -27,7 +27,7 @@ class MnePopupDetail extends MnePopupWeblet
   
   async getWeblet(path)
   {
-    let { default: Weblet } = await MneRequest.import(path);
+    var Weblet = await super.getWeblet(path);
     
     class MyWeblet extends Weblet
     {
@@ -160,12 +160,13 @@ class MneDbTableView extends MneDbTableBasic
   
   async detail()
   {
-    if ( this.obj.popups[this.initpar.detailweblet] == undefined )
+    var parent = this.initpar.popupparent ?? this;
+    if ( parent.obj.popups[this.initpar.detailweblet] == undefined )
     {
       var p = this.config.composeparent.obj.popups[this.initpar.detailweblet];
       if ( p )
       {
-        this.obj.popups[this.initpar.detailweblet] = new MnePopupDetail(p.id, p.initpar, Object.assign({ tableweblet : this }, p.config));
+        parent.obj.popups[this.initpar.detailweblet] = new MnePopupDetail(p.id, p.initpar, Object.assign({ tableweblet : this }, p.config));
       }
       else
       {

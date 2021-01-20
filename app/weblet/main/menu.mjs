@@ -10,7 +10,7 @@
 
 import MneConfig        from '/js/basic/config.mjs'
 import MneRequest       from '/js/basic/request.mjs'
-import MneRecursiveMenu from './recursive.mjs'
+import MneRecursiveMenu from '/weblet/allg/menu/recursive.mjs'
 
 export class MneMainMenu extends MneRecursiveMenu
 {
@@ -21,7 +21,7 @@ export class MneMainMenu extends MneRecursiveMenu
     {
         notitleframe : 1,
         classname : 'menu',
-        name : 'main',
+        name : window.mne_application ?? 'main',
 
     };
 
@@ -32,7 +32,7 @@ export class MneMainMenu extends MneRecursiveMenu
   {
     super.reset();
 
-    this.obj.readurl = '/db/utils/query/data.json';
+    this.obj.readurl = 'db/utils/query/data.json';
     this.obj.readparam =
     {
       schema : 'mne_application',
@@ -83,6 +83,21 @@ export class MneMainMenu extends MneRecursiveMenu
     window.location = data.values[data.res.rids.action].parameter[0];
   }
 
+  async action_menu(data)
+  {
+    if ( this.initpar.name == data.values[data.res.rids.action].parameter[0] )
+      return;
+    
+    window.mne_application = this.initpar.name = data.values[data.res.rids.action].parameter[0];
+    window.history.replaceState(null, document.title, location.origin + '/' + window.mne_application );
+
+    var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
+    try { startweblet = JSON.parse(startweblet); } catch(e) { console.warn(e); console.warn(startweblet), startweblet = undefined; }
+
+    await this.obj.weblet.show(startweblet);
+
+    return this.values();
+  }
 }
 
 export default MneMainMenu

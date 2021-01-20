@@ -17,7 +17,7 @@ import MneElement from '/weblet/basic/element.mjs'
 import MneConfig  from '/js/basic/config.mjs'
 import MneFullscreen  from '/js/geometrie/fullscreen.mjs'
 
-MneTheme.loadCss('basic/weblet.css', '/styles/weblet');
+MneTheme.loadCss('basic/weblet.css', 'styles/weblet');
 
 export class MneWebletEmpty
 {
@@ -57,10 +57,10 @@ export class MneWebletEmpty
     }
   }
 
-  getPath(url)     { return (new URL(url)).pathname.replace(/\/[^\/]+\.mjs$/, ''); }
-  getBasePath(url) { return (new URL(url)).pathname.substring(8, ).replace(/\/[^\/]*$/, ''); }
-  getCss(url)      { return (new URL(url)).pathname.substring(8).replace(/\.mjs$/, '.css'); }
-  getView(url)     { return (new URL(url)).pathname.substring(8).replace(/\.mjs$/, '.html'); }
+  getPath(url)     { url = new URL(url); return url.pathname.substring(url.pathname.indexOf('/weblet/')).replace(/\/[^\/]+\.mjs$/, ''); }
+  getBasePath(url) { url = new URL(url); return url.pathname.substring(url.pathname.indexOf('/weblet/') + 8 ).replace(/\/[^\/]*$/, ''); }
+  getCss(url)      { url = new URL(url); return url.pathname.substring(url.pathname.indexOf('/weblet/') + 8 ).replace(/\.mjs$/, '.css'); }
+  getView(url)     { url = new URL(url); return url.pathname.substring(url.pathname.indexOf('/weblet/') + 8 ).replace(/\.mjs$/, '.html'); }
 
   getCssPath() { return "" };
 
@@ -231,6 +231,10 @@ export class MneWebletEmpty
   {
   }
 
+  async loadready()
+  {
+  }
+
   async show()
   {
   }
@@ -284,21 +288,20 @@ export class MneWeblet extends MneWebletEmpty
     {
       var i;
 
-      if ( this.obj.popup && this.obj.popup.frame && this.obj.popup.frame.parentNode )
-        this.obj.popup.frame.parentNode.removeChild(this.obj.popup.frame);
-
       for ( i in this.obj.weblets )
         this.obj.weblets[i].reset();
 
       for ( i in this.obj.slider )
         this.obj.slider[i].reset();
-
+      
+      for ( i in this.obj.popups )
+        this.obj.popups[i].reset();
+      
     }
 
     super.reset();
     this.initpar = Object.assign({}, this.initorig )
     this.obj  = Object.assign( this.obj, { loaded : false, weblets : {}, popups : {}, slider : {}, buttons : {} });
-    if ( this.initpar.popup ) this.obj.popup = this.initpar.popup;
 
     this.frame.className = '';
     this.config.cssName = this.config.path.replace(/\.mjs$/, '').replace(/^\//,'').replace(/\//g,'-');
@@ -320,8 +323,8 @@ export class MneWeblet extends MneWebletEmpty
   
   async createpopup(name, config, initpar )
   {
-    var p = ( this.obj.popups[name] ) ? this.obj.popups[name] : this.config.composeparent.obj.popups[name];
     var parent = ( this.initpar.popupparent) ? this.initpar.popupparent : this;
+    var p = this.obj.popups[name] ?? parent.obj.popups[name] ?? this.config.composeparent.obj.popups[name];
     await p.create(parent, config, initpar );
 
     var w = parent.obj.weblets[name];
@@ -434,18 +437,6 @@ export class MneWeblet extends MneWebletEmpty
   {
     if ( this.obj.loaded == false )
       await this.load();
-
-    if ( this.obj.popup != undefined )
-    {
-      var self = this;
-      if ( hide == false )
-        this.obj.popup.show();
-
-      this.obj.popup.setTitle(this.title ?? this.config.label ?? this.id );
-      this.obj.popup.reload = async function() { return self.reload() };
-      this.obj.popup.query = async function() { return self.query() };
-      this.obj.buttons.query = this.obj.popup.frame.querySelector('#querybutton');
-    }
   }
   
   showWaitframe()
@@ -489,19 +480,13 @@ export class MneWeblet extends MneWebletEmpty
 
   async close()
   {
-    if ( this.obj.popup != undefined )
-    {
-      this.obj.popup.close();
-      return true;
-    }
-
     return false;
   }
 
 }
 
 MneWeblet.webletnum = 0;
-MneWeblet.stylePath = '/styles/weblet';
+MneWeblet.stylePath = 'styles/weblet';
 MneWeblet.click_mutex = new MneMutex();
 
 MneWeblet.waitframe = document.createElement("div");

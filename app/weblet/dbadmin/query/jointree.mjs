@@ -185,7 +185,7 @@ class MneAdminJoinTree extends MneDbView
         "sqlend" : 1
     };
 
-    var res = this.obj.run.result = await MneRequest.fetch("/db/utils/table/data.json", p );
+    var res = this.obj.run.result = await MneRequest.fetch("db/utils/table/data.json", p );
 
     for ( i = 0; i<res.values.length; i++ )
     {

@@ -109,6 +109,7 @@ export class MneRegister extends MneWeblet
           
           await weblet.load();
           weblet.obj.run.newvalues = true;
+          this.obj.container.frame.appendChild(weblet.frame);
       }
 
       Array.from(this.obj.container.menu.children).forEach((item) => { MneElement.mkClass(item, 'registeractive', item.id == id )})
@@ -116,8 +117,9 @@ export class MneRegister extends MneWeblet
       var weblet = this.config.composeparent.obj.weblets[id];
       weblet.config.depend.forEach((item, index) => { if ( item instanceof MneWeblet && weblet.config.dependid[index] && weblet.config.dependid[index][0] != '#' ) item.config.dependweblet = weblet; })
       
-      if ( this.obj.container.frame.firstChild ) this.obj.container.frame.removeChild(this.obj.container.frame.firstChild);
-      this.obj.container.frame.appendChild(this.config.composeparent.obj.weblets[id].frame);
+      Array.from(this.obj.container.frame.children).forEach((item) => { MneElement.mkClass(item,'hide') });
+      MneElement.clearClass(this.config.composeparent.obj.weblets[id].frame, 'hide');
+      
 
     }
 

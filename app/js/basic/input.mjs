@@ -171,7 +171,8 @@ export class MneInput
     switch(MneInput.getTyp(typ))
     {
       case "bool":
-        return (( value != '' && value != '0' && value != 0 && value != false && value != 'false' && value != MneText.getText("#mne_lang#falsch") ) ? '&#10004;' : '' );
+        return (( value != '' && value != '0' && value != 0 && value != false && value != 'false' && value != MneText.getText("#mne_lang#falsch") ) ? '✔' : '' );
+        //return (( value != '' && value != '0' && value != 0 && value != false && value != 'false' && value != MneText.getText("#mne_lang#falsch") ) ? '&#10004;' : '' );
 
       case "binary":
         return "binary";

@@ -1,6 +1,4 @@
 @import "../variable.css";
-@import "../tag.css";
-@import "../class.css";
 
 :root {
 	--font_normal: 16px;

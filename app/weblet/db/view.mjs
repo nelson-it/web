@@ -98,12 +98,12 @@ export class MneDbView extends MneView
     {
       if ( this.initpar.schema && this.initpar.query )
       {
-        readurl = '/db/utils/query/data.json';
+        readurl = 'db/utils/query/data.json';
         this.obj.run.readpar  = { schema : this.initpar.schema, query : this.initpar.query, sqlstart : 1, sqlend : 1 };
       }
       else if ( this.initpar.schema && this.initpar.table )
       {
-        readurl = '/db/utils/table/data.json';
+        readurl = 'db/utils/table/data.json';
         this.obj.run.readpar = { schema : this.initpar.schema, table : this.initpar.table, sqlstart : 1, sqlend : 1 };
       }
     }
@@ -201,11 +201,11 @@ export class MneDbView extends MneView
       }
     }
     
-    var addurl = this.initpar.addurl ?? (( addtyp == 'function' ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? (( addtyp == 'table' ) ? "/db/utils/table/insert.json" : undefined );
-    var modurl = this.initpar.modurl ?? (( modtyp == 'function' ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? (( modtyp == 'table' ) ? "/db/utils/table/modify.json" : undefined );
-    var delurl = this.initpar.delurl ?? (( deltyp == 'function' ) ? "/db/utils/connect/func/execute.json" : undefined ) ?? (( deltyp == 'table' ) ? "/db/utils/table/delete.json" : undefined );
+    var addurl = this.initpar.addurl ?? (( addtyp == 'function' ) ? "db/utils/connect/func/execute.json" : undefined ) ?? (( addtyp == 'table' ) ? "db/utils/table/insert.json" : undefined );
+    var modurl = this.initpar.modurl ?? (( modtyp == 'function' ) ? "db/utils/connect/func/execute.json" : undefined ) ?? (( modtyp == 'table' ) ? "db/utils/table/modify.json" : undefined );
+    var delurl = this.initpar.delurl ?? (( deltyp == 'function' ) ? "db/utils/connect/func/execute.json" : undefined ) ?? (( deltyp == 'table' ) ? "db/utils/table/delete.json" : undefined );
 
-    this.obj.run.btnrequest  = { read : readurl, add : addurl, mod : modurl, del : delurl, "export" : '/db/utils/query/data.csv' };
+    this.obj.run.btnrequest  = { read : readurl, add : addurl, mod : modurl, del : delurl, "export" : 'db/utils/query/data.csv' };
     
     if ( ! addurl ) this.delbutton('add');
     if ( ! modurl ) this.delbutton('ok');
@@ -225,7 +225,7 @@ export class MneDbView extends MneView
           ids : this.initpar.selectlistids
       }
 
-      var res = await MneRequest.fetch('/htmlcompose/select.json', p);
+      var res = await MneRequest.fetch('htmlcompose/select.json', p);
 
       res.ids.push('mustmatch');
       res.typs.push('bool');
@@ -302,7 +302,7 @@ export class MneDbView extends MneView
         p.wval = ( this.initpar.selectlists[id] ) ? this.initpar.selectlists[id] : id;
       }
 
-      res = await MneRequest.fetch(( p.query ) ? '/db/utils/query/data.json' : '/db/utils/table/data.json', p);
+      res = await MneRequest.fetch(( p.query ) ? 'db/utils/query/data.json' : 'db/utils/table/data.json', p);
 
       var str = '';
       for ( i = 0; i< res.values.length; i++)
@@ -837,7 +837,7 @@ export class MneDbView extends MneView
     
     p = this.getFunctionParam(p, this.initpar[id + 'cols'] ?? this.initpar.showids, this.initpar[id + 'typs'] ?? {});
 
-    return MneRequest.fetch('/db/utils/connect/func/execute.json', p);
+    return MneRequest.fetch('db/utils/connect/func/execute.json', p);
 
   }
  
@@ -914,11 +914,6 @@ export class MneDbView extends MneView
       this.obj.run.values[res.ids[i]] = MneInput.getValue(res.values[0][i], res.typs[i], true );
     
     this.obj.run.values = Object.assign({}, this.obj.run.values);
-    if ( this.initpar.mainweblet )
-      {
-      window.sessionStorage.setItem(window.mne_application + ':' + this.config.composeparent.obj.name, JSON.stringify(this.obj.run.values)); 
-      if ( ! window.inpopstate ) window.history.pushState({name : this.config.composeparent.obj.name, values : this.obj.run.values}, '');
-      }
 
     await this.links();
     
@@ -960,7 +955,7 @@ export class MneDbView extends MneView
       res.rids[this.initpar.okids[0]] = res.rids['result'];
     }
 
-    this.initpar.showids.forEach( ( item ) => { values[item] = oldvalues[item]; });
+    this.initpar.showids.forEach( ( item ) => { values[item] = oldvalues[item] ?? (( this.config.dependweblet ) ? this.config.dependweblet.obj.run.values[item] : undefined ); });
     res.ids.forEach( (item, index) => { values[item] = res.values[0][index]; })
 
     this.dependweblet = this;

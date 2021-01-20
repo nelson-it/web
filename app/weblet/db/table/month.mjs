@@ -91,7 +91,7 @@ class MneTableMonth extends MneDbView
         sqlend   : 1
     };
 
-    var res = await MneRequest.fetch("/db/utils/table/data.json",  param );
+    var res = await MneRequest.fetch("db/utils/table/data.json",  param );
     
     if ( res.values.length > 0 )
     {
@@ -125,7 +125,7 @@ class MneTableMonth extends MneDbView
     str = '<div class="inputarea"><div class="inputgroup">';
     for ( i in data.values )
     {
-      if ( data.result.hides.indexOf(data.result.ids[i]) == -1 && data.values[i] != '' )
+      if ( data.result.ids[i] == 'start' || data.result.ids[i] == 'duration' || ( data.result.hides.indexOf(data.result.ids[i]) == -1 && data.values[i] != '' ))
         str += '<div class="inputsingle"><span id="' + data.result.ids[i] + 'Label">' + data.result.labels[i] + '</span><span id="' + data.result.ids[i] + 'Output">' + MneInput.format(data.values[i], data.result.typs[i], data.result.formats[i]) + '</span></div>'; 
     }
     str += '</div></div>';
