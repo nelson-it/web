@@ -24,19 +24,17 @@ class MneUserPasswdWeblet extends MneDbViewWeblet
     {
       var ivalues = 
       {
-        schema    : 'mne_crm',
+        schema    : 'mne_application',
         query     : 'userpasswd',
 
-        showids    : [ "personid"] ,
+        showids    : [ "username"] ,
         delbutton  : 'add,del', 
 
         modschema   : 'mne_catalog',
-        modfunction : 'userpasswd',  
+        modfunction : 'userpasswd',
         modcols     : ['username', 'passwd1'],
         modtyps     : {},
 
-        modpost     : 'sysexec/user/passwd/setpasswd',
-        
         hinput : false
       };
            
