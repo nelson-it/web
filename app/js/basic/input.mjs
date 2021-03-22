@@ -74,6 +74,9 @@ export class MneInput
       case '1011':
       case "link":
         return "link";
+      case '1012':
+      case "http":
+        return "http";
 
       case '1020':
       case 'color':

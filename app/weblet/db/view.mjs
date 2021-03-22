@@ -24,7 +24,8 @@ class MnePopupSelectFrame extends MnePopup
 {
   async getWeblet(path)
   {
-    let { default: Weblet } = await MneRequest.import(path);
+    var Weblet = await super.getWeblet(path);
+    
     class MyWeblet extends Weblet
     {
       set matchobj(matchobj)
@@ -205,10 +206,10 @@ export class MneDbView extends MneView
     var modurl = this.initpar.modurl ?? (( modtyp == 'function' ) ? "db/utils/connect/func/execute.json" : undefined ) ?? (( modtyp == 'table' ) ? "db/utils/table/modify.json" : undefined );
     var delurl = this.initpar.delurl ?? (( deltyp == 'function' ) ? "db/utils/connect/func/execute.json" : undefined ) ?? (( deltyp == 'table' ) ? "db/utils/table/delete.json" : undefined );
 
-    this.obj.run.btnrequest  = { read : readurl, add : addurl, mod : modurl, del : delurl, "export" : 'db/utils/query/data.csv' };
+    this.obj.run.btnrequest  = { read : readurl, add : addurl, mod : modurl, del : delurl };
     
-    if ( ! addurl ) this.delbutton('add');
-    if ( ! modurl ) this.delbutton('ok');
+    if ( ! addurl ) { this.delbutton('add'); this.obj.run.title.add = this.config.label }
+    if ( ! modurl ) { this.delbutton('ok'); this.obj.run.title.mod = this.config.label }
     if ( ! delurl ) this.delbutton('del');
     
     this.obj.lastquery = this.initpar.lastquery;
@@ -358,7 +359,7 @@ export class MneDbView extends MneView
     var res = await MneRequest.fetch(this.obj.run.btnrequest.read, p);
 
     for ( i in this.obj.labels )
-      if ( ! this.obj.labels[i].noautoread ) this.obj.labels[i].setValue(res.labels[res.rids[i]]);
+      if ( ! this.obj.labels[i].noautoread ) { this.obj.labels[i].setTyp(res.typs[res.rids[i]], this.obj.inputs[i]); this.obj.labels[i].setValue(res.labels[res.rids[i]]);  }
 
     for ( i in this.obj.inputs )
       if ( this.obj.inputs[i] && ! this.obj.inputs[i].noautoread ) this.obj.inputs[i].setTyp(res.typs[res.rids[i]], res.regexps[res.rids[i]], res.formats[res.rids[i]]  );
@@ -386,19 +387,19 @@ export class MneDbView extends MneView
     var path = { 'table' : 'table/select', 'fmenu' : 'menu/fselect', 'rmenu' : 'menu/rselect', frame : 'table/frame' }
     var config;
     var isselect = (vals[rids['element']].indexOf('?') != -1 );
-    var interactive = ( vals[rids['type']] != 'frame' )
+    var interactive = ( vals[rids['type']] != 'frame' && vals[rids['type']] != 'fweblet' )
     var name;
     var showids;
 
     if ( this.obj.popups[id + 'select'] )
     {
     }
-    else if ( vals[rids['type']] == 'weblet' )
+    else if ( vals[rids['type']] == 'weblet' || vals[rids['type']] == 'fweblet' )
     {
       name = vals[rids['weblet']];
       var popup = this.config.composeparent.obj.popups[name];
       var initpar = Object.assign(Object.assign({},popup.initpar), { selectok : async (sel) => { self[id + 'selected'](sel) } });
-      this.obj.popups[id + 'select']  = new MnePopup( id + 'select', initpar, popup.config );
+      this.obj.popups[id + 'select']  = ( interactive ) ? new MnePopup( id + 'select', initpar, popup.config ) : new MnePopupSelectFrame(id + 'select', initpar, Object.assign(popup.config, { nointeractive : true}) );
     }
     else
     {
@@ -507,8 +508,8 @@ export class MneDbView extends MneView
           await this.openpopup(id + 'select', {}, { matchobj : obj, lastquery : this.obj.lastquery });
           w = this.initpar.popupparent.obj.weblets[id + 'select'];
           
-          w.initpar.popup.frame.style.left = obj.offsetLeft + 'px';
-          w.initpar.popup.frame.style.top = obj.offsetTop + obj.offsetHeight + 'px';
+          this.obj.popups[id + 'select'].popup.frame.style.left = obj.offsetLeft + 'px';
+          this.obj.popups[id + 'select'].popup.frame.style.top = obj.offsetTop + obj.offsetHeight + 'px';
         }
         catch(e)
         {
@@ -522,7 +523,7 @@ export class MneDbView extends MneView
       obj.addEventListener('tabblur', (evt) =>
       {
         var w = this.initpar.popupparent.obj.weblets[id + 'select'];
-        if( w && w.initpar.popup.frame.parentNode == obj.offsetParent )
+        if( w && this.obj.popups[id + 'select'].popup.frame.parentNode == obj.offsetParent )
         {
           if ( vals[rids['mustmatch']] )
           {
@@ -542,7 +543,7 @@ export class MneDbView extends MneView
       obj.addEventListener('blur', (evt) =>
       {
         var w = this.initpar.popupparent.obj.weblets[id + 'select'];
-        if( w && w.initpar.popup.frame.parentNode == obj.offsetParent )
+        if( w && this.obj.popups[id + 'select'].popup.frame.parentNode == obj.offsetParent )
         {
           if ( evt.explicitOriginalTarget && evt.explicitOriginalTarget.parentNode.closest('tbody') == w.obj.weblets.table.obj.tbody )
             return;
@@ -608,7 +609,7 @@ export class MneDbView extends MneView
       obj.addEventListener('keydown', (evt) =>
       {
         var w;
-        if ( ! this.initpar.popupparent.obj.weblets[id + 'select'] || ! this.initpar.popupparent.obj.weblets[id + 'select'].obj.popup.visible ) return;
+        if ( ! this.initpar.popupparent.obj.weblets[id + 'select'] || ! this.obj.popups[id + 'select'].popup.visible ) return;
 
         switch(evt.key)
         {

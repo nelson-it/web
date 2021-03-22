@@ -39,7 +39,7 @@ export class MneFixMenu extends MneMenu
     if ( this.initpar.query ) this.obj.readparam.query = this.initpar.query;
     if ( this.initpar.table ) this.obj.readparam.table = this.initpar.table;
     
-    this.obj.readurl = ( this.initpar.query ) ? 'db/utils/query/data.json' : 'db/utils/table/data.json'
+    this.obj.readurl = this.initpar.url ?? (( this.initpar.query ) ? 'db/utils/query/data.json' : 'db/utils/table/data.json')
 
     this.obj.cols = this.initpar.cols.split(',');
     this.obj.showcolnames = ( this.initpar.showcolnames ) ? this.initpar.showcolnames.split(',') : this.initpar.showcols.split(',');

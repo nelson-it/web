@@ -149,7 +149,7 @@ class MnePopupWeblet
       if ( parent.obj.weblets[this.id] )
       {
         this.config.parentframe = parent.obj.weblets[this.id].config.parentframe = frame;
-        frame.appendChild(parent.obj.weblets[this.id].initpar.popup.frame);
+        frame.appendChild(this.popup.frame);
       }
       else
       {

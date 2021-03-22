@@ -25,33 +25,28 @@ class MneRecursiveMenu extends MneMenu
   {
     super.reset();
 
+    this.obj.readurl = this.initpar.url ?? (( this.initpar.query ) ? 'db/utils/query/data.json' : 'db/utils/table/data.json');
+    this.obj.readparam =
+    {
+      cols     : this.initpar.cols,
+      scols    : this.initpar.scols,
+      distinct : ( this.initpar.distinct ) ? '1' : '',
+      sqlstart : 1,
+      sqlend   : 1
+    }
+
+    this.obj.readparam.wcol = ( this.initpar.showids && this.initpar.showids.length ) ? this.initpar.showids.join(',') : ( this.initpar.wcol ?? '' );
+    this.obj.readparam.wop  = ( this.initpar.showids && this.initpar.showids.length) ? (Array(this.initpar.showids.length).fill('=')).join(',') : ( this.initpar.wop ?? '' );
+    this.obj.readparam.wval = ( this.initpar.showids && this.initpar.showids.length) ? (Array(this.initpar.showids.length).fill('')).join(',') : ( this.initpar.wval ?? '' );
+    this.obj.readparam = Object.assign(this.obj.readparam, this.initpar.readparam );
+
     if ( ! this.initpar.url )
     {
-
-      this.obj.readurl = ( this.initpar.query ) ? 'db/utils/query/data.json' : 'db/utils/table/data.json'
-
-        this.obj.readparam =
-        {
-          schema   : this.initpar.schema,
-          cols     : this.initpar.cols,
-          scols    : this.initpar.scols,
-          distinct : ( this.initpar.distinct ) ? '1' : '',
-          sqlstart : 1,
-          sqlend   : 1
-        }
-
+      this.obj.readparam.schema = this.initpar.schema;
       if ( this.initpar.query ) this.obj.readparam.query = this.initpar.query;
       if ( this.initpar.table ) this.obj.readparam.table = this.initpar.table;
+    }
 
-      this.obj.readparam.wcol = this.initpar.wcol ?? this.initpar.showids.join(',');
-      this.obj.readparam.wop  = this.initpar.wop  ?? (Array(this.initpar.showids.length).fill('=')).join(',')
-      this.obj.readparam.wval = this.initpar.wval ?? ''
-    }
-    else
-    {
-      this.obj.readurl = this.initpar.url;
-      this.obj.readparam = Object.assign({ wcol : '', wop : '', wval : '' }, this.initpar.readparam );
-    }
   }
   
   async load()
@@ -93,8 +88,9 @@ class MneRecursiveMenu extends MneMenu
   {
     var i;
     var actioncol = this.initpar.actioncol ?? 0;
-    var values = [{}, '', '', '', ''];
+    var values = ['', '', '', '', ''];
     var rids = { action : 0, menuid : 2 };
+    var wval = '';
     
     values[actioncol] = {};
     
@@ -106,8 +102,10 @@ class MneRecursiveMenu extends MneMenu
         val = this.initpar.showalias[i]();
       else
         val = w.obj.run.values[this.initpar.showids[i]];
-      this.obj.readparam.wval = val + ',';
+      wval += (val + ',');
     }
+    
+    if ( this.initpar.showids && this.initpar.showids.length ) this.obj.readparam.wval = wval;
     
     await this.action_submenu( { menu : null, values : values, res : { rids : rids }, frame : this.obj.container.tree});
   }

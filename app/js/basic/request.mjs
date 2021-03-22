@@ -95,7 +95,7 @@ class MneRequest
         par = '\n' + MneText.getText('#mne_lang#Parameter') + '\n' + request + '\n';
         
         if ( parameter instanceof FormData )
-          for ( i of parameter.keys() ) par += ( i + ": " + parameter.get(i) + "\n");
+          for ( i of parameter.keys() ) par += ( i + ": " + decodeURIComponent(parameter.get(i)) + "\n");
         else
           for ( i in parameter ) par += ( i + ": " + parameter[i] + "\n");
 
@@ -139,8 +139,26 @@ class MneRequest
       if ( data.regexps )
       {
         var i;
-        for ( i = 0; i < data.regexps.length; i++ )
-          data.regexps[i] = ( MneInput.checktype[data.regexps[i][0]] ) ? MneInput.checktype[data.regexps[i][0]] : { reg :new RegExp(( data.regexps[i][0] ) ? data.regexps[i][0] : '(?:.|\n)+|^$', data.regexps[i][1]), help : data.regexps[i][2] };
+        data.regexps.forEach( ( item, i) => 
+        {
+          if ( typeof item == 'string' && item != '' )
+          {
+            data.regexps[i] = MneInput.checktype[item];
+            if ( data.regexps[i] == undefined )
+            {
+              data.regexps[i] = MneInput.checktype['ok'];
+              console.error('regexp ' + item + ' not found');
+            }
+          }
+          else if ( Array.isArray(item) )
+          {
+            data.regexps[i] = MneInput.checktype[item[0]]  ?? { reg : new RegExp(( item[0] ) ? item[0] : '(?:.|\n)+|^$', item[1]), help : item[2] };
+          }
+          else
+          {
+            data.regexps[i] = MneInput.checktype['ok'];
+          }
+        });
       }
     }
     return data;

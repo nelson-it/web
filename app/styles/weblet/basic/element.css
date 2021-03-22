@@ -60,8 +60,8 @@ span.hint {
 	display: none;
 }
 
-[contenteditable="true"]:empty::after {
-    content: attr(placeholder);
+[contenteditable="true"][placeholder]:empty::after {
+    content: attr(placeholder) !important;
     color: var(--placeholdercolor);
 }
 
@@ -69,7 +69,8 @@ span.hint {
     position: absolute;
     display: inline-block;
     left: 20px;
-    top: calc(var(--lineheight_normal) * 0.8);
+    bottom: 0px;
+    translate: 0 100%;
     border: var(--border);
     border-width: 2px;
     box-shadow: 0px 0px 12px;
@@ -127,7 +128,7 @@ span[contenteditable="true"][aria-multiline], span[contenteditable="true"].multi
 
 span[contenteditable="true"].multionfocus {
     overflow : hidden;
-    max-height: var(--select_lineheight);
+    max-height: calc( 1.2 * var(--select_lineheight));
 }
 
 td  span[contenteditable="true"] {

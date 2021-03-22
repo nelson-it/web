@@ -8,11 +8,12 @@
 //================================================================================
 'use strict';
 
-import MneText   from '/js/basic/text.mjs'
-import MneLog    from '/js/basic/log.mjs'
-import MneTheme  from '/js/basic/theme.mjs'
-import MneConfig from '/js/basic/config.mjs'
-import MneMutex  from '/js/basic/mutex.mjs'
+import MneText    from '/js/basic/text.mjs'
+import MneLog     from '/js/basic/log.mjs'
+import MneTheme   from '/js/basic/theme.mjs'
+import MneConfig  from '/js/basic/config.mjs'
+import MneMutex   from '/js/basic/mutex.mjs'
+import MneElement from '/js/basic/element.mjs'
 
 import MneDbConfig from '/js/db/config.mjs'
 
@@ -49,7 +50,12 @@ class MneMain extends MneGeometrie
         try { startweblet = JSON.parse(startweblet); } catch(e) { console.log(e); console.log(startweblet), startweblet = undefined; }
 
         if ( startweblet )
-          this.obj.weblets.detail.show( startweblet).catch( (e) => { MneLog.exception('Main Startweblet', e); });
+        {
+          var timeout = window.setTimeout(() => { MneElement.mkClass(MneWeblet.waitframe, 'show') }, 500);
+          this.obj.weblets.detail.show( startweblet)
+            .then( () => { window.clearTimeout(timeout); MneElement.mkClass(MneWeblet.waitframe, 'show', false)})
+            .catch( (e) => { window.clearTimeout(timeout); MneElement.mkClass(MneWeblet.waitframe, 'show', false); MneLog.exception('Main Startweblet', e); });
+        }
       });
       
       observer.observe(this.obj.weblets.menu.frame, { attributes : true, attributeFilter : ['menuready']} );

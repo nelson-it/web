@@ -48,7 +48,7 @@ class MneDbAdminProcedure extends MneDbView
     {
       await super.load();
       
-      await MneRequest.loadscript('/js/ace/ace.js');
+      await MneRequest.loadscript('js/ace/ace.js');
 
       this.obj.editor = ace.edit("textEdit");
       this.obj.editor.getSession().setMode("ace/mode/sql");

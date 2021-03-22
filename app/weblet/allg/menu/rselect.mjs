@@ -205,14 +205,12 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     var res;
     var retval = false;
     
-    if ( this.obj.selectdata == undefined ) return false;
-    
     res = Object.assign({}, this.obj.run.result );
     res.values = [[]];
     
     res.ids.forEach( (item) =>
     {
-      res.values[0].push(this.obj.selectdata.values[this.obj.selectdata.res.rids[item]]);
+      res.values[0].push(( this.obj.selectdata ) ? this.obj.selectdata.values[this.obj.selectdata.res.rids[item]] : '');
     });
     
     if ( this.initpar.selectok )

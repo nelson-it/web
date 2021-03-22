@@ -254,7 +254,51 @@ export class MneView extends MneViewContainer
     MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-label');
 
     obj.setAttribute('shortid',id);
-    obj.setValue = obj.modValue = function(text) { this.textContent = text };
+    obj.setTyp = function(dpytype, vobject )
+    {
+      this.vobject = vobject;
+      if ( vobject )
+        this.dpytype = MneInput.getTyp( dpytype );
+      
+      if ( this.observer ) this.observer.disconnect();
+      this.observer = undefined;
+      
+      switch(this.dpytype )
+      {
+        case "email":
+          this.observer = new MutationObserver( (muts) => 
+          {
+            this.firstChild.href = 'mailto:' + this.vobject.getValue(false);
+          });
+          this.observer.observe(vobject, { attributes: true, attributeFilter: [ 'newvalue'] } );
+          break;
+          
+        case "http":
+          this.observer = new MutationObserver( (muts) => 
+          {
+            this.firstChild.href ='http://' + this.vobject.getValue(false);
+          });
+          this.observer.observe(vobject, { attributes: true, attributeFilter: [ 'newvalue'] } );
+          break;
+      }
+    }
+    
+    obj.setValue = obj.modValue = function(text)
+    {
+      switch(this.dpytype )
+      {
+        case "email":
+          this.innerHTML='<a href="mailto:' + this.vobject.getValue(false) + '" >' + text + '</a>';
+          break;
+          
+        case "http":
+          this.innerHTML='<a href="http://' + this.vobject.getValue(false) + '" target="extern">' + text + '</a>';
+          break;
+          
+        default:
+          this.textContent = text
+      }
+    };
   }
 
   async mkOutput(id, obj )
@@ -388,8 +432,10 @@ export class MneView extends MneViewContainer
       this.obj.fields.push(obj);
     }
     
-    if ( obj.type == 'hidden' )
-      obj.placeholder = id;
+    if ( this.initpar.placeholder && this.initpar.placeholder[id] )
+      obj.setAttribute('placeholder', this.initpar.placeholder[id] );
+    else if ( obj.type == 'hidden' )
+      obj.setAttribute('placeholder', id);
 
     MneElement.mkClass(obj, 'input');
     MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-input');
@@ -527,10 +573,12 @@ export class MneView extends MneViewContainer
 
     obj.setValue = function(value)
     {
-      var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
+      var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/\t/g, "    ").replace(/ /g, "\u00A0");
       if ( text[text.length - 1] == '\n') text = text + '\n';
       if ( this.dpytype != 'bool' && this.format != 'xhtml' )
+      {
         this.innerText = text;
+      }
       else
         this.innerHTML = text;
 
@@ -540,7 +588,7 @@ export class MneView extends MneViewContainer
 
     obj.modValue = function(value)
     {
-      var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/ /g, "\u00A0");
+      var text = String(MneInput.format(value, this.dpytype, this.format)).replace(/\t/g, "    ").replace(/ /g, "\u00A0");
       if ( text[text.length - 1] == '\n') text = text + '\n';
       if ( this.dpytype != 'bool' && this.format != 'xhtml' )
         this.innerText = text;

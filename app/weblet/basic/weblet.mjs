@@ -452,7 +452,7 @@ export class MneWeblet extends MneWebletEmpty
   async btnClick (clickid, data = {}, obj, evt )
   {
     let unlock = await MneWeblet.click_mutex.lock();
-    var timeout = window.setTimeout(() => { MneElement.mkClass(MneWeblet.waitframe, 'show') }, 500);
+    var timeout = window.setTimeout(() => { if ( this.obj.run.nowaitframe ) return; MneElement.mkClass(MneWeblet.waitframe, 'show') }, 500);
     
     try
     {
