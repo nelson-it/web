@@ -1,37 +1,37 @@
-.weblet-allg-repository-tree div.treelink::before {
+.weblet-allg-repository div.treelink::before {
     background-size: 8px;
 	background-repeat: no-repeat;
 	background-position: 100% 70%;
 	padding-right: 4px;
 }
 
-.weblet-allg-repository-tree div.treelinkM::before {
+.weblet-allg-repository div.treelinkM::before {
     background-image: url('mod.svg');
 	background-position: bottom;
 }
 
-.weblet-allg-repository-tree div.treelinkD, .weblet-allg-repository-tree div.treelinkAD {
+.weblet-allg-repository div.treelinkD, .weblet-allg-repository div.treelinkAD {
 	text-decoration: line-through;
     color: #800000;
 }
 
-.weblet-allg-repository-tree div.treelinkD::before, .weblet-allg-repository-tree div.treelinkAD::before {
+.weblet-allg-repository div.treelinkD::before, .weblet-allg-repository div.treelinkAD::before {
     background-image: url('del.svg');
 }
 
-.weblet-allg-repository-tree div.treelinkA::before {
+.weblet-allg-repository div.treelinkA::before {
     background-image: url('add.svg');
 }
 
-.weblet-allg-repository-tree div.treelinkY::before {
+.weblet-allg-repository div.treelinkY::before {
     background-image: url('notadd.svg');
 }
 
-.weblet-allg-repository-tree div.treelinkR::before {
+.weblet-allg-repository div.treelinkR::before {
     background-image: url('ren.svg');
 }
 
-.weblet-allg-repository-treeedit > .webletmain {
+.weblet-allg-repositoryedit > .webletmain {
 	border: var(--border);
 }
 	

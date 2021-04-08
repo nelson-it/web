@@ -24,10 +24,10 @@ class MneRepositoryReference extends MneDbView
      frameclass : 'weblet-allg-repository',
       notitleframe   : true,
 
-      url       : '/db/utils/repository/data.json',
-      addurl    : '/db/utils/repository/insert.json',
-      modurl    : '/db/utils/repository/modify.json',
-      sendurl   : '/db/utils/trust/repmail.json',
+      url       : 'db/utils/repository/data.json',
+      addurl    : 'db/utils/repository/insert.json',
+      modurl    : 'db/utils/repository/modify.json',
+      sendurl   : 'db/utils/trust/repmail.json',
 
       showids : [ 'refid' ],
       

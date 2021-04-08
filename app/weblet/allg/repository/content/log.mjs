@@ -25,7 +25,7 @@ class MneRepositoryLog extends MneFixTable
         
         tableweblet : '/weblet/allg/repository/content/logtable',
         whereweblet : '/weblet/allg/repository/content/tabletitle',
-        url     : '/db/utils/repository/dblog.json',
+        url     : 'db/utils/repository/dblog.json',
 
         readpar :
         {

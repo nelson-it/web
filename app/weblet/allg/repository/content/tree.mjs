@@ -25,7 +25,7 @@ class MneRepositoryTree extends MneMenuRecursive
     {
         frameclass : 'weblet-allg-repository',
 
-        url : '/db/utils/repository/ls.json',
+        url : 'db/utils/repository/ls.json',
         readpar : {'rootInput.old' : 'repository',
                       'dirInput.old' : '',
                  'pointdirInput.old' : '',
@@ -62,8 +62,8 @@ class MneRepositoryTree extends MneMenuRecursive
         return;
 
       await this.openpopup('edit');
-      this.obj.weblets.edit.obj.popup.frame.style.left = evt.clientX + "px";
-      this.obj.weblets.edit.obj.popup.frame.style.top = evt.clientY  + "px";
+      this.obj.popups.edit.popup.frame.style.left = evt.clientX + "px";
+      this.obj.popups.edit.popup.frame.style.top = evt.clientY  + "px";
       this.obj.weblets.edit.openmenu(evt.target);
       return false;
     });

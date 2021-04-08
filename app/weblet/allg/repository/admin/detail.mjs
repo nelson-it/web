@@ -23,12 +23,12 @@ class MneRepositoryDetail extends MneDbView
     {
      frameclass : 'weblet-allg-repository',
 
-      url       : '/db/utils/repository/data.json',
-      addurl    : '/db/utils/repository/insert.json',
-      modurl    : '/db/utils/repository/modify.json',
-      delurl    : '/db/utils/repository/delete.json',
-      commiturl : '/db/utils/repository/commit.json',
-      sendurl   : '/db/utils/trust/repmail.json',
+      url       : 'db/utils/repository/data.json',
+      addurl    : 'db/utils/repository/insert.json',
+      modurl    : 'db/utils/repository/modify.json',
+      delurl    : 'db/utils/repository/delete.json',
+      commiturl : 'db/utils/repository/commit.json',
+      sendurl   : 'db/utils/trust/repmail.json',
 
       showids       : ['repositoryid'],
       

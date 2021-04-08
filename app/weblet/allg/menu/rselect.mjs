@@ -28,7 +28,8 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
       super.reset();
       
-      if ( ! this.initpar.table )
+      this.initpar.edit = ( this.initpar.table || this.initpar.addurl )
+      if ( ! this.initpar.edit )
         this.delbutton('del,add');
       else
         this.obj.mkbuttons.push( { id : 'rename', value : MneText.getText('#mne_lang#Umbenennen'), behind : 'add' } );
@@ -47,7 +48,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
       });
       this.obj.run.result = res;
       
-      if ( this.initpar.table )
+      if ( this.initpar.edit )
         this.obj.htmlcontent = '<div class="inputarea"><div class="inputgroup"><div class="inputsingle"><div id="tree"></div></div></div></div><div class="inputarea"><div class="inputgroup"><div class="inputsingle"><span>&nbsp;</span><span id="nameInput"></span></div></div></div>';
     }
   
@@ -55,7 +56,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
     await super.load();
 
-    if ( ! this.initpar.table )  return;
+    if ( ! this.initpar.edit )  return;
 
     this.obj.container.tree = this.obj.container.content.querySelector('#tree');
     
@@ -111,17 +112,17 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
       {
         var p = 
         {
-            schema : this.initpar.schema,
-            table : this.initpar.table,
-
             "treeidInput.old" : this.obj.drag.data.values[this.obj.drag.data.res.rids.menuid],
             parentidInput : ( evt.target.mne_data ) ? evt.target.mne_data.values[evt.target.mne_data.res.rids.menuid] : '',
 
                 sqlstart : 1,
                 sqlend : 1
         }
+        
+        if ( this.initpar.schema ) p.schema = this.initpar.schema;
+        if ( this.initpar.table  ) p.schema = this.initpar.table;
 
-        await MneRequest.fetch('db/utils/table/modify.json', p);
+        await MneRequest.fetch(this.initpar.modurl ?? 'db/utils/table/modify.json', p);
         ( evt.target.mne_data )  ? await this.action_submenu(Object.assign({ refresh : true }, evt.target.mne_data )) : await this.values();
         this.obj.drag.element.parentNode.removeChild(this.obj.drag.element);
       }
@@ -133,7 +134,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
     super.mk_submenu(container, res, data);
     
-    if ( ! this.initpar.table ) return;
+    if ( ! this.initpar.edit ) return;
     
     container.querySelectorAll('.treelink').forEach((item) => 
     {
@@ -164,7 +165,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
       return this.cancel();
     }
     
-    if ( ! this.initpar.table ) return;
+    if ( ! this.initpar.edit ) return;
     
     this.obj.buttons.add.disabled = ( this.obj.inputs.name.getValue(false) == '');
     this.obj.buttons.del.disabled = ! this.obj.selectdata;
@@ -223,15 +224,15 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
     var p = {};
     
-    p.schema = this.initpar.schema;
-    p.table = this.initpar.table;
+    if ( this.initpar.schema ) p.schema = this.initpar.schema;
+    if ( this.initpar.table )  p.table = this.initpar.table;
     p.parentidInput = ( this.obj.selectdata ) ? this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid] : '';
     p.treeidInput = '################';
     p.treenameInput = this.obj.inputs.name.getValue();
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    await MneRequest.fetch('db/utils/table/insert.json', p);
+    await MneRequest.fetch(this.initpar.addurl ?? 'db/utils/table/insert.json', p);
     ( this.obj.selectdata )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata )) : await this.values();
     this.obj.inputs.name.setValue('');
     
@@ -242,15 +243,14 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
     var p = {};
     
-    p.schema = this.initpar.schema;
-    p.table = this.initpar.table;
+    if ( this.initpar.schema ) p.schema = this.initpar.schema;
+    if ( this.initpar.table )  p.table = this.initpar.table;
     p["treeidInput.old"] = ( this.obj.selectdata ) ? this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid] : '';
     p.treenameInput = this.obj.inputs.name.getValue();
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    console.log(p)
-    await MneRequest.fetch('db/utils/table/modify.json', p);
+    await MneRequest.fetch(this.initpar.modurl ?? 'db/utils/table/modify.json', p);
     ( this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.values();
     this.obj.inputs.name.setValue('');
     
@@ -260,13 +260,15 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   async del()
   {
     var p = {};
-    p.schema = this.initpar.schema;
-    p.table = this.initpar.table;
+    if ( this.initpar.schema ) p.schema = this.initpar.schema;
+    if ( this.initpar.table )  p.table = this.initpar.table;
     p["treeidInput.old"] = this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid];
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    await MneRequest.fetch('db/utils/table/delete.json', p);
+    if ( ! this.confirm(MneText.sprintf( MneText.getText("#mne_lang#<$1> Wirklich löschen ?") , p["treeidInput.old"] )) ) return false;
+
+    await MneRequest.fetch(this.initpar.delurl ?? 'db/utils/table/delete.json', p);
     ( this.obj.selectdata && this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.refresh();
     
     return false;
@@ -282,7 +284,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
     await super.values();
 
-    if ( this.initpar.table ) 
+    if ( this.initpar.edit ) 
     {
       this.obj.buttons.add.disabled = ( this.obj.inputs.name.getValue(false) == '');
       this.obj.buttons.del.disabled = ! this.obj.selectdata;

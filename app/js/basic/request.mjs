@@ -51,7 +51,7 @@ class MneRequest
     //console.info('request: ' + request + " : " + JSON.stringify(parameter));
     if ( request[0] == '/' )
     {
-      console.warn('request mit führendem /');
+      console.warn('request mit führendem / ' + request);
       console.trace();
       request = request.substr(1);
       

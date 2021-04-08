@@ -15,7 +15,7 @@ export class MneInput
 {
   static getTyp(typ)
   {
-    switch(typ)
+    switch(typ.toString())
     {
       case '1':
       case "bool":

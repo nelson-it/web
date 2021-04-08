@@ -24,15 +24,15 @@ class MneRepositoryTreeEdit extends MneView
     {
         frameclass : 'weblet-allg-repository',
         
-        diraddaction : '/db/utils/repository/mkdir.json',
-        dirdelaction : '/db/utils/repository/rmdir.json',
+        diraddaction : 'db/utils/repository/mkdir.json',
+        dirdelaction : 'db/utils/repository/rmdir.json',
 
-        repaddaction : '/db/utils/repository/addfile.json',
+        repaddaction : 'db/utils/repository/addfile.json',
 
-        fileaddaction : '/db/utils/repository/mkfile.json',
-        filedelaction : '/db/utils/repository/rmfile.json',
+        fileaddaction : 'db/utils/repository/mkfile.json',
+        filedelaction : 'db/utils/repository/rmfile.json',
 
-        renameaction : '/db/utils/repository/mv.json',
+        renameaction : 'db/utils/repository/mv.json',
 
         autocommit : true,
         

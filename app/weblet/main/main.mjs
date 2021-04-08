@@ -34,9 +34,6 @@ class MneMain extends MneGeometrie
       
       window.main_weblet = this;
       window.history.replaceState(null, document.title, location.origin + '/' + appl );
-      
-      console.log(document.cookie)
-
     }
     
     getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
