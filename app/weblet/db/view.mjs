@@ -905,7 +905,10 @@ export class MneDbView extends MneView
       if ( this.obj.outputs[i] && ! this.obj.outputs[i].noautoread ) this.obj.outputs[i].setValue(res.values[0][res.rids[i]]);
 
     for ( i in this.obj.files )
+    {
       this.obj.files[i].modClear();
+      if ( res.rids[i] ) this.obj.files[i].setValue(res.values[0][res.rids[i]]);
+    }
 
     this.obj.run.okaction = 'mod';
     this.title = this.obj.run.title.mod;

@@ -817,6 +817,12 @@ export class MneView extends MneViewContainer
       obj.value = '';
       obj.parentNode.previousSibling.innerHTML = '';
     }
+    
+    obj.setValue = function(value)
+    {
+	    obj.value = '';
+        obj.parentNode.previousSibling.innerHTML = value;
+    }
   }
   
   async mkEditor (id, obj )
