@@ -552,8 +552,9 @@ export class MneView extends MneViewContainer
 
     obj.checkInput = () =>
     {
-      var ok = ( obj.getAttribute('newvalue') != obj.getAttribute('oldvalue') ) ? 'ok' : 'no';
       var ele;
+      var file = obj.closest('.ele-wrapper').querySelector('input[type="file"]');
+      var ok = ( obj.getAttribute('newvalue') != obj.getAttribute('oldvalue') || ( file != null && file.files.length > 0 )) ? 'ok' : 'no';
       
       var text = obj.innerText.replace(/\n$/,'');
       var r = text.match(obj.regexp.reg);

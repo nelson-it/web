@@ -455,7 +455,10 @@ class MneDbTableBasic extends MneDbView
       else
         return false;
     }
+
     this.newvalues = false;
+    this.parent.newvalues = false;
+    
     return true;
   }
   
@@ -744,27 +747,27 @@ class MneDbTableBasic extends MneDbView
   
   async detail()
   {
-    console.log('TableBasic: kein detail')
+    console.error('TableBasic: kein detail')
   }
 
   async detailscreen()
   {
-    console.log('TableBasic: kein detail')
+    console.error('TableBasic: kein detail')
   }
 
   async detailadd()
   {
-    console.log('TableBasic: kein detailadd')
+    console.error('TableBasic: kein detailadd')
   }
 
   async detailmod()
   {
-    console.log('TableBasic: kein detailmod')
+    console.error('TableBasic: kein detailmod')
   }
 
   async detaildel()
   {
-    console.log('TableBasic: kein detaildel')
+    console.error('TableBasic: kein detaildel')
   }
 }
 
