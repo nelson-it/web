@@ -70,7 +70,7 @@
 	
 	--button_color: #404040;
 	--button_background: #FDFDFD;
-	--button_boxshadow:  #808080 2px 2px 3px;
+	--button_boxshadow:  #e0e0e0 0px 0px 3px;
 	--button_border: 1px solid #e0e0e0;
 
 	--button_background_active: #e0e0e0;
@@ -90,7 +90,7 @@
 	--darkborder: 1px solid #404040;
 	--darkbordercolor: #404040;
 
-	--borderradius: 2px;
+	--borderradius: 4px;
 
 	--input_boxshadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.3);
 	--popup_boxshadow: 0px 0px 10px 1px #ccc;

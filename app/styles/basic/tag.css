@@ -181,6 +181,7 @@ input[type="button"], button, div.button {
     text-indent:0;
     text-decoration:none;
     text-align:center;
+    height: auto;
 }
 
 div.button  {
