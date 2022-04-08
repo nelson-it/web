@@ -196,12 +196,19 @@ export class MneViewContainer extends MneWeblet
   async view(data, obj, evt)
   {
     var config = this.config;
-
+    var oldvalues = this.obj.run.values;
+    var values;
+    
     this.reset();
     this.config = config;
     
     this.obj.run.viewnum = ( obj.checked ) ? "1" : "2";
     await this.load();
+    
+    values = this.obj.run.values
+    this.initpar.showids.forEach( ( item ) => { values[item] = oldvalues[item] ?? (( this.config.dependweblet ) ? this.config.dependweblet.obj.run.values[item] : undefined ); });
+    this.dependweblet = this;
+    
   }
 }
 
@@ -249,6 +256,8 @@ export class MneView extends MneViewContainer
   async mkLabel (id, obj )
   {
     var self = this;
+
+    if ( this.initpar.hinput && obj.style.display == 'none') { obj.style.display = 'inline';}
 
     MneElement.mkClass(obj, 'label');
     MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-label');
@@ -677,13 +686,13 @@ export class MneView extends MneViewContainer
       
       evt.preventDefault();
 
-      obj.setAttribute('newvalue', MneInput.getValue(obj.innerText, obj.dpytype ));
+      obj.setAttribute('newvalue', obj.innerText);
 
     });
 
     obj.addEventListener('input', function (evt)
     {
-      this.setAttribute('newvalue', MneInput.getValue(this.innerText.replace(/\n$/,''), this.dpytype ));
+      this.setAttribute('newvalue', this.innerText.replace(/\n$/,''));
     });
 
     obj.addEventListener('keypress', (evt) => 
@@ -749,7 +758,7 @@ export class MneView extends MneViewContainer
       
     }
 
-    obj.addEventListener('input', function() { this.setAttribute('newvalue', MneInput.getValue(this.value, this.dpytype)); })
+    obj.addEventListener('input', function() { this.setAttribute('newvalue', this.value); })
 
     obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { childList: false, subtree: false, attributeOldValue: true, attributes : true, attributeFilter: [ (( obj.type == 'checkbox' ) ? 'checked' : 'newvalue' ), 'oldvalue' ] } );

@@ -94,8 +94,7 @@ class MneAllgFileListTable extends MneDbTableView
   
   async data()
   {
-    await this.openpopup('rte');
-    var w = this.obj.weblets['rte'];
+    var w = await this.openpopup('rte');
     
     if ( this.obj.tables.content.querySelector('tbody td') == null || this.obj.run.act_row == null || ( this.obj.run.okaction != 'add' && this.obj.run.values.havesource != true ) )
       await this.add();

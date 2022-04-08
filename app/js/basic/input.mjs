@@ -125,10 +125,12 @@ export class MneInput
         return ( value !== '') ? parseInt(value) : 0;
       case "float":
         if ( typeof value == 'number') return value;
-        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : 0.0;
+        if ( MneConfig.locale.thousands_sep != "" ) value = value.replace(new RegExp("\\" + MneConfig.locale.thousands_sep, 'g'),'');
+        return ( value !== '') ? parseFloat(value.replace(MneConfig.locale.decimal_point,'.')) : 0.0;
       case "double":
         if ( typeof value == 'number') return value;
-        return ( value !== '') ? parseFloat(value.replace(new RegExp(MneConfig.locale.thousands_sep, 'g'),'').replace(MneConfig.locale.decimal_point,'.')) : 0.0;
+        if ( MneConfig.locale.thousands_sep != "" ) value = value.replace(new RegExp("\\" + MneConfig.locale.thousands_sep, 'g'),'');
+        return ( value !== '') ? parseFloat(value.replace(MneConfig.locale.decimal_point,'.')) : 0.0;
 
       case "binary":
         return "binary";

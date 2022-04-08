@@ -104,6 +104,8 @@ class MneDbTableView extends MneDbTableBasic
          if ( this.obj.inputs[this.obj.cols[i]] ) { this.obj.inputs[this.obj.cols[i]].focus(); break; }
 
      this.obj.run.okaction = 'add';
+     
+     return ! ( this.config.dependid.length == 0 || this.config.dependid[0][0] == '#' );
   }
 
   async ok(param)

@@ -28,7 +28,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   {
       super.reset();
       
-      this.initpar.edit = ( this.initpar.table || this.initpar.addurl )
+      this.initpar.edit = ( this.initpar.table || ( this.initpar.addurl && this.initpar.addurl != "" ) )
       if ( ! this.initpar.edit )
         this.delbutton('del,add');
       else
@@ -232,7 +232,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    await MneRequest.fetch(this.initpar.addurl ?? 'db/utils/table/insert.json', p);
+    await MneRequest.fetch( ( this.initpar.addurl && this.initpar.addurl != "" ) ? this.initpar.addurl : 'db/utils/table/insert.json', p);
     ( this.obj.selectdata )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata )) : await this.values();
     this.obj.inputs.name.setValue('');
     
@@ -250,7 +250,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    await MneRequest.fetch(this.initpar.modurl ?? 'db/utils/table/modify.json', p);
+    await MneRequest.fetch(( this.initpar.modurl && this.initpar.modurl != "" ) ? this.initpar.modurl : 'db/utils/table/modify.json', p);
     ( this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.values();
     this.obj.inputs.name.setValue('');
     
@@ -268,7 +268,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     
     if ( ! this.confirm(MneText.sprintf( MneText.getText("#mne_lang#<$1> Wirklich löschen ?") , p["treeidInput.old"] )) ) return false;
 
-    await MneRequest.fetch(this.initpar.delurl ?? 'db/utils/table/delete.json', p);
+    await MneRequest.fetch(( this.initpar.delurl && this.initpar.delurl != "" ) ? this.initpar.delurl : 'db/utils/table/delete.json', p);
     ( this.obj.selectdata && this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.refresh();
     
     return false;

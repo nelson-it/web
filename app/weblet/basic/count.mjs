@@ -51,6 +51,9 @@ class MneCountWeblet extends MneViewWeblet
     
     async showVersion()
     {
+      if ( ! MneConfig.updatehost )
+          return;
+          
       var self = this;
       var version = await MneRequest.fetch( window.location.protocol + '//' + MneConfig.updatehost + '/version.php', { version : MneConfig.version, x : (parseInt(parseInt(document.body.clientWidth) / 100 ) * 100), y : (parseInt(parseInt(document.body.clientHeight) / 100 ) * 100), uuid : MneConfig.uuid });
       this.obj.container.version.innerHTML = MneText.getText('#mne_lang#Neue Version# ') + version;

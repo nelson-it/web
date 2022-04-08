@@ -89,7 +89,7 @@ class MneLetterDetail extends MneDbView
     if ( this.getModify() )
       throw new Error("#mne_lang#Zum Versenden muss der Brief gespeichert werden");
 
-    this.print({send : true });
+    await this.print({send : true });
     
     var p =
     {
@@ -98,7 +98,7 @@ class MneLetterDetail extends MneDbView
         wcol : 'letterid',
         sort : '',
         language : this.obj.inputs.language.getValue(),
-        xml0 : "lettercontent," + this.obj.inputs.data.value,
+        xml0 : "lettercontent," + this.obj.inputs.data.getValue(),
         base64 : '1',
         sqlstart : 1,
         sqlend : 1
@@ -135,7 +135,9 @@ class MneLetterDetail extends MneDbView
       };
       
       await MneRequest.fetch( "db/utils/table/insert.xml",  p);
-      this.newvalues = true;
+
+      this.obj.buttons.send.disabled = true;
+      this.obj.buttons.ok.disabled   = true;
       return;
   }
   

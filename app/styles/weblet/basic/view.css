@@ -43,6 +43,12 @@ div.weblet div.title div.button {
     width: auto;
 }
 
+div.weblet div.subtitle {
+	font-size: large;
+	font-weight: bold;
+	padding: var(--dmargin);
+}
+
 div.popupcontent > div.weblet > div.title > div.titleright {
     display: none;
 }

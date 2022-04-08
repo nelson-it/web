@@ -348,6 +348,8 @@ export class MneWeblet extends MneWebletEmpty
     w.newvalues = true;
     await w.check_values();
     
+    return w;
+    
   }
 
   change_depend ( weblet, oldweblet )
