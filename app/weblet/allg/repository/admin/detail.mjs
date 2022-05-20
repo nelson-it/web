@@ -66,6 +66,7 @@ class MneRepositoryDetail extends MneDbView
     {
         'rootInput.old'         : this.initpar.root,
         'repositoryidInput.old' : this.obj.run.values.repositoryid,
+        'commitmessageInput'    : this.obj.inputs.commitmessage.getValue(),
     }
     await MneRequest.fetch(this.initpar.commiturl, p);
     this.dependweblet = this;
