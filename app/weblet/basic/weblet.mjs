@@ -112,7 +112,7 @@ export class MneWebletEmpty
         }
         else if ( typeof item == 'object' && item.composeparent && item.composeparent.obj.weblets[( item.depend[0] == '#') ? item.depend.substr(1) : item.depend ] )
         {
-          this.config.depend[index] = item = this.config.composeparent.obj.weblets[( item.depend[0] == '#') ? item.depend.substr(1) : item.depend];
+          this.config.depend[index] = item = item.composeparent.obj.weblets[( item.depend[0] == '#') ? item.depend.substr(1) : item.depend];
           if ( item.newvalues != true ) item.newvalues = true;
         }
       });
