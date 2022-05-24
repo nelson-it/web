@@ -1,2 +1,1 @@
-# web
-Common file web interface 
+# A framework for web based application
