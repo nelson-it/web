@@ -45,6 +45,7 @@ class MneRequest
   static async fetch( request, parameter, raw)
   {
     var data;
+    var error = ( parameter && parameter.ignore_error ) ? false : true;
     
     parameter = MneRequest.mkParam(parameter);
     
@@ -106,7 +107,8 @@ class MneRequest
             str += data.meldungen[i][1] + '\n';
           else
           {
-            MneLog[data.meldungen[i][0]]( data.meldungen[i][1] + '\n' + str + par );
+            if ( error && ( data.meldungen[i][0] == 'error' ) )
+              MneLog[data.meldungen[i][0]]( data.meldungen[i][1] + '\n' + str + par );
             error_found |= ( data.meldungen[i][0] == 'error' );
             par = str = '';
           }

@@ -18,7 +18,7 @@ class MneMenu extends MneView
 {
   constructor(parent, frame, id, initpar = {}, config = {} )
   {
-    var ivalues = { notitle : 1, nobuttonframe : 1, classname : 'tree',  };
+    var ivalues = { notitle : 1, nobuttonframe : 1, classname : 'tree', actioncol : 2 };
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
   }
   
@@ -77,7 +77,7 @@ class MneMenu extends MneView
 
   async action(data, obj, evt )
   {
-    var actioncol = this.initpar.actioncol ?? data.res.rids.action;
+    var actioncol = data.res.rids.action ?? this.initpar.actioncol;
     try { return await this['action_' + data.values[actioncol].action](data, evt.detail == 2 ) } catch(e) { console.error(data); e.message += "\nMenu::action: " +  data.values[actioncol].action; throw e }
   }
   

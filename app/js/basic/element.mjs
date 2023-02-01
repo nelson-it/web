@@ -83,6 +83,16 @@ export class MneElement
     return obj.offsetHeight;
   }
   
+  static getRight(obj)
+  {
+    return MneElement.getLeft(obj) + MneElement.getWidth(obj);
+  }
+  
+  static getBottom(obj)
+  {
+    return MneElement.getTop(obj) + MneElement.getHeight(obj);
+  }
+  
   /*
   static setTop(obj, ref, parent )
   {

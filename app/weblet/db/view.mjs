@@ -1020,7 +1020,7 @@ export class MneDbView extends MneView
     var str = "";
     ids.forEach((item) =>
     {
-      str += MneInput.format(this.obj.run.values[item], this.obj.run.result.typs[this.obj.run.result.rids[item]], this.obj.run.result.formats[this.obj.run.result.rids[item]]) + ':';
+      str += MneInput.format(this.obj.run.values[item], this.obj.run.result.typs[this.obj.run.result.rids[item]] ?? '', this.obj.run.result.formats[this.obj.run.result.rids[item]] ?? '') + ':';
     })
     str = str.substr(0, str.length-1);
 

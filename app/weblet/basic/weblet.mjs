@@ -188,9 +188,11 @@ export class MneWebletEmpty
 
     if ( this.newvalues )
     {
-      await this.values();
-      this.newvalues = false;
+      try { await this.values(); }
+      catch(e) { this.newvalues = false; throw(e); }
     }
+    
+    this.newvalues = false;
 
     var w = ( this.obj.webletsort ) ? this.obj.webletsort : Object.keys(this.obj.weblets);
     w.forEach((item) => { this.obj.weblets[item].mustcheckvalues = true;} );
@@ -211,6 +213,8 @@ export class MneWebletEmpty
         }
       }
     }
+        w.forEach((item) => { this.obj.weblets[item].newvalues = false;} );
+
   }
 
   confirm(text)
@@ -325,14 +329,18 @@ export class MneWeblet extends MneWebletEmpty
   {
     var parent = ( this.initpar.popupparent) ? this.initpar.popupparent : this;
     var p = this.obj.popups[name] ?? parent.obj.popups[name] ?? this.config.composeparent.obj.popups[name];
-    await p.create(parent, config, initpar );
+
+    await p.create(parent, config, initpar )
 
     var w = parent.obj.weblets[name];
-    w.config.dependweblet = this;
-    
-    if ( parent.config.depend.indexOf(w) == -1 )
-      parent.config.depend.push(w);
+    if ( w )
+    {
+      if ( ! config.notsetdepend && parent.config.depend.indexOf(w) == -1 )
+        parent.config.depend.push(w);
 
+      w.config.dependweblet = this;
+    }
+    
     return w;
   }
   

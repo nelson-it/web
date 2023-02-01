@@ -4,7 +4,7 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/allg/menu/main.mjs
+// datei: weblet/main/menu.mjs
 //================================================================================
 'use strict';
 

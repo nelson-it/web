@@ -4,7 +4,7 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/allg/menu/main.mjs
+// datei: weblet/main/detail.mjs
 //================================================================================
 'use strict';
 
@@ -31,7 +31,7 @@ export class MneMainDetail extends MneGeometrie
 
     if ( this.obj.mainweblet )
     {
-      var val = JSON.stringify(this.obj.weblets[this.obj.mainweblet].obj.run.values);
+      var val = ( this.obj.weblets[this.obj.mainweblet].obj.run.savevalues ) ? JSON.stringify(this.obj.weblets[this.obj.mainweblet].obj.run.savevalues) : JSON.stringify(this.obj.weblets[this.obj.mainweblet].obj.run.values);
       
       if ( val != this.obj.historyval || this.obj.historyname != this.obj.name )
       {

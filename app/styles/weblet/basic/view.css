@@ -383,3 +383,14 @@ div.weblet .inputsingle::after {
 div.weblet .inputsingle.nomargin::after {
     content: none;
 }
+
+div.weblet div.icon {
+    box-shadow: var(--button_boxshadow);
+    border: var(--button_border);
+    color: var(--darkcolor1);
+    font-size: calc(var(--iconfontsize) * 3);
+    line-height: calc(var(--iconfontsize) * 3);
+    width: auto;
+    font-family: SymbolFont1;
+    padding: var(--qmargin);
+}

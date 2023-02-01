@@ -1,0 +1,8 @@
+#!/bin/bash
+
+find . -name '*.mjs' | while read f
+do
+	name=$(echo "$f" | sed -e 's/\./weblet/')
+	awk '/\/\/.*datei:/ { printf("// datei: '$name'\n"); next }{print $0}' < "$f" > "$f.new"
+	mv "$f.new" "$f"
+done

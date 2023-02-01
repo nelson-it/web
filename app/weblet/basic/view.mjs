@@ -686,13 +686,13 @@ export class MneView extends MneViewContainer
       
       evt.preventDefault();
 
-      obj.setAttribute('newvalue', obj.innerText);
+      obj.setAttribute('newvalue', MneInput.getValue(obj.innerText, this.dpytype));
 
     });
 
     obj.addEventListener('input', function (evt)
     {
-      this.setAttribute('newvalue', this.innerText.replace(/\n$/,''));
+      this.setAttribute('newvalue', MneInput.getValue(this.innerText.replace(/\n$/,''), this.dpytype));
     });
 
     obj.addEventListener('keypress', (evt) => 
@@ -758,7 +758,7 @@ export class MneView extends MneViewContainer
       
     }
 
-    obj.addEventListener('input', function() { this.setAttribute('newvalue', this.value); })
+    obj.addEventListener('input', function() { this.setAttribute('newvalue', MneInput.getValue(this.value, this.dpytype)); })
 
     obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { childList: false, subtree: false, attributeOldValue: true, attributes : true, attributeFilter: [ (( obj.type == 'checkbox' ) ? 'checked' : 'newvalue' ), 'oldvalue' ] } );

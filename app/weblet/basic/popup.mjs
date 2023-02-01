@@ -9,6 +9,7 @@
 'use strict';
 
 import MneRequest    from '/js/basic/request.mjs'
+import MneElement    from '/js/basic/element.mjs'
 import MnePopupFrame from '/js/geometrie/popup.mjs'
 
 class MyPopupFrame extends MnePopupFrame
@@ -87,6 +88,19 @@ class MnePopupWeblet
 
           this.title = ( this.config.label ) ? this.config.label : this.id;
           
+          this.obj.observer.popup = new MutationObserver( (muts) => 
+          {
+            if ( ! this.obj.container.weblet || ! this.initpar.popup) return;
+      
+            if ( (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getRight(pw.popup.frame)) < 0 )
+              pw.popup.frame.style.left = (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getWidth(pw.popup.frame)) + 'px';
+              
+            if ( (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getBottom(pw.popup.frame)) < 0 )
+              pw.popup.frame.style.left = (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getHeight(pw.popup.frame)) + 'px';
+              
+          });
+          this.obj.observer.popup.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
+          
           return this.loadready();
         }
 
@@ -138,10 +152,15 @@ class MnePopupWeblet
         var container;
         
         var Weblet =  await this.getWeblet(this.config.path + '.mjs');
-        var weblet = parent.obj.weblets[this.id] = new Weblet(parent, (container = document.createElement('div')), this.id, Object.assign(Object.assign({ popup : this.popup }, this.initpar), initpar ), Object.assign(Object.assign({}, this.config), config) )
+        var weblet = parent.obj.weblets[this.id] = new Weblet(parent, (container = document.createElement('div')), this.id, Object.assign(Object.assign({}, this.initpar), initpar ), Object.assign(Object.assign({}, this.config), config) )
 
         this.popup = new MyPopupFrame(container, '', this.config.nointeractive, this.config.parentframe, weblet, this )
+        weblet.initpar.popup = weblet.initorig.popup = this.popup;
+        
+        return true;
       }
+      
+      return false;
     }
 
     setParentframe(parent, frame)

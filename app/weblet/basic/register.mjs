@@ -34,7 +34,8 @@ export class MneRegister extends MneWeblet
 
     set newvalues(val)
     {
-      MneLog.warning("Registerweblet set newvalue");
+      if ( val == true )
+          MneLog.warning("Registerweblet set newvalue");
       super.newvalues = val;
     }
 

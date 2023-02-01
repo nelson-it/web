@@ -1,0 +1,107 @@
+	
+div.weblet.weblet-allg-filesystem .filesystem-select > #contentContainer {
+	display: none;
+}
+
+div.weblet.weblet-allg-filesystem .filesystem-adddir .namefile,
+div.weblet.weblet-allg-filesystem .filesystem-rename .namefile {
+	display: none;
+}
+
+div.weblet.weblet-allg-filesystem-view #contentContainer {
+	position: relative;
+	flex-direction: row;
+	margin: 0px;
+}
+
+div.weblet.weblet-allg-filesystem-view #contentContainer > #listContainer,
+div.weblet.weblet-allg-filesystem-view #contentContainer > #iconContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  
+  width: 100%;
+  min-height: 100%;
+  
+  overflow: scroll;
+}
+	
+div.weblet.weblet-allg-filesystem-view #contentContainer > #iconContainer {
+	width: unset;
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin: 0px;
+	align-content: flex-end;
+	padding: var(--qmargin);
+	border-right: var(--border);
+}
+	
+div.weblet.weblet-allg-filesystem-view #contentContainer > #listContainer > .filesystem-list-element,
+div.weblet.weblet-allg-filesystem-view #contentContainer > #iconContainer > .filesystem-list-element {
+	display: inline-block;
+  position: relative;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+  
+  border: var(--border);
+  margin: var(--qmargin);
+  height: calc(var(--margin) * 150);
+  width: calc(var(--margin) * 100);
+  
+  text-align: center;
+}
+
+div.weblet.weblet-allg-filesystem-view #listContainer div.filesystem-list-img {
+  position: absolute;
+  top: var(--qmargin);
+  left: var(--qmargin);
+  right: var(--qmargin);
+  bottom: calc(var(--qmargin) + var(--lineheight_normal));
+  background-position: center;
+}
+
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element > #name {
+  display: block;
+
+  position: absolute;
+  width: 100%;
+  bottom: var(--dmargin);
+
+  line-height: var(--lineheight_normal);
+  text-align: center;
+}
+
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.dir:before {
+  content: '\f07b';
+  font-family: SymbolFont2;
+  position: absolute;
+  font-size: calc(var(--margin) * 80);
+  text-align: center;
+  width: 100%;
+  top: var(--qmargin);
+  left: 0px;
+}
+
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.file:before {
+  content: '\f15b';
+  font-family: SymbolFont2;
+  position: absolute;
+  font-size: calc(var(--margin) * 80);
+  text-align: center;
+  width: 100%;
+  top: var(--qmargin);
+  left: 0px;
+}
+
+div.weblet.weblet-allg-filesystem-view #contentContainer > #iconContainer > #trashIcon:after {
+    content: '\f1f8';
+}
+  
+div.weblet.weblet-allg-filesystem-treeedit > .webletmain {
+  border: var(--border);
+}
+
+div.weblet.weblet-allg-filesystem-treeedit #nameInput {
+	min-width: 20em;
+}

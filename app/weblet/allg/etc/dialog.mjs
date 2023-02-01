@@ -4,7 +4,7 @@
 // Die Software darf unter den Bedingungen 
 // der APGL ( Affero Gnu Public Licence ) genutzt werden
 //
-// datei: weblet/allg/etc/color.mjs
+// datei: weblet/allg/etc/dialog.mjs
 //================================================================================
 'use strict';
 
