@@ -686,7 +686,7 @@ export class MneView extends MneViewContainer
       
       evt.preventDefault();
 
-      obj.setAttribute('newvalue', MneInput.getValue(obj.innerText, this.dpytype));
+      obj.setAttribute('newvalue', MneInput.getValue(obj.innerText, obj.dpytype));
 
     });
 
