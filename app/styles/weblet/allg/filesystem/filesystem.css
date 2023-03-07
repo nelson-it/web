@@ -3,8 +3,15 @@ div.weblet.weblet-allg-filesystem .filesystem-select > #contentContainer {
 	display: none;
 }
 
+div.weblet.weblet-allg-filesystem .filesystem-addfile .nameold,
+div.weblet.weblet-allg-filesystem .filesystem-adddir .nameold,
 div.weblet.weblet-allg-filesystem .filesystem-adddir .namefile,
-div.weblet.weblet-allg-filesystem .filesystem-rename .namefile {
+div.weblet.weblet-allg-filesystem .filesystem-renamedir .namefile,
+div.weblet.weblet-allg-filesystem .filesystem-renamefile .namefile {
+	display: none;
+}
+
+div.weblet.weblet-allg-filesystem .filesystem-renamedir .nameold {
 	display: none;
 }
 

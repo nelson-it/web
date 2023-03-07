@@ -59,6 +59,13 @@ class MneRepositoryInterest extends MneFixTable
   }
   
   getCssPath()  {  return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + 'allg/repository/repository.css'; }
+  
+  async values()
+  {
+    await super.values();
+    
+    this.obj.run.values.fullname = '';
+  }
 
 }
 

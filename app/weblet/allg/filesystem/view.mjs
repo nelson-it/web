@@ -23,7 +23,7 @@ class MneFilesystemView extends MneView
   {
     var ivalues = 
     {
-        frameclass : 'weblet-allg-filesystem',
+        frameclass : 'weblet-allg-filesystem-view weblet-allg-filesystem',
 
         url : 'file/ls.json',
         readpar :
@@ -93,26 +93,13 @@ class MneFilesystemView extends MneView
         
         ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
 
-        if ( data && ! (evt.dataTransfer.getData('text/plain').indexOf('mne_filesystem: ' + this.frame.id) == 0 && obj == this.obj.container.list ) )
+        if ( data )
         {
-        
-          if ( ( data.values[data.res.rids.action].parameter[2].filetype ?? 'dir' ) == 'dir' ) 
-          {
-              if (  isfile )
-                evt.dataTransfer.dropEffect = 'move';
-              else
-                evt.dataTransfer.dropEffect = 'copy';
-              MneElement.mkClass(obj, 'dropover')
-          }
-          else if ( isfile )
-          {
-            evt.dataTransfer.dropEffect = 'move';
-            MneElement.mkClass(obj, 'dropover')
-          }
+          if (  isfile )
+            evt.dataTransfer.dropEffect = 'copy';
           else
-          {
-            evt.dataTransfer.dropEffect = 'none';
-          }
+            evt.dataTransfer.dropEffect = 'move';
+          MneElement.mkClass(obj, 'dropover')
         }
         else
            evt.dataTransfer.dropEffect = 'none';
@@ -174,6 +161,29 @@ class MneFilesystemView extends MneView
         this.obj.weblets.edit.btnClick('filedrop' , data, evt.target, evt);
       }
     };
+    this.obj.evt.icon.drop = async (evt) => 
+    {
+      evt.preventDefault();
+
+      var obj = evt.target;
+      var data;
+      
+      for ( data = obj.mne_data; ! data; obj = obj.parentNode, data = obj.mne_data );
+       
+      var ok = obj.classList.contains('dropover');
+      
+      ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
+
+      if ( ok )
+      {
+        await this.openpopup('edit');
+
+        this.obj.popups.edit.popup.frame.style.left = evt.clientX + "px";
+        this.obj.popups.edit.popup.frame.style.top = evt.clientY  + "px";
+
+        this.obj.weblets.edit.btnClick('del' , data, evt.target, evt);
+      }
+    };
   }
   
   async check_values()
@@ -230,23 +240,7 @@ class MneFilesystemView extends MneView
 
   treeeditok(typ, weblet)
   {
-    var actioncol = ( this.obj.run.res ) ? this.obj.run.res.rids.action ?? this.initpar.actioncol : this.initpar.actioncol;
-    if ( this.obj.weblets.edit.obj.run.values.parameter[0] == this.obj.container.list.mne_data.values[0])
-    {
-      var actioncol = ( this.obj.run.res ) ? this.obj.run.res.rids.action ?? this.initpar.actioncol : this.initpar.actioncol;
-      var dir = this.obj.run.values.parameter[0];
-      
-      if ( typ == 'rename' && weblet.obj.run.act_data.values[weblet.obj.run.act_data.res.rids.action].parameter[2].filetype == 'dir' )
-      {
-        this.obj.run.values.parameter[actioncol].fullname = dir.substring(0, dir.length - this.obj.run.values.parameter[1].length) + this.obj.weblets.edit.obj.inputs.name.getValue();
-      }
-      else if ( typ == 'del' )
-      {
-        this.obj.run.values.parameter[actioncol].fullname = dir.substring(0, dir.length - this.obj.run.values.parameter[1].length - 1);
-      }
-      
       this.dependweblet = this;
-    }
   }
 
   async mkElement(index)

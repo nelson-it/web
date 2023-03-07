@@ -47,7 +47,6 @@ class MneRepositoryLogTable extends MneDbTableView
         var p = Object.assign({}, this.obj.run.readpar)
         p.hash = ( typeof this.obj.run.values.hash != 'undefined' ) ? this.obj.run.values.hash : "";
 
-        console.log(p)
         var res = await MneRequest.fetch('db/utils/repository/download.dat', p, true);
         return await res.blob();
       }
@@ -62,19 +61,35 @@ class MneRepositoryLogTable extends MneDbTableView
 
   async values()
   {
-    this.obj.run.readpar['repositoryidInput.old'] = this.config.dependweblet.obj.run.values.repositoryid;
-    this.obj.run.readpar['filenameInput.old'] = this.config.dependweblet.obj.run.values.menuid;
+    var values = this.config.dependweblet.obj.run.values;
+    var menuid = values.menuid;
+    var index;
     
     var tbody = this.obj.tables.content.querySelector('tbody')
     if ( tbody ) tbody.innerHTML = '';
     
-    if ( ! this.obj.run.readpar['filenameInput.old'] )
+    if ( menuid ) 
     {
-      this.enable('', false);
-      return;
-    }
+      this.obj.run.readpar['repositoryidInput.old'] = values.repositoryid;
+      if ( values.filetype != 'dir' )
+      {
+        this.obj.run.readpar['dirInput.old'] = (  (( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index));
+        this.obj.run.readpar['filenameInput.old'] = ( (  index < 0 ) ? menuid : menuid.substr(index + 1));
+      }
+      else
+      {
+        this.obj.run.readpar['dirInput.old'] = menuid;
+        this.obj.run.readpar['filenameInput.old'] = '';
+      }
+
+      if ( ! this.obj.run.readpar['filenameInput.old'] )
+      {
+        this.enable('', false);
+        return;
+      }
     
-    return super.values();
+      return super.values();
+    }
   }
 }
 

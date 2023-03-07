@@ -37,7 +37,7 @@ class MneRepositoryDetail extends MneDbView
 
       root      : 'repository',
 
-      hinput : false
+      hinput : true
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
@@ -49,10 +49,10 @@ class MneRepositoryDetail extends MneDbView
   reset()
   {
     super.reset();
-    this.obj.run.readpar = { schema : 'mne_repository', query : 'repository', table : 'repository', root : this.initpar.root };
+    this.obj.run.readpar = { schema : 'mne_repository', query : 'repository', table : 'repository', "rootInput.old" : this.initpar.root };
     this.obj.run.addpar  = { schema : 'mne_repository', table : 'repository' };
     this.obj.run.modpar  = { schema : 'mne_repository', table : 'repository' };
-    this.obj.run.delpar  = { schema : 'mne_repository', table : 'repository',  root : this.initpar.root };
+    this.obj.run.delpar  = { schema : 'mne_repository', table : 'repository',  "rootInput.old" : this.initpar.root };
     
     this.obj.defvalues.root = this.initpar.root;
     
@@ -78,7 +78,11 @@ class MneRepositoryDetail extends MneDbView
     
     p = this.addParam(p, "repositoryid", this.obj.inputs.repositoryid );
 
-    await MneRequest.fetch(this.initpar.sendurl, p);
+    var res = await MneRequest.fetch(this.initpar.sendurl, p);
+    
+    if ( ! res.result )
+      MneLog['error'](res);
+      
     this.dependweblet = this;
   };
 

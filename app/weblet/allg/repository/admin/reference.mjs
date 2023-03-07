@@ -46,7 +46,7 @@ class MneRepositoryReference extends MneDbView
   {
     super.reset();
 
-    this.obj.run.readpar = { schema : 'mne_repository', query : 'repository', table : 'repository', root : this.initpar.root };
+    this.obj.run.readpar = { schema : 'mne_repository', query : 'repository', table : 'repository', 'rootInput.old' : this.initpar.root };
     this.obj.run.addpar  = { schema : 'mne_repository', table : 'repository' };
     this.obj.run.modpar  = { schema : 'mne_repository', table : 'repository' };
  

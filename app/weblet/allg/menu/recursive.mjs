@@ -86,6 +86,21 @@ class MneRecursiveMenu extends MneMenu
     }
   }
   
+  async action_show(data)
+  {
+    var rids = data.res.rids;
+    var action = data.values[this.initpar.actioncol ?? rids.action]; 
+    if ( data.values[rids.typ] != 'leaf' )
+      await this.action_submenu(data);
+    
+    this.obj.run.values.menuid = action.parameter[0];
+    this.obj.run.values.itemname = action.parameter[1];
+    for ( var i in action.parameter[2] )
+      this.obj.run.values[i] = action.parameter[2][i];
+    
+    this.newselect = true;
+  }
+
   async values()
   {
     var i;
@@ -107,22 +122,6 @@ class MneRecursiveMenu extends MneMenu
     
     await this.action_submenu( { menu : null, values : this.obj.run.values, res : { rids : rids }, frame : this.obj.container.tree});
   }
-  
-  async action_show(data)
-  {
-    var rids = data.res.rids;
-    var action = data.values[this.initpar.actioncol ?? rids.action]; 
-    if ( data.values[rids.typ] != 'leaf' )
-      await this.action_submenu(data);
-    
-    this.obj.run.values.menuid = action.parameter[0];
-    this.obj.run.values.itemname = action.parameter[1];
-    for ( var i in action.parameter[2] )
-      this.obj.run.values[i] = action.parameter[2][i];
-    
-    this.newselect = true;
-  }
-
 }
 
 export default MneRecursiveMenu

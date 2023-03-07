@@ -91,7 +91,7 @@ class MneRequest
       {
         var i;
         var error_found = false;
-        var str, par;
+        var str, typ, par;
         
         par = '\n' + MneText.getText('#mne_lang#Parameter') + '\n' + request + '\n';
         
@@ -101,21 +101,31 @@ class MneRequest
           for ( i in parameter ) par += ( i + ": " + parameter[i] + "\n");
 
         str = '';
-        for ( i=data.meldungen.length-1;  i>=0; i-- )
+        if ( data.meldungen )
         {
-          if ( data.meldungen[i][0] == 'line' )
-            str += data.meldungen[i][1] + '\n';
-          else
+          typ = data.meldungen[0][0];
+          for ( i=data.meldungen.length-1;  i>=0; i-- )
           {
-            if ( error && ( data.meldungen[i][0] == 'error' ) )
-              MneLog[data.meldungen[i][0]]( data.meldungen[i][1] + '\n' + str + par );
-            error_found |= ( data.meldungen[i][0] == 'error' );
-            par = str = '';
+            if ( data.meldungen[i][0] == 'line' )
+              str += data.meldungen[i][1] + '\n';
+            else
+            {
+              if ( error && ( data.meldungen[i][0] == 'error' ) )
+                MneLog[data.meldungen[i][0]]( data.meldungen[i][1] + '\n' + str + par );
+              error_found |= ( data.meldungen[i][0] == 'error' );
+              par = str = '';
+            }
           }
+        }
+        else
+        {
+          typ = 'error';
+          error_found = true;
+          str = MneText.getText('#mne_lang#Es ist ein Fehler aufgetreten\n' + par);
         }
 
         if ( str )
-          MneLog[data.meldungen[0][0]]( str );
+          MneLog[typ]( str );
 
         if ( error_found || ( data.result && data.result == 'error') )
           throw new Error();

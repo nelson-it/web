@@ -88,18 +88,21 @@ class MnePopupWeblet
 
           this.title = ( this.config.label ) ? this.config.label : this.id;
           
-          this.obj.observer.popup = new MutationObserver( (muts) => 
+          if ( this.obj.container.content)
           {
-            if ( ! this.obj.container.weblet || ! this.initpar.popup) return;
-      
-            if ( (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getRight(pw.popup.frame)) < 0 )
-              pw.popup.frame.style.left = (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getWidth(pw.popup.frame)) + 'px';
+            this.obj.observer.popup = new MutationObserver( (muts) => 
+            {
+              if ( ! this.obj.container.weblet || ! this.initpar.popup) return;
+        
+              if ( (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getRight(pw.popup.frame)) < 0 )
+                pw.popup.frame.style.left = (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getWidth(pw.popup.frame)) + 'px';
               
-            if ( (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getBottom(pw.popup.frame)) < 0 )
-              pw.popup.frame.style.left = (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getHeight(pw.popup.frame)) + 'px';
+              if ( (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getBottom(pw.popup.frame)) < 0 )
+                pw.popup.frame.style.left = (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getHeight(pw.popup.frame)) + 'px';
               
-          });
-          this.obj.observer.popup.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
+            });
+            this.obj.observer.popup.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
+          }
           
           return this.loadready();
         }
@@ -114,12 +117,12 @@ class MnePopupWeblet
           await super.show(hide);
 
           if ( hide == false )
-            pw.show(checkauto);
+            await pw.show(checkauto);
         }
         
         async close(auto = false)
         {
-          pw.close(auto);
+          await pw.close(auto);
         }
       }
       

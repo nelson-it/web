@@ -36,6 +36,7 @@ class MneFilesystemTreeEdit extends MneView
         nointeractive : true,
         
         autosave: false,
+        hinput: false
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
@@ -86,24 +87,28 @@ class MneFilesystemTreeEdit extends MneView
   {
     var index;
 
+    this.obj.inputs.dir.setValue('');
+    this.obj.outputs.dirold.setValue('');
+
+    this.obj.inputs.name.setValue('');
+    this.obj.outputs.nameold.setValue('');
+
     if ( this.obj.run.act_data )
     {
       var menuid = this.obj.run.act_data.values[this.obj.run.act_data.res.rids.menuid];
       if ( leaf || this.obj.run.act_data.values[this.obj.run.act_data.res.rids.action].parameter[2].filetype != 'dir' )
       {
-        this.obj.run.dir  = ( ( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index);
-        this.obj.run.file = ( index < 0 ) ? menuid : menuid.substr(index + 1);
+        this.obj.outputs.dirold.setValue(  (( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index));
+        this.obj.outputs.nameold.setValue( (  index < 0 ) ? menuid : menuid.substr(index + 1));
       }
       else
       {
-        this.obj.run.dir = menuid;
-        this.obj.run.file = '';
+        this.obj.outputs.dirold.setValue(menuid);
       }
+
+      this.obj.inputs.dir.setValue( this.obj.outputs.dirold.getValue());
+      this.obj.inputs.name.setValue( this.obj.outputs.nameold.getValue());
     }
-    else
-      {
-      this.obj.run.dir = this.obj.run.file = '';
-      }
   }
   
   mkpar()
@@ -145,8 +150,8 @@ class MneFilesystemTreeEdit extends MneView
     this.obj.run.action = this.obj.run.btnrequest['adddir'];
     MneElement.mkClass(this.obj.container.weblet, 'filesystem-adddir', true, 'filesystem')
 
-    this.mkdir(true);
-    this.obj.outputs.dir.setValue(this.obj.run.dir);
+    this.mkdir();
+    this.obj.inputs.name.focus();
     
     return false;
   }
@@ -158,9 +163,6 @@ class MneFilesystemTreeEdit extends MneView
     MneElement.mkClass(this.obj.container.weblet, 'filesystem-addfile', true, 'filesystem')
 
     this.mkdir();
-    this.obj.outputs.dir.setValue(this.obj.run.dir);
-    this.obj.inputs.name.setValue(this.obj.run.file);
-    
     this.obj.inputs.name.focus();
     
     return false;
@@ -185,29 +187,10 @@ class MneFilesystemTreeEdit extends MneView
         this.obj.run.action = this.obj.run.btnrequest['addfile'];
         MneElement.mkClass(this.obj.container.weblet, 'filesystem-addfile', true, 'filesystem')
       }
-      dir  = this.obj.run.dir;
-      name = ( this.obj.run.file ) ? this.obj.run.file : this.obj.files.name.files[0].name;
+
+      if ( ! this.obj.inputs.name.getValue() )
+        this.obj.inputs.name.modValue(this.obj.files.name.files[0].name);
     }
-    else if ( this.obj.run.dropdata.items.length )
-    {
-        var data = this.obj.run.act_data;
-
-        this.obj.run.action = this.obj.run.btnrequest['rename'];
-        MneElement.mkClass(this.obj.container.weblet, 'filesystem-rename', true, 'filesystem')
-
-        this.obj.run.act_data = JSON.parse(this.obj.run.dropdata.getData('text/json'));
-        this.mkdir();
-        
-        name = data.values[1];
-        if ( data.values[data.res.rids.action].parameter[2].filetype == 'dir' )
-          name = name + '/' + this.obj.run.act_data.values[1]
-        dir = this.obj.run.act_data.values[0]
-    }
-
-    this.mkdir();
-    this.obj.outputs.dir.setValue( dir );
-    this.obj.inputs.name.modValue(name);
-    
     this.obj.inputs.name.focus();
     
     if ( this.initpar.autosave ) return this.ok();
@@ -219,35 +202,57 @@ class MneFilesystemTreeEdit extends MneView
   {
     this.showButton('ok')
     this.obj.run.action = this.obj.run.btnrequest['rename'];
-    MneElement.mkClass(this.obj.container.weblet, 'filesystem-rename', true, 'filesystem');
+    MneElement.mkClass(this.obj.container.weblet, 'filesystem-renamefile', true, 'filesystem');
 
     this.mkdir(true);
-
-    this.obj.outputs.dir.setValue(this.obj.run.dir);
-    this.obj.inputs.name.setValue(this.obj.run.file);
-
+    this.obj.inputs.name.focus();
     return false;
   }
 
   async filedrop(data, obj, evt)
   {
-    var i;
+    var i,d;
     this.obj.files.name.modClear();
     for ( i in this.obj.outputs ) this.obj.outputs[i].setValue('');
     for ( i in this.obj.inputs  ) this.obj.inputs[i].setValue('');
 
-    this.obj.run.act_data = data;
-    this.obj.run.dropdata = evt.dataTransfer;
-    this.obj.files.name.files = evt.dataTransfer.files;
+    if ( evt.dataTransfer.dropEffect == 'move' )
+    {
+      this.obj.run.action = this.obj.run.btnrequest['rename'];
+      MneElement.mkClass(this.obj.container.weblet, 'filesystem-renamefile', true, 'filesystem');
 
-    if ( ! data.res || data.values[data.res.rids.action].action == 'submenu' )
-        await this.addfile();
+      d = this.obj.run.act_data = JSON.parse(evt.dataTransfer.getData('text/json'));
+      this.mkdir();
+
+      var menuid = data.values[data.res.rids.menuid];
+      if ( data.values[data.res.rids.action].parameter[2].filetype != 'dir' )
+      {
+        var index;
+        this.obj.inputs.dir.setValue(  (( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index));
+        this.obj.inputs.name.setValue( (  index < 0 ) ? menuid : menuid.substr(index + 1));
+      }
+      else
+      {
+        this.obj.inputs.dir.setValue(menuid);
+        if ( d.values[d.res.rids.action].parameter[2].filetype == 'dir' )
+        {
+          MneElement.mkClass(this.obj.container.weblet, 'filesystem-renamedir', true, 'filesystem');
+          this.obj.inputs.name.setValue(d.values[d.res.rids.item])
+        }
+      }
+    }
     else
-      await this.filechange();
+    {
+      MneElement.mkClass(this.obj.container.weblet, 'filesystem-addfile', true, 'filesystem');
+      d = this.obj.run.act_data = data;
+      this.mkdir();
+
+      this.obj.files.name.files = evt.dataTransfer.files;
+      var e = new Event('change');
+      this.obj.files.name.dispatchEvent(e);
+    }
     
-    var e = new Event('change');
-    this.obj.files.name.dispatchEvent(e);
-    
+    this.showButton('ok');
     return false;
  }
 
@@ -255,8 +260,9 @@ class MneFilesystemTreeEdit extends MneView
   {
     var data = new FormData();
     data.append('rootInput.old', this.initpar.root);
-    data.append('dirInput.old', this.obj.run.dir);
-    data.append('filenameInput.old', this.obj.run.file);
+    data.append('dirInput.old', this.obj.outputs.dirold.getValue());
+    data.append('filenameInput.old', this.obj.outputs.nameold.getValue());
+    data.append('dirInput', this.obj.inputs.dir.getValue());
     data.append('filenameInput', this.obj.inputs.name.getValue());
     data.append('overwrite', this.obj.inputs.overwrite.getValue());
     
@@ -276,30 +282,33 @@ class MneFilesystemTreeEdit extends MneView
     this.close();
   }
   
-  async del()
+  async del(data, obj, evt)
   {
     this.obj.run.dir = '';
     this.obj.run.file = '';
 
+    if ( evt.dataTransfer && evt.dataTransfer.getData('text/plain').indexOf('mne_filesystem') == 0 )
+      this.obj.run.act_data = JSON.parse(evt.dataTransfer.getData('text/json'));
+      
     this.mkdir();
     var p =
     {
-        'dirInput.old'          : this.obj.run.dir,
-        'filenameInput.old'     : this.obj.run.file,
+        'dirInput.old'          : this.obj.outputs.dirold.getValue(),
+        'filenameInput.old'     : this.obj.outputs.nameold.getValue(),
     };
     p = Object.assign(this.mkpar(), p);
     
     this.close();
     
-    if ( this.obj.run.file )
+    if ( this.obj.outputs.nameold.getValue() != '' )
     {
-      if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.run.file)) != true )
+      if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.outputs.nameold.getValue() )) != true )
           return;
       await MneRequest.fetch(this.initpar.filedelaction, p)
     }
-    else if ( this.obj.run.dir )
+    else if ( this.obj.outputs.dirold.getValue() != '' )
     {
-      if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.run.dir)) != true )
+      if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.outputs.dirold.getValue() )) != true )
           return;
       
       this.parent.treeeditok('del', this)  

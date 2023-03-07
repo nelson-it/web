@@ -141,7 +141,7 @@ export class MneWebletEmpty
   {
     this.obj.run.dependweblet = weblet;
     this.obj.run.checkdepend = ( weblet ) ? true : false;
-    if ( weblet && ! this.newvalues )
+    if ( weblet && ! this.obj.run.newvalues )
       this.newvalues = true;
   }
 
@@ -173,6 +173,16 @@ export class MneWebletEmpty
     return str; 
   }
 
+  async clear_newvalues()
+  {
+    var w;
+
+    this.newvalues = false;
+
+    var w = ( this.obj.webletsort ) ? this.obj.webletsort : Object.keys(this.obj.weblets);
+    w.forEach((item) => { this.obj.weblets[item].newvalues = false;} );
+  }
+
   async check_values()
   {
     var i;
@@ -190,9 +200,9 @@ export class MneWebletEmpty
     {
       try { await this.values(); }
       catch(e) { this.newvalues = false; throw(e); }
+      this.newvalues = false;
     }
     
-    this.newvalues = false;
 
     var w = ( this.obj.webletsort ) ? this.obj.webletsort : Object.keys(this.obj.weblets);
     w.forEach((item) => { this.obj.weblets[item].mustcheckvalues = true;} );
@@ -213,8 +223,6 @@ export class MneWebletEmpty
         }
       }
     }
-        w.forEach((item) => { this.obj.weblets[item].newvalues = false;} );
-
   }
 
   confirm(text)
@@ -325,11 +333,11 @@ export class MneWeblet extends MneWebletEmpty
     window.main_weblet.show(name, initpar).catch( (e) => { MneLog.exception('showweblet:' + name, e)});
   }
   
-  async createpopup(name, config, initpar )
+  async createpopup(name, config = {}, initpar  = {})
   {
     var parent = ( this.initpar.popupparent) ? this.initpar.popupparent : this;
     var p = this.obj.popups[name] ?? parent.obj.popups[name] ?? this.config.composeparent.obj.popups[name];
-
+    
     await p.create(parent, config, initpar )
 
     var w = parent.obj.weblets[name];

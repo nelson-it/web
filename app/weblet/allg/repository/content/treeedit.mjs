@@ -37,7 +37,8 @@ class MneRepositoryTreeEdit extends MneView
         autocommit : true,
         
         notitle : true,
-        nointeractive : true
+        nointeractive : true,
+        hinput: true
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
@@ -51,6 +52,8 @@ class MneRepositoryTreeEdit extends MneView
 
     this.obj.mkbuttons =
     [ 
+      { id : 'ok',         value : MneText.getText('#mne_lang#Ok#')},
+      { id : 'cancel',     value : MneText.getText('#mne_lang#Abbrechen#')},
       { id : 'adddir',     value : MneText.getText('#mne_lang#Ordner Hinzufügen#')},
       { id : 'addfile',    value : MneText.getText('#mne_lang#Datei Hinzufügen#')},
       { id : 'addrep',     value : MneText.getText('#mne_lang#Datei versionieren#')},
@@ -61,9 +64,10 @@ class MneRepositoryTreeEdit extends MneView
     this.obj.enablebuttons.buttons = [];
     this.obj.mkbuttons.forEach( (item) => { this.obj.enablebuttons.buttons.push(item.id); });
     
-    this.obj.enablebuttons.root =  [ 'adddir', 'addfile' ];
-    this.obj.enablebuttons.dir  =  [ 'adddir', 'addfile', 'rename', 'del'];
-    this.obj.enablebuttons.file =  [ 'addfile','rename', 'del'];
+    this.obj.enablebuttons.ok   =  [ 'ok', 'cancel' ];
+    this.obj.enablebuttons.root =  [ 'adddir',  'addfile' ];
+    this.obj.enablebuttons.dir  =  [ 'adddir',  'addfile', 'rename', 'del'];
+    this.obj.enablebuttons.file =  [ 'addfile', 'rename', 'del'];
     this.obj.enablebuttons.vfile = [ 'addfile', 'addrep', 'rename', 'del'];
     
     this.obj.run.btnrequest = [];
@@ -90,24 +94,28 @@ class MneRepositoryTreeEdit extends MneView
   {
     var index;
 
+    this.obj.inputs.dir.setValue('');
+    this.obj.outputs.dirold.setValue('');
+
+    this.obj.inputs.name.setValue('');
+    this.obj.outputs.nameold.setValue('');
+
     if ( this.obj.run.act_data )
     {
       var menuid = this.obj.run.act_data.values[this.obj.run.act_data.res.rids.menuid];
-      if ( leaf || this.obj.run.act_data.values[this.obj.run.act_data.res.rids.typ] == 'leaf' )
+      if ( leaf || this.obj.run.act_data.values[this.obj.run.act_data.res.rids.action].parameter[2].filetype != 'dir' )
       {
-        this.obj.run.dir  = ( ( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index);
-        this.obj.run.file = ( index < 0 ) ? menuid : menuid.substr(index + 1);
+        this.obj.outputs.dirold.setValue(  (( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index));
+        this.obj.outputs.nameold.setValue( (  index < 0 ) ? menuid : menuid.substr(index + 1));
       }
       else
       {
-        this.obj.run.dir = menuid;
-        this.obj.run.file = '';
+        this.obj.outputs.dirold.setValue(menuid);
       }
+
+      this.obj.inputs.dir.setValue( this.obj.outputs.dirold.getValue());
+      this.obj.inputs.name.setValue( this.obj.outputs.nameold.getValue());
     }
-    else
-      {
-      this.obj.run.dir = this.obj.run.file = '';
-      }
   }
   
   mkpar()
@@ -119,6 +127,12 @@ class MneRepositoryTreeEdit extends MneView
     };
   }
 
+  showButton(typ)
+  {
+    this.obj.enablebuttons.buttons.forEach((item) => { this.obj.buttons[item].style.display = 'none' } )
+    this.obj.enablebuttons[typ].forEach((item) => { this.obj.buttons[item].style.display = 'block' } )
+  }
+
   openmenu(obj)
   {
     var btn;
@@ -126,19 +140,17 @@ class MneRepositoryTreeEdit extends MneView
     this.obj.run.act_data = obj.mne_data;
 
     if ( ! this.obj.run.act_data )
-      btn = this.obj.enablebuttons.root;
+       this.showButton('root')
     else if ( this.obj.run.act_data.values[this.obj.run.act_data.res.rids.typ] == 'leaf' )
     {
       if ( this.obj.run.act_data.values[this.obj.run.act_data.res.rids.status]  == 'Y' )
-        btn = this.obj.enablebuttons.vfile;
+       this.showButton('vfile')
       else
+       this.showButton('file')
         btn = this.obj.enablebuttons.file;
     }
     else
-      btn = this.obj.enablebuttons.dir;
-    
-    this.obj.enablebuttons.buttons.forEach((item) => { this.obj.buttons[item].style.display = 'none' } )
-    btn.forEach((item) => { this.obj.buttons[item].style.display = 'block' } )
+       this.showButton('dir')
 
     MneElement.mkClass(this.obj.container.weblet, 'repository-select', true, 'repository')
     
@@ -149,82 +161,121 @@ class MneRepositoryTreeEdit extends MneView
   
   async adddir()
   {
+    this.showButton('ok')
     this.obj.run.action = this.obj.run.btnrequest['adddir'];
     MneElement.mkClass(this.obj.container.weblet, 'repository-adddir', true, 'repository')
 
-    this.mkdir(true);
-    this.obj.outputs.dir.setValue(this.obj.run.dir);
+    this.mkdir();
+    this.obj.inputs.name.focus();
     
     return false;
   }
 
   async addfile()
   {
+    this.showButton('ok')
     this.obj.run.action = this.obj.run.btnrequest['addfile'];
     MneElement.mkClass(this.obj.container.weblet, 'repository-addfile', true, 'repository')
 
     this.mkdir();
-    this.obj.outputs.dir.setValue(this.obj.run.dir);
-    this.obj.inputs.name.setValue(this.obj.run.file);
-    
+    this.obj.inputs.name.focus();
+ 
     return false;
   }
   
   async filechange()
   {
-    this.obj.run.action = this.obj.run.btnrequest['addfile'];
-    MneElement.mkClass(this.obj.container.weblet, 'repository-addfile', true, 'repository')
     
-    this.mkdir();
-    this.obj.outputs.dir.setValue( this.obj.run.dir );
-    this.obj.inputs.name.modValue(( this.obj.run.file ) ? this.obj.run.file : this.obj.files.name.files[0].name);
+    this.showButton('ok')
+
+    if ( this.obj.files.name.files.length )
+    {
+      if (this.obj.files.name.files[0].type == '' && this.obj.files.name.files[0].size == 0 ) 
+      {
+        this.obj.run.action = this.obj.run.btnrequest['adddir'];
+        MneElement.mkClass(this.obj.container.weblet, 'repository-adddir', true, 'repository')
+      }
+      else
+      {
+        this.obj.run.action = this.obj.run.btnrequest['addfile'];
+        MneElement.mkClass(this.obj.container.weblet, 'repository-addfile', true, 'repository')
+      }
+
+      if ( ! this.obj.inputs.name.getValue() )
+        this.obj.inputs.name.modValue(this.obj.files.name.files[0].name);
+    }
+    this.obj.inputs.name.focus();
     
     return false
   }
   
   async rename()
   {
+    this.showButton('ok')
     this.obj.run.action = this.obj.run.btnrequest['rename'];
     MneElement.mkClass(this.obj.container.weblet, 'repository-rename', true, 'repository');
 
     this.mkdir(true);
-
-    this.obj.outputs.dir.setValue(this.obj.run.dir);
-    this.obj.inputs.name.setValue(this.obj.run.file);
-
+    this.obj.inputs.name.focus();
     return false;
+
   }
 
   async addrep()
   {
-    this.obj.run.dir = '';
-    this.obj.run.file = '';
+    this.showButton('ok')
+    this.obj.run.action = this.obj.run.btnrequest['addrep'];
+    MneElement.mkClass(this.obj.container.weblet, 'repository-addrep', true, 'repository');
+
     this.mkdir();
-
-    var p = this.mkpar();
-
-    p['dirInput.old']  = this.obj.run.dir;
-    p['filenameInput'] = this.obj.run.file;
-
-    this.close();
-    if ( this.obj.run.file )
-    {
-      await MneRequest.fetch('db/utils/repository/addfile.json', p);
-      this.obj.run.checkdepend = true;
-    }
+    this.obj.inputs.commitmessage.focus();
+    return false;
   }
   
   async filedrop(data, obj, evt)
   {
-    if ( ! data.res || data.values[data.res.rids.action].action == 'submenu' )
-      await this.addfile();
+    var i,d;
+    this.obj.files.name.modClear();
+    for ( i in this.obj.outputs ) this.obj.outputs[i].setValue('');
+    for ( i in this.obj.inputs  ) this.obj.inputs[i].setValue('');
+
+    if ( evt.dataTransfer.dropEffect == 'move' )
+    {
+      this.obj.run.action = this.obj.run.btnrequest['rename'];
+      MneElement.mkClass(this.obj.container.weblet, 'repository-renamefile', true, 'repository');
+
+      d = this.obj.run.act_data = JSON.parse(evt.dataTransfer.getData('text/json'));
+      this.mkdir();
+
+      var menuid = data.values[data.res.rids.menuid];
+      if ( data.values[data.res.rids.action].parameter[2].filetype != 'dir' )
+      {
+        var index;
+        this.obj.inputs.dir.setValue(  (( index = menuid.lastIndexOf('/') ) < 0 ) ? "" : menuid.substring(0, index));
+        this.obj.inputs.name.setValue( (  index < 0 ) ? menuid : menuid.substr(index + 1));
+      }
+      else
+      {
+        this.obj.inputs.dir.setValue(menuid);
+        if ( d.values[d.res.rids.action].parameter[2].filetype == 'dir' )
+        {
+          MneElement.mkClass(this.obj.container.weblet, 'repository-renamedir', true, 'repository');
+          this.obj.inputs.name.setValue(d.values[d.res.rids.item])
+        }
+      }
+    }
     else
-      await this.filechange();
+    {
+      MneElement.mkClass(this.obj.container.weblet, 'repository-addfile', true, 'repository');
+      d = this.obj.run.act_data = data;
+      this.mkdir();
+
+      this.obj.files.name.files = evt.dataTransfer.files;
+      var e = new Event('change');
+      this.obj.files.name.dispatchEvent(e);
+    }
     
-    this.obj.files.name.files = evt.dataTransfer.files;
-    var e = new Event('change');
-    this.obj.files.name.dispatchEvent(e);
-    
+    this.showButton('ok');
     return false;
  }
 
@@ -233,11 +284,14 @@ class MneRepositoryTreeEdit extends MneView
     var data = new FormData();
     data.append('rootInput.old', this.initpar.root);
     data.append('repositoryidInput.old', this.obj.run.values.repositoryid);
-    data.append('dirInput.old', this.obj.run.dir);
-    data.append('filenameInput.old', this.obj.run.file);
+    data.append('dirInput.old', this.obj.outputs.dirold.getValue());
+    data.append('filenameInput.old', this.obj.outputs.nameold.getValue());
+    data.append('dirInput', this.obj.inputs.dir.getValue());
     data.append('filenameInput', this.obj.inputs.name.getValue());
     data.append('autocommitInput', ( this.initpar.autocommit == true ) ? "true" : "");
     data.append('commitmessageInput', this.obj.inputs.commitmessage.getValue());
+    data.append('overwrite', "1");
+
     
     if (this.obj.files.name.files.length )
       data.append('dataInput', this.obj.files.name.files[0], this.obj.files.name.files[0].name);
@@ -245,31 +299,50 @@ class MneRepositoryTreeEdit extends MneView
     this.close();
     var res = await MneRequest.fetch(this.obj.run.action, data);
 
+    if ( this.parent.obj.run.dragelement && this.parent.obj.run.dragelement.parentNode )
+    {
+      this.parent.obj.run.dragelement.parentNode.removeChild(this.parent.obj.run.dragelement);
+      this.parent.obj.run.dragelement = undefined;
+    }
+    
     this.obj.run.checkdepend = true;
     this.parent.newselect = true;
   }
   
-  async del()
+  async cancel()
   {
-    this.obj.run.dir = '';
-    this.obj.run.file = '';
+    this.close();
+  }
 
+  async del(data, obj, evt)
+  {
+    if ( evt.dataTransfer && evt.dataTransfer.getData('text/plain').indexOf('mne_repository') == 0 )
+      this.obj.run.act_data = JSON.parse(evt.dataTransfer.getData('text/json'));
+      
     this.mkdir();
     var p =
     {
-        'dirInput.old'          : this.obj.run.dir,
-        'filenameInput.old'     : this.obj.run.file,
+        'repositoryidInput.old' : this.obj.run.values.repositoryid,
+        'dirInput.old'          : this.obj.outputs.dirold.getValue(),
+        'filenameInput.old'     : this.obj.outputs.nameold.getValue(),
     };
     p = Object.assign(this.mkpar(), p);
     
     this.close();
-    if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.run.file)) != true )
-        return;
     
-    if ( this.obj.run.file )
-      await MneRequest.fetch('db/utils/repository/rmfile.json', p)
-    else if ( this.obj.run.dir )
-      await MneRequest.fetch('db/utils/repository/rmdir.json', p)
+    if ( this.obj.outputs.nameold.getValue() != '' )
+    {
+      if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.outputs.nameold.getValue() )) != true )
+          return;
+      await MneRequest.fetch(this.initpar.filedelaction, p)
+    }
+    else if ( this.obj.outputs.dirold.getValue() != '' )
+    {
+      if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.outputs.dirold.getValue() )) != true )
+          return;
+      
+      await MneRequest.fetch(this.initpar.dirdelaction, p)
+    }
     
     this.obj.run.checkdepend = true;
     this.parent.newselect = true;

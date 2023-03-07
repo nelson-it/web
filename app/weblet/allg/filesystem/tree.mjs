@@ -46,16 +46,24 @@ class MneFilesystemTree extends MneMenuRecursive
 
   async check_values()
   {
-    var mustcheck = false;
-    var self = this;
     var openmenu = this.obj.act_openmenu;
     var values = this.obj.run.values;
     
     if ( this.obj.act_refreshmenu )
     {
-       await this.action_submenu(Object.assign({ refresh : true }, this.obj.act_refreshmenu));
-       this.obj.act_openmenu = this.obj.act_refreshmenu = undefined;
+       if ( this.obj.act_refreshmenu.frame )
+       {
+         await this.action_submenu(Object.assign({ refresh : true }, this.obj.act_refreshmenu));
+         if ( this.obj.run.dragelement)
+           this.obj.run.dragelement.parentNode.removeChild(this.obj.run.dragelement);
+       }
+       else
+       {
+         this.newvalues = true;
+       }
     }
+    
+    this.obj.act_openmenu = this.obj.act_refreshmenu = this.obj.run.dropdata = this.obj.run.dragelement = undefined;
 
     await super.check_values();
     this.obj.act_openmenu = openmenu;
@@ -66,7 +74,7 @@ class MneFilesystemTree extends MneMenuRecursive
   {
     super.reset();
     this.obj.readurl = this.initpar.url;
-    this.initpar.readpar['pointdirInput.old'] = this.initpar.pointdir;
+    this.initpar.readpar['pointdirInput.old'] = this.initpar.pointdir ?? true;
     this.obj.run.readpar = Object.assign({ 'rootInput.old' : this.initpar.root }, this.initpar.readpar );
     this.obj.popups['edit'] = new MnePopup( 'edit', {root : 'album' }, { nointeractive : true, composeparent : this, htmlcomposetabid : 'edit', id : 'edit', position : 'popup', path : '/weblet/allg/filesystem/treeedit', depend : [], label : MneText.getText('#mne_lang#Bearbeiten') } );
     this.obj.run.values = { parameter : [ "", "", {} ] };
@@ -87,26 +95,38 @@ class MneFilesystemTree extends MneMenuRecursive
     });
 
     this.obj.container.content.addEventListener('click', async (evt) => { if ( this.obj.weblets.edit ) this.obj.weblets.edit.close(); } );
+
+    this.obj.container.content.addEventListener('dragstart', async (evt) =>
+    {
+       evt.dataTransfer.setData('text/json', JSON.stringify(evt.target.mne_data));
+       evt.dataTransfer.setData('text/plain', 'mne_filesystem: ' + this.frame.id);
+       
+       this.obj.run.dragelement = evt.target;
+    });
+    
     this.obj.container.content.addEventListener('dragover', async (evt) =>
     {
-      if ( evt.dataTransfer.types.includes('Files') )
+      if ( this.obj.timeout ){ window.clearTimeout(this.obj.timeout); this.obj.timeout = undefined; }
+      ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
+      
+      var isfile = evt.dataTransfer.types.includes('Files');
+      var isown  = evt.dataTransfer.getData('text/plain').indexOf('mne_filesystem') == 0;
+      var data = evt.target.mne_data;
+
+      if ( ( isfile || isown ) && data )
       {
-        var data = evt.target.mne_data;
-
-        if ( this.obj.timeout ){ window.clearTimeout(this.obj.timeout); this.obj.timeout = undefined; }
-        ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
-
-        if ( data )
-        {
-          MneElement.mkClass(evt.target, 'dropover')
-          if ( data.values[data.res.rids.action].action == 'submenu' && data.menu.className.indexOf('menuopen') == -1 )
-          {
+        if (  isfile )
+          evt.dataTransfer.dropEffect = 'copy';
+        else
+          evt.dataTransfer.dropEffect = 'move';
+        MneElement.mkClass(evt.target, 'dropover')
+        if ( data.values[data.res.rids.action].action == 'submenu' && data.menu && data.menu.className.indexOf('menuopen') == -1 )
             this.obj.timeout = window.setTimeout(() => { this.action_submenu(data, false); }, 1000);
-          }
-        }
-        evt.dataTransfer.dropEffect = 'copy';
-        evt.preventDefault();
       }
+      else
+        evt.dataTransfer.dropEffect = 'none';
+
+      evt.preventDefault();
     });
     
     this.obj.container.content.addEventListener('dragleave', async (evt) =>
@@ -122,12 +142,13 @@ class MneFilesystemTree extends MneMenuRecursive
       
       ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
 
+      this.obj.run.dropdata = data;
+      
       await this.openpopup('edit');
 
       this.obj.popups.edit.popup.frame.style.left = evt.clientX + "px";
       this.obj.popups.edit.popup.frame.style.top = evt.clientY  + "px";
 
-      this.obj.weblets.edit.openmenu(evt.target);
       this.obj.weblets.edit.btnClick('filedrop' , data, evt.target, evt);
     });
 
@@ -141,11 +162,12 @@ class MneFilesystemTree extends MneMenuRecursive
       div.className = this.initpar.classname + 'leaf';
       div.innerHTML = '<div class="' + this.initpar.classname + 'link"></div>'
       div.firstChild.innerHTML =  ".";
-      this.mkButton('treelink', div.firstChild, {}, 'values');
+      this.mkButton('treelink', div.firstChild, {res : { rids : {action : 2 }}, values : [ '', '', {action : 'submenu', parameter : [ '', '', { name : '', fullname : '', filetype : "dir" }] }] }, 'values');
       container.appendChild(div);
     }
       
-    return super.mk_submenu(container, res, data );
+    super.mk_submenu(container, res, data );
+    container.querySelectorAll('.treelink').forEach( ( item ) => { item.draggable = true });
   }
 
   async action_submenu( data, dblclick )
@@ -179,8 +201,9 @@ class MneFilesystemTree extends MneMenuRecursive
     }
     else if ( typ == 'rename')
     {
-      var actioncol = ( this.obj.run.res ) ? this.obj.run.res.rids.action ?? this.initpar.actioncol : this.initpar.actioncol;
-      if ( weblet.obj.run.values.parameter[0] == this.obj.run.values.parameter[0] )
+      this.obj.act_refreshmenu = this.obj.run.dropdata ?? weblet.obj.run.act_data.parent;
+
+      if ( weblet.obj.run.act_data.values[0] == this.obj.run.values.parameter[0] )
       {
         var actioncol = ( this.obj.run.res ) ? this.obj.run.res.rids.action ?? this.initpar.actioncol : this.initpar.actioncol;
         var dir = this.obj.run.values.parameter[0];
@@ -188,10 +211,8 @@ class MneFilesystemTree extends MneMenuRecursive
         
         this.obj.run.values.parameter[0] = this.obj.run.values.parameter[actioncol].fullname = dir.substring(0, dir.length - this.obj.run.values.parameter[1].length) + name;
         this.obj.run.values.parameter[1] = this.obj.run.values.parameter[actioncol].name = name;
-        this.obj.act_refreshmenu = this.obj.act_openmenu.parent;
       }
     }
-
   }
   
   async values()
@@ -216,7 +237,6 @@ class MneFilesystemTree extends MneMenuRecursive
     this.obj.run.values = { parameter : [ "", "", {} ] }
     await this.action_submenu( { menu : null, values : [this.obj.run.values, '', '', '', ''], res : { rids : rids }, frame : this.obj.container.tree});
   }
-
 }
 
 

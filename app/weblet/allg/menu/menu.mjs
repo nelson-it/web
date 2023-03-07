@@ -54,7 +54,7 @@ class MneMenu extends MneView
   {
     var i;
     var res;
-    var container = data.frame;
+    var container = data.frame ?? this.obj.container.tree;
     var open = ( ! data.menu ) ? false : (! data.refresh ) && MneElement.hasClass(data.menu, 'menuopen');
     
     if ( dblclick ) return;
@@ -72,6 +72,8 @@ class MneMenu extends MneView
     await this.mk_submenu( container, res, data);
     this.obj.act_openmenu = data;
     
+    if ( data.menu && this.initpar.noleaf ) MneElement.mkClass(data.menu, this.initpar.classname + (( res.values.length != 0 ) ? '' : 'leaf'), true, this.initpar.classname );
+
     return false;
   }
 
