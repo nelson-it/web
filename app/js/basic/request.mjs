@@ -110,7 +110,7 @@ class MneRequest
               str += data.meldungen[i][1] + '\n';
             else
             {
-              if ( error && ( data.meldungen[i][0] == 'error' ) )
+              if ( error && ( data.meldungen[i][0] != 'line' ) )
                 MneLog[data.meldungen[i][0]]( data.meldungen[i][1] + '\n' + str + par );
               error_found |= ( data.meldungen[i][0] == 'error' );
               par = str = '';
