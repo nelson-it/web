@@ -37,7 +37,7 @@ class MneRepositoryDetail extends MneDbView
 
       root      : 'repository',
 
-      hinput : true
+      hinput : false
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );

@@ -45,8 +45,11 @@
 	display: none;
 }
 
-.weblet-allg-repository .repository-adddir .namefile,
-.weblet-allg-repository .repository-rename .namefile {
+div.weblet.weblet-allg-repository .repository-addfile .nameold,
+div.weblet.weblet-allg-repository .repository-adddir .nameold,
+div.weblet.weblet-allg-repository .repository-adddir .namefile,
+div.weblet.weblet-allg-repository .repository-renamedir .namefile,
+div.weblet.weblet-allg-repository .repository-renamefile .namefile {
 	display: none;
 }
 

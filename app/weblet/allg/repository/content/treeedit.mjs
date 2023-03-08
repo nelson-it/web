@@ -38,7 +38,7 @@ class MneRepositoryTreeEdit extends MneView
         
         notitle : true,
         nointeractive : true,
-        hinput: true
+        hinput: false
     };
 
     super(parent, frame, id, Object.assign(ivalues, initpar), config );
