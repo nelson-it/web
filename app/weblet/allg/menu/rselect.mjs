@@ -120,7 +120,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
         }
         
         if ( this.initpar.schema ) p.schema = this.initpar.schema;
-        if ( this.initpar.table  ) p.schema = this.initpar.table;
+        if ( this.initpar.table  ) p.table  = this.initpar.table;
 
         await MneRequest.fetch(this.initpar.modurl ?? 'db/utils/table/modify.json', p);
         ( evt.target.mne_data )  ? await this.action_submenu(Object.assign({ refresh : true }, evt.target.mne_data )) : await this.values();
@@ -266,7 +266,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     p.sqlstart = 1;
     p.sqlend = 1;
     
-    if ( ! this.confirm(MneText.sprintf( MneText.getText("#mne_lang#<$1> Wirklich löschen ?") , p["treeidInput.old"] )) ) return false;
+    if ( ! this.confirm(MneText.sprintf( MneText.getText("#mne_lang#<$1> Wirklich löschen ?") , this.obj.selectdata.values[this.obj.selectdata.res.rids.item] )) ) return false;
 
     await MneRequest.fetch(( this.initpar.delurl && this.initpar.delurl != "" ) ? this.initpar.delurl : 'db/utils/table/delete.json', p);
     ( this.obj.selectdata && this.obj.selectdata.parent )  ? await this.action_submenu(Object.assign({ refresh : true }, this.obj.selectdata.parent )) : await this.refresh();

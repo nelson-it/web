@@ -89,7 +89,7 @@ class MneRecursiveMenu extends MneMenu
   async action_show(data)
   {
     var rids = data.res.rids;
-    var action = data.values[this.initpar.actioncol ?? rids.action]; 
+    var action = data.values[rids.action ?? this.initpar.actioncol]; 
     if ( data.values[rids.typ] != 'leaf' )
       await this.action_submenu(data);
     
@@ -104,8 +104,12 @@ class MneRecursiveMenu extends MneMenu
   async values()
   {
     var i;
-    var rids = { action : 0, menuid : 2 };
+    var actioncol = this.initpar.actioncol ?? 0;
+    var values = ['', '', '', '', ''];
+    var rids = { action : 2, menuid : 0 };
     var wval = '';
+    
+    values[actioncol] = {};
     
     for( i =0; i<this.initpar.showids.length - 1; i++)
     {
@@ -120,7 +124,7 @@ class MneRecursiveMenu extends MneMenu
     
     if ( this.initpar.showids && this.initpar.showids.length ) this.obj.readparam.wval = wval;
     
-    await this.action_submenu( { menu : null, values : this.obj.run.values, res : { rids : rids }, frame : this.obj.container.tree});
+    await this.action_submenu( { menu : null, values : values, res : { rids : rids }, frame : this.obj.container.tree});
   }
 }
 
