@@ -193,7 +193,7 @@ export class MneViewContainer extends MneWeblet
     return this.loadview();
   }
   
-  async view(data, obj, evt)
+  async view(_data, obj, _evt)
   {
     var config = this.config;
     var oldvalues = this.obj.run.values;
@@ -420,7 +420,7 @@ export class MneView extends MneViewContainer
     MneElement.mkClass(obj, 'link');
     MneElement.mkClass(obj.closest('.ele-wrapper'), 'contain-link');
 
-    obj.addEventListener('click', (evt) =>
+    obj.addEventListener('click', (_evt) =>
     {
       if ( this.initpar.links && this.initpar.links[id] )
       {
@@ -655,7 +655,7 @@ export class MneView extends MneViewContainer
     obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { characterData: true, attributes: true, childList: false, subtree: false, characterDataOldValue : false, attributeFilter: [ 'newvalue', 'oldvalue' ] } );
 
-    obj.addEventListener('paste', (evt, data) =>
+    obj.addEventListener('paste', (evt, _data) =>
     {
       var node;
       
@@ -1299,7 +1299,7 @@ export class MneView extends MneViewContainer
       else
         MneElement.mkClass(this.obj.container.weblet, 'modify', false, 'modify');
     });
-    this.obj.observer.content.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
+    this.obj.observer.content.observe(this.obj.container.content, {subtree : true, childList: true, attributes : true, attributeFilter : ['class'] });
     
     if ( this.initpar.delbutton )
       this.delbutton(this.initpar.delbutton);
@@ -1339,7 +1339,7 @@ export class MneView extends MneViewContainer
       return this.ctrl_s();
   }
 
-  async tab(data, obj, evt )
+  async tab(_data, _obj, evt )
   {
     evt.preventDefault();
     evt.stopPropagation();
@@ -1355,7 +1355,7 @@ export class MneView extends MneViewContainer
     return false;
   }
 
-  async ok(param)
+  async ok()
   {
   }
   
@@ -1401,9 +1401,10 @@ export class MneView extends MneViewContainer
   
   async print()
   {
+    var parent = this.initpar.popupparent ?? this;
     var w;
 
-    if ( ! ( w = this.obj.weblets['show'] ) )
+    if ( ! ( w = parent.obj.weblets['show'] ) )
     {
       var self = this;
       w = await this.createpopup('show');

@@ -130,8 +130,10 @@
 	--ariaheight: 1;
 }
 
+/*
 body[aria-view-mode="tablet"] {
 }
+*/
 
 body[aria-view-mode="mobile"] {
 	--font_normal: 16px;

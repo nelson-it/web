@@ -10,8 +10,8 @@
 
 import MneElement from '/weblet/basic/element.mjs'
 import MneText    from '/js/basic/text.mjs'
-import MneInput   from '/js/basic/input.mjs'
-import MneLog     from '/js/basic/log.mjs'
+//import MneInput   from '/js/basic/input.mjs'
+//import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
 
 import MneView           from '/weblet/basic/view.mjs'
@@ -87,6 +87,9 @@ class MneFilesystemTreeEdit extends MneView
   {
     var index;
 
+    this.obj.inputs.root.setValue(this.initpar.rootnew);
+    this.obj.inputs.rootold.setValue(this.initpar.root);
+
     this.obj.inputs.dir.setValue('');
     this.obj.outputs.dirold.setValue('');
 
@@ -126,7 +129,6 @@ class MneFilesystemTreeEdit extends MneView
   
   openmenu(obj)
   {
-    var btn;
     var i;
     this.obj.run.act_data = obj.mne_data;
 
@@ -170,9 +172,6 @@ class MneFilesystemTreeEdit extends MneView
   
   async filechange()
   {
-    var name;
-    var dir;
-    
     this.showButton('ok')
     
     if ( this.obj.files.name.files.length )
@@ -209,7 +208,7 @@ class MneFilesystemTreeEdit extends MneView
     return false;
   }
 
-  async filedrop(data, obj, evt)
+  async filedrop(data, _obj, evt)
   {
     var i,d;
     this.obj.files.name.modClear();
@@ -224,6 +223,8 @@ class MneFilesystemTreeEdit extends MneView
       d = this.obj.run.act_data = JSON.parse(evt.dataTransfer.getData('text/json'));
       this.mkdir();
 
+      this.obj.inputs.rootold.setValue(d.values[d.res.rids.action].root);
+      
       var menuid = data.values[data.res.rids.menuid];
       if ( data.values[data.res.rids.action].parameter[2].filetype != 'dir' )
       {
@@ -240,6 +241,8 @@ class MneFilesystemTreeEdit extends MneView
           this.obj.inputs.name.setValue(d.values[d.res.rids.item])
         }
       }
+      
+      if ( this.initpar.autosave ) return this.ok();
     }
     else
     {
@@ -259,9 +262,10 @@ class MneFilesystemTreeEdit extends MneView
  async ok()
   {
     var data = new FormData();
-    data.append('rootInput.old', this.initpar.root);
+    data.append('rootInput.old', this.obj.inputs.rootold.getValue());
     data.append('dirInput.old', this.obj.outputs.dirold.getValue());
     data.append('filenameInput.old', this.obj.outputs.nameold.getValue());
+    data.append('rootInput', this.obj.inputs.root.getValue());
     data.append('dirInput', this.obj.inputs.dir.getValue());
     data.append('filenameInput', this.obj.inputs.name.getValue());
     data.append('overwrite', this.obj.inputs.overwrite.getValue());
@@ -270,7 +274,7 @@ class MneFilesystemTreeEdit extends MneView
       data.append('dataInput', this.obj.files.name.files[0], this.obj.files.name.files[0].name);
     
     this.close();
-    var res = await MneRequest.fetch(this.obj.run.action, data);
+    await MneRequest.fetch(this.obj.run.action, data);
 
     this.obj.run.checkdepend = true;
     this.parent.treeeditok(Object.keys(this.obj.run.btnrequest).find( item => this.obj.run.btnrequest[item] == this.obj.run.action ), this);
@@ -282,7 +286,7 @@ class MneFilesystemTreeEdit extends MneView
     this.close();
   }
   
-  async del(data, obj, evt)
+  async del(_data, _obj, evt)
   {
     this.obj.run.dir = '';
     this.obj.run.file = '';
@@ -293,10 +297,10 @@ class MneFilesystemTreeEdit extends MneView
     this.mkdir();
     var p =
     {
+        'rootInput.old'         : this.obj.inputs.root.getValue(),
         'dirInput.old'          : this.obj.outputs.dirold.getValue(),
         'filenameInput.old'     : this.obj.outputs.nameold.getValue(),
     };
-    p = Object.assign(this.mkpar(), p);
     
     this.close();
     

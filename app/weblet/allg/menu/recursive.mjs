@@ -104,12 +104,11 @@ class MneRecursiveMenu extends MneMenu
   async values()
   {
     var i;
-    var actioncol = this.initpar.actioncol ?? 0;
     var values = ['', '', '', '', ''];
     var rids = { action : 2, menuid : 0 };
     var wval = '';
     
-    values[actioncol] = {};
+    values[2] = {};
     
     for( i =0; i<this.initpar.showids.length - 1; i++)
     {

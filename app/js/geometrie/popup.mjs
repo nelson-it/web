@@ -79,11 +79,11 @@ export class MnePopupFrame
       {
         var td = document.body.offsetHeight - this.frame.scrollHeight - this.frame.offsetTop;
         if ( td < 0 )
-          this.frame.style.top = (parseInt(this.frame.style.top) + td) + "px";
+          this.frame.style.top = (parseInt(this.frame.style.top) + td - 12) + "px";
 
         var ld = document.body.offsetWidth - this.frame.scrollWidth - this.frame.offsetLeft;
         if ( ld < 0 )
-          this.frame.style.left = (parseInt(this.frame.style.left) + ld) + "px";
+          this.frame.style.left = (parseInt(this.frame.style.left) + ld -12 ) + "px";
 
 
       });

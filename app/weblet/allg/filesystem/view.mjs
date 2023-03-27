@@ -9,8 +9,9 @@
 'use strict';
 
 import MneText    from '/js/basic/text.mjs'
-import MneLog     from '/js/basic/log.mjs'
+//import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
+import MneFile    from '/js/basic/file.mjs'
 
 import MneElement from '/weblet/basic/element.mjs'
 import MnePopup   from '/weblet/basic/popup.mjs'
@@ -53,11 +54,13 @@ class MneFilesystemView extends MneView
     
     this.obj.mkbuttons = [];
     
+    if ( ! this.initpar.rootnew ) this.initpar.rootnew = this.initpar.root;
+    
     this.obj.run.readpar = Object.assign({ 'rootInput.old' : this.initpar.root }, this.initpar.readpar );
-    this.obj.popups['edit'] = new MnePopup( 'edit', {root : 'album', autosave : this.initpar.autosave }, { nointeractive : true, composeparent : this, htmlcomposetabid : 'edit', id : 'edit', position : 'popup', path : '/weblet/allg/filesystem/treeedit', depend : [], label : MneText.getText('#mne_lang#Bearbeiten') } );
+    this.obj.popups['edit'] = new MnePopup( 'edit', {root : this.initpar.root,  rootnew : this.initpar.rootnew, autosave : this.initpar.autosave }, { nointeractive : true, composeparent : this, htmlcomposetabid : 'edit', id : 'edit', position : 'popup', path : '/weblet/allg/filesystem/treeedit', depend : [], label : MneText.getText('#mne_lang#Bearbeiten') } );
     
     this.obj.evt = { list : {}, icon : {} };
-    this.obj.evt.list.click = async (evt) => { if ( this.obj.weblets.edit ) this.obj.weblets.edit.close(); };
+    this.obj.evt.list.click = async () => { if ( this.obj.weblets.edit ) this.obj.weblets.edit.close(); };
     this.obj.evt.list.contextmenu = async (evt) =>
     {
       evt.preventDefault();
@@ -76,7 +79,7 @@ class MneFilesystemView extends MneView
     this.obj.evt.list.dragstart = async (evt) =>
     {
        evt.dataTransfer.setData('text/json', JSON.stringify(evt.target.mne_data));
-       evt.dataTransfer.setData('text/plain', 'mne_filesystem: ' + this.frame.id);
+       evt.dataTransfer.setData('text/plain', 'mne_filesystem: ' + this.fullid);
     };
     
     this.obj.evt.list.dragover = async (evt) =>
@@ -133,7 +136,7 @@ class MneFilesystemView extends MneView
       }
     };
 
-    this.obj.evt.list.dragleave = async (evt) =>
+    this.obj.evt.list.dragleave = async () =>
     {
       ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
     };
@@ -188,9 +191,6 @@ class MneFilesystemView extends MneView
   
   async check_values()
   {
-    var mustcheck = false;
-    var self = this;
-    
     if ( this.obj.weblets.edit && this.obj.weblets.edit.obj.run.checkdepend  )
     {
       this.dependweblet = this;
@@ -217,13 +217,20 @@ class MneFilesystemView extends MneView
     return this.values()
   }
   
-  async eleClick(index, obj, evt)
+  async eleClick(_index , obj, _evt )
   {
     var p = obj.mne_data.values[this.obj.run.res.rids.action];
      
+    ( this.obj.container.content.querySelectorAll('.selected') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'selected', false));
+    MneElement.mkClass(obj, 'selected');
+
     this.obj.run.values = p;
+    
     if ( p.action == 'submenu')
-      this.dependweblet = this;
+    {
+    	this.obj.run.savevalues = p;
+    	this.dependweblet = this; 
+    }
     else
       this.newselect = true;
   }
@@ -238,7 +245,7 @@ class MneFilesystemView extends MneView
     return par;
   }
 
-  treeeditok(typ, weblet)
+  treeeditok(_typ, _weblet)
   {
       this.dependweblet = this;
   }
@@ -248,31 +255,42 @@ class MneFilesystemView extends MneView
     var a = this.obj.run.res.values[index][this.obj.run.res.rids.action];
     var p = a.parameter[2];
     var img = '';
-    var str = p.name.toLowerCase().split('.');
+    var ftyp = p.name.toLowerCase().split('.');
+    var fclass = '';
 
-    if ( str.length > 1 )
+    ftyp = MneFile.filetyps[( ftyp.length > 1 ) ? ftyp[ftyp.length - 1] : ''] ?? { mime : 'text/plain' };
+     
+    switch( true )
     {
-      switch(str[str.length - 1] )
-      {
-      case "jpg" :
-      case "jpeg" :
-      case "png" :
-      case "tiff" :
-      case "gif" :
+      case ftyp.mime.indexOf('image') == 0 :
         img = '<div class="filesystem-list-img" style="background-image: url(\'file/images/mk_icon.php?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
-      }
+        fclass = 'image';
+        break;
+
+      case ftyp.mime.indexOf('video') == 0 :
+        fclass = 'video';
+        break;
+        
+      case ftyp.mime.indexOf('audio') == 0 :
+        fclass = 'audio';
+        break;
+        
+      case ftyp.mime.indexOf('application') == 0 :
+        fclass = 'application';
+        break;
+
     }
     
-    return '<div id="filesystem-list-element' + index + '" class="filesystem-list-element ' + p.filetype + '" draggable="true">' + img + '<div id="name">' + p.name + '</div></div>';
+    return '<div id="filesystem-list-element' + index + '" class="filesystem-list-element ' + p.filetype + ' ' + fclass + '" draggable="true">' + img + '<div id="name">' + p.name + '</div></div>';
   }
   
   async values()
   {
-    var  i,j,data,str;
+    var  i,str;
     var res;
     
     var dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
-    var values = dependweblet.obj.run.values;
+    var values = ( dependweblet == this ) ? this.obj.run.savevalues : dependweblet.obj.run.values;
     
     this.obj.container.list.innerHTML = '';
     this.obj.run.dependweblet = undefined;
@@ -303,7 +321,7 @@ class MneFilesystemView extends MneView
     }
     
     this.obj.container.list.innerHTML = str;
-    this.obj.run.savevalues = this.obj.run.values = Object.assign({}, dependweblet.obj.run.values);
+    this.obj.run.savevalues = this.obj.run.values = Object.assign({}, values);
     this.obj.run.values.root = this.initpar.root;
     this.obj.run.values.dir = this.obj.run.dir;
     
@@ -314,6 +332,7 @@ class MneFilesystemView extends MneView
       val[actioncol].root = self.initpar.root;
       val[actioncol].dir = self.obj.run.values.dir;
       val[actioncol].filename = val[res.rids.item];
+      val[actioncol].index = index;
       
       obj.addEventListener('click', async function(evt) { await self.btnClick('eleClick', index, obj, evt) } );
       obj.mne_data = { res : res, values : res.values[parseInt(obj.id.substring(23))] };

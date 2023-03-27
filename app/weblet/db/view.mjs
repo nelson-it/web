@@ -799,7 +799,7 @@ export class MneDbView extends MneView
   
   getParamShow(p, showids, showops )
   {
-    var w = this.obj.run.act_dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
+    var w = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
     showids = showids ?? this.initpar.showids;
     showops = showops ?? this.initpar.showops;
     
@@ -847,7 +847,7 @@ export class MneDbView extends MneView
     var cols = param.cols;
     var i;
 
-    var dependweblet = this.obj.run.act_dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
+    var dependweblet = ( this.obj.run.dependweblet ) ? this.obj.run.dependweblet : this.config.dependweblet;
     
     if ( dependweblet != this && this.initpar.defalias )
       Object.keys(this.initpar.defalias).forEach( (item) => { this.obj.defvalues[item] = dependweblet.obj.run.values[this.initpar.defalias[item]]; });

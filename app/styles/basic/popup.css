@@ -94,6 +94,7 @@
 	font-size: x-large;
     line-height: var(--titleheight);
     background: linear-gradient(to bottom, var(--background), var(--lightcolor1));
+    height: var(--titleheight);
 }
 
 .fullscreen .popupbutton {
@@ -103,8 +104,12 @@
 .fullscreen .popupcontent {
 	max-height: none;
 	max-width: none;
+	top: var(--titleheight);
 }
 
+.fullscreen .popupresize {
+	visibility: hidden;
+}
 
 .popupresize {
 	position: absolute;
@@ -144,6 +149,9 @@
 }
 #downloadbutton.popupbutton::after {
     content: '\f019';
+}
+#delbutton.popupbutton::after {
+    content: '\f1f8';
 }
 
 #querybutton.popupbutton::after {

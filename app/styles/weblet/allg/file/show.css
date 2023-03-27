@@ -1,37 +1,44 @@
-.weblet-allg-file-show object {
-	min-height: 80vh;
+div.weblet-allg-file-show  {
+	position: relative;
+}
+
+div.weblet-allg-file-show #showContainer {
+	position: relative;
+	min-height: 30vh;
+	min-width: 30vw;
+}
+
+.weblet-allg-file-show object, .weblet-allg-file-show video {
+	min-height: 40vh;
 	min-width: 40vw;
 	max-height: 80vh;
-	max-width: 40vw;
-
+	max-width: 80vw;
 	object-fit: contain;
 }
 
-.popupisresize.popupdoresize .weblet-allg-file-show div {
+.popupisresize.popupdoresize .weblet-allg-file-show div#link {
 	display: block;
 	z-index: 10;
 	background: #fff8;
 }
 
-.popupisresize .weblet-allg-file-show div {
+.popupisresize .weblet-allg-file-show div#link {
 	display: none;
-} 
-
-.fullscreen .weblet-allg-file-show object,
-.popupisresize .weblet-allg-file-show object {
-	min-height: unset;
-	min-width: unset;
-	max-height: unset;
-	max-width: unset;
 }
 
-.popupisresize .weblet-allg-file-show, 
-.popupisresize .weblet-allg-file-show object,
-.popupisresize .weblet-allg-file-show div,
-.fullscreen .weblet-allg-file-show, 
-.fullscreen .weblet-allg-file-show object,
+.fullscreen .weblet-allg-file-show object, .popupisresize .weblet-allg-file-show object,
+.fullscreen .weblet-allg-file-show video, .popupisresize .weblet-allg-file-show video {
+	min-height: unset;
+	min-width: unset;
+	max-height: calc(100vh - var(--titleheight));
+	max-width: 100vw;
+}
+
+.popupisresize .weblet-allg-file-show, .popupisresize .weblet-allg-file-show object,
+.popupisresize .weblet-allg-file-show video, .popupisresize .weblet-allg-file-show div,
+.fullscreen .weblet-allg-file-show, .fullscreen .weblet-allg-file-show object,
 .fullscreen .weblet-allg-file-show div {
 	position: absolute;
-    width: 100%;
-    height: 100%;
-} 
+	width: 100%;
+	height: 100%;
+}

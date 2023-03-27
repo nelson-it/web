@@ -9,8 +9,8 @@
 'use strict';
 
 import MneText    from '/js/basic/text.mjs'
-import MneLog     from '/js/basic/log.mjs'
-import MneRequest from '/js/basic/request.mjs'
+//import MneLog     from '/js/basic/log.mjs'
+//import MneRequest from '/js/basic/request.mjs'
 
 import MneElement from '/weblet/basic/element.mjs'
 import MnePopup   from '/weblet/basic/popup.mjs'
@@ -75,8 +75,10 @@ class MneFilesystemTree extends MneMenuRecursive
     super.reset();
     this.obj.readurl = this.initpar.url;
     this.initpar.readpar['pointdirInput.old'] = this.initpar.pointdir ?? true;
+    this.initpar.rootnew = this.initpar.rootnew ?? this.initpar.root;
+    
     this.obj.run.readpar = Object.assign({ 'rootInput.old' : this.initpar.root }, this.initpar.readpar );
-    this.obj.popups['edit'] = new MnePopup( 'edit', {root : 'album' }, { nointeractive : true, composeparent : this, htmlcomposetabid : 'edit', id : 'edit', position : 'popup', path : '/weblet/allg/filesystem/treeedit', depend : [], label : MneText.getText('#mne_lang#Bearbeiten') } );
+    this.obj.popups['edit'] = new MnePopup( 'edit', {root : this.initpar.root, rootnew : this.initpar.rootnew, autosave : this.initpar.autosave }, { nointeractive : true, composeparent : this, htmlcomposetabid : 'edit', id : 'edit', position : 'popup', path : '/weblet/allg/filesystem/treeedit', depend : [], label : MneText.getText('#mne_lang#Bearbeiten') } );
     this.obj.run.values = { parameter : [ "", "", {} ] };
   }
   
@@ -94,7 +96,7 @@ class MneFilesystemTree extends MneMenuRecursive
       return false;
     });
 
-    this.obj.container.content.addEventListener('click', async (evt) => { if ( this.obj.weblets.edit ) this.obj.weblets.edit.close(); } );
+    this.obj.container.content.addEventListener('click', async (_evt) => { if ( this.obj.weblets.edit ) this.obj.weblets.edit.close(); } );
 
     this.obj.container.content.addEventListener('dragstart', async (evt) =>
     {
@@ -121,7 +123,7 @@ class MneFilesystemTree extends MneMenuRecursive
           evt.dataTransfer.dropEffect = 'move';
         MneElement.mkClass(evt.target, 'dropover')
         if ( data.values[data.res.rids.action].action == 'submenu' && data.menu && data.menu.className.indexOf('menuopen') == -1 )
-            this.obj.timeout = window.setTimeout(() => { this.action_submenu(data, false); }, 1000);
+            this.obj.timeout = window.setTimeout(async () => { var v = this.obj.run.values; await this.action_submenu(data, false); this.obj.run.values = v}, 1000);
       }
       else
         evt.dataTransfer.dropEffect = 'none';
@@ -129,7 +131,7 @@ class MneFilesystemTree extends MneMenuRecursive
       evt.preventDefault();
     });
     
-    this.obj.container.content.addEventListener('dragleave', async (evt) =>
+    this.obj.container.content.addEventListener('dragleave', async (_evt) =>
     {
       ( this.obj.container.content.querySelectorAll('.dropover') ?? [] ).forEach( (item) => MneElement.mkClass(item, 'dropover', false));
       if ( this.obj.timeout ){ window.clearTimeout(this.obj.timeout); this.obj.timeout = undefined; }
@@ -192,6 +194,8 @@ class MneFilesystemTree extends MneMenuRecursive
 
   treeeditok(typ, weblet)
   {
+    var d;
+    
     if ( typ == 'del')
     {
       if ( this.obj.act_openmenu && weblet.obj.run.values.parameter[0] == this.obj.act_openmenu.values[this.obj.act_openmenu.res.rids.menuid] )
@@ -199,8 +203,11 @@ class MneFilesystemTree extends MneMenuRecursive
         this.obj.act_refreshmenu = this.obj.act_openmenu.parent;
       }
     }
-    else if ( typ == 'rename')
+    else if ( typ == 'rename' )
     {
+      if ( ( d = weblet.obj.run.act_data )  && d.values[d.res.rids.action].action != 'submenu' )
+        return;
+        
       this.obj.act_refreshmenu = this.obj.run.dropdata ?? weblet.obj.run.act_data.parent;
 
       if ( weblet.obj.run.act_data.values[0] == this.obj.run.values.parameter[0] )

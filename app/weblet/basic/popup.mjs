@@ -83,7 +83,7 @@ class MnePopupWeblet
           await super.load();
           
           this.obj.title.text   = pw.popup.frame.querySelector("#titletext");
-          this.obj.title.middle = pw.popup.frame.querySelector("#ttitlemiddle");
+          this.obj.title.middle = pw.popup.frame.querySelector("#titlemiddle");
           this.obj.title.button = pw.popup.frame.querySelector("#titlebutton");
 
           this.title = ( this.config.label ) ? this.config.label : this.id;

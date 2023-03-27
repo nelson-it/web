@@ -59,6 +59,15 @@ div.weblet.weblet-allg-filesystem-view #contentContainer > #iconContainer > .fil
   text-align: center;
 }
 
+div.weblet.weblet-allg-filesystem-view #contentContainer > #listContainer > .filesystem-list-element.selected {
+	background-color: var(--lightcolor2);
+	border: var(--darkborder); 
+}
+
+div.weblet.weblet-allg-filesystem-view #contentContainer > #listContainer > div.filesystem-list-element.modifyok {
+	border-color: var(--modifyokbackgroundcolor); 
+}
+
 div.weblet.weblet-allg-filesystem-view #listContainer div.filesystem-list-img {
   position: absolute;
   top: var(--qmargin);
@@ -70,38 +79,64 @@ div.weblet.weblet-allg-filesystem-view #listContainer div.filesystem-list-img {
 
 div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element > #name {
   display: block;
+  overflow: hidden;
 
   position: absolute;
-  width: 100%;
+  left:var(--dmargin);
+  right:var(--dmargin);
   bottom: var(--dmargin);
 
   line-height: var(--lineheight_normal);
   text-align: center;
 }
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element > #name:hover {
+	overflow: visible;
+	font-size: var(--font_Large);
+	font-weight: bold;
+	border: var(--border);
+	right: initial;
+  padding: var(--dmargin);
+  background: var(--background);
+  z-index: 100000;
+}
 
-div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.dir:before {
-  content: '\f07b';
-  font-family: SymbolFont2;
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element:before {
   position: absolute;
-  font-size: calc(var(--margin) * 80);
+  font-size: calc(var(--margin) * 40);
   text-align: center;
   width: 100%;
   top: var(--qmargin);
   left: 0px;
+  line-height: calc(var(--margin) * 140 - var(--lineheight_normal));
+  color: var(--lightcolor1);
+}
+
+
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.dir:before {
+  content: '\f07b';
+  font-family: SymbolFont2;
 }
 
 div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.file:before {
   content: '\f15b';
   font-family: SymbolFont2;
-  position: absolute;
-  font-size: calc(var(--margin) * 80);
-  text-align: center;
-  width: 100%;
-  top: var(--qmargin);
-  left: 0px;
 }
 
-div.weblet.weblet-allg-filesystem-view #contentContainer > #iconContainer > #trashIcon:after {
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.file.video:before {
+  content: '\f03d';
+  font-family: SymbolFont1;
+}
+
+div.weblet.weblet-allg-filesystem-view #listContainer > .filesystem-list-element.file.audio:before {
+  content: '\f001';
+  font-family: SymbolFont1;
+}
+
+div.weblet.weblet-allg-filesystem-view #iconContainer .icon:hover {
+  background: var(--button_background_active);
+}
+  
+div.weblet.weblet-allg-filesystem-view #iconContainer #trashIcon:after {
     content: '\f1f8';
 }
   
