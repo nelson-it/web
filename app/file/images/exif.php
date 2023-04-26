@@ -17,14 +17,20 @@ if ( isset($_GET['filenameInput_old']) && $_GET ['filenameInput_old'] != 'null' 
 
     $exif = exif_read_data ( $file, 0, true );
 
-    foreach ( $exif as $key => $section )
+    if ( $exif !== false )
     {
-        foreach ( $section as $name => $val )
+        foreach ( $exif as $key => $section )
         {
-            $val = @iconv ( mb_detect_encoding ( $val, mb_detect_order (), true ), "UTF-8", $val );
-            if ($needkey == '' || $needkey == $key ."." . $name)
+            foreach ( $section as $name => $val )
             {
-                array_push($data, array($key . '.' . $name, (ctype_print ( $val )) ? $val : 'binary'));
+                $val = @iconv ( mb_detect_encoding ( $val, mb_detect_order (), true ), "UTF-8", $val );
+                if ($needkey == '' || $needkey == $key . "." . $name)
+                {
+                    array_push ( $data, array (
+                            $key . '.' . $name,
+                            (ctype_print ( $val )) ? $val : 'binary'
+                    ) );
+                }
             }
         }
     }

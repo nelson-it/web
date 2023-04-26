@@ -35,10 +35,24 @@ class MneFileShow extends MneViewContainer
 
     super.reset();
 
-    this.obj.observer.frame = new IntersectionObserver((is) => { if ( is[0].isIntersecting == 0 && this.obj.container.show ) this.obj.container.show.innerHTML = "" }, { root : document.body } );
+    this.obj.observer.frame = new IntersectionObserver((is) => { if ( is[0].isIntersecting == 0 && this.obj.container.show ) this.close() }, { root : document.body } );
     this.obj.observer.frame.observe(this.frame);
     
     this.obj.htmlcontent = '<div id="showContainer"></div>';
+    
+    this.obj.showerror = () =>
+    {
+      if (this.obj.container.show.firstChild.tagName == 'A')
+      {
+        this.close();
+        return;
+      }
+
+      this.obj.container.show.innerHTML = link
+      this.obj.container.show.firstChild.click();
+      this.close();
+    };
+ 
 
   }
 
@@ -73,8 +87,33 @@ class MneFileShow extends MneViewContainer
     return new Blob([], { type: 'text/plain;charset=UTF-8' });
   }
 
+
+  async close()
+  {
+    var video = this.obj.container.show.querySelector('video');
+    if (video)
+    {
+      this.obj.container.show.firstChild.removeEventListener('error', this.obj.showerror );
+      video.pause()
+      video.src = "blob:https://tphoto/"
+    }
+
+    this.obj.container.show.innerHTML = '';
+    return super.close();
+  }
+
+
   async values()
   {
+ 
+    var video = this.obj.container.show.querySelector('video');
+    if (video)
+    {
+      this.obj.container.show.firstChild.removeEventListener('error', this.obj.showerror );
+      video.pause()
+      video.src = "blob:https://tphoto/"
+    }
+
     this.obj.container.show.innerHTML = '';
 
     if (!this.visible) return;
@@ -107,50 +146,32 @@ class MneFileShow extends MneViewContainer
 
     var link = '<a id="download" style="display: none" download="' + name.split(/[\\/]/).pop() + '" href="' + this.obj.url + '">download</a>';
 
-    if (type.indexOf('application/octet-stream') != -1)
-    {
-      this.obj.container.show.innerHTML = link;
-      this.obj.container.show.firstChild.click();
-      this.close();
-      return;
-    }
-
+ 
     switch (true)
     {
       case type.indexOf('video') == 0:
-        var v = document.createElement('video');
-        if ( v.canPlayType(type) == 'maybe')
-          this.obj.container.show.innerHTML = '<video controls><source src="' + this.obj.url + '" type="' + type + '"></video><div id="link">' + link + '</div>';
-        else
-        {
-        	this.obj.container.show.innerHTML = link;
-        	this.obj.container.show.firstChild.click();
-        	this.close();
-        	return;
-        }
+        var values = this.config.dependweblet.obj.run.values;
+        var p = "rootInput.old=" +  this.initpar.root + "&dirInput.old=" +  values.dir + "&filenameInput.old=" + values.filename;
+        link = '<a id="download" style="display: none" download="' + name.split(/[\\/]/).pop() + '" href="file/download.html?' + p + '">download</a>';
+        this.obj.container.show.innerHTML = '<video controls autoplay><source src="file/stream.dat?' + p + '" type="video/mp4"></video><div id="link">' + link + '</div>';
         break;
 
       case type.indexOf('audio') == 0:
         this.obj.container.show.innerHTML = '<audio controls><source src="' + this.obj.url + '" type="' + type + '"></audio><div id="link">' + link + '</div>';
         break;
 
+      case type.indexOf('application/octet-stream') == 0:
+        this.obj.container.show.innerHTML = link;
+        this.obj.container.show.firstChild.click();
+        this.close();
+        return;
+
       default:
         this.obj.container.show.innerHTML = '<object type="' + type + '" data="' + this.obj.url + '"></object><div id="link">' + link + '</div>';
         break;
     }
 
-    this.obj.container.show.firstChild.addEventListener('error', () =>
-    {
-      if (this.obj.container.show.firstChild.tagName == 'A')
-      {
-        this.close();
-        return;
-      }
-
-      this.obj.container.show.innerHTML = link
-      this.obj.container.show.firstChild.click();
-      this.close();
-    });
+    this.obj.container.show.firstChild.addEventListener('error', this.obj.showerror );
   }
 }
 export default MneFileShow;

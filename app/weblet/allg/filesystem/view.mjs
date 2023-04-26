@@ -255,32 +255,32 @@ class MneFilesystemView extends MneView
     var a = this.obj.run.res.values[index][this.obj.run.res.rids.action];
     var p = a.parameter[2];
     var img = '';
-    var ftyp = p.name.toLowerCase().split('.');
+    //var ftyp = p.name.toLowerCase().split('.');
     var fclass = '';
 
-    ftyp = MneFile.filetyps[( ftyp.length > 1 ) ? ftyp[ftyp.length - 1] : ''] ?? { mime : 'text/plain' };
+    //ftyp = MneFile.filetyps[(( ftyp.length > 1 ) ? ftyp[ftyp.length - 1] : '').toLowerCase()] ?? { mime : 'text/plain' };
      
     switch( true )
     {
-      case ftyp.mime.indexOf('image') == 0 :
+      case p.mime.indexOf('image') == 0 :
         img = '<div class="filesystem-list-img" style="background-image: url(\'file/images/mk_icon.php?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
         fclass = 'image';
         break;
 
-      case ftyp.mime.indexOf('video') == 0 :
+      case p.mime.indexOf('video') == 0 :
+        img = '<div class="filesystem-list-img" style="background-image: url(\'file/images/mk_icon.php?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
         fclass = 'video';
         break;
         
-      case ftyp.mime.indexOf('audio') == 0 :
+      case p.mime.indexOf('audio') == 0 :
         fclass = 'audio';
         break;
         
-      case ftyp.mime.indexOf('application') == 0 :
+      case p.mime.indexOf('application') == 0 :
         fclass = 'application';
         break;
 
     }
-    
     return '<div id="filesystem-list-element' + index + '" class="filesystem-list-element ' + p.filetype + ' ' + fclass + '" draggable="true">' + img + '<div id="name">' + p.name + '</div></div>';
   }
   

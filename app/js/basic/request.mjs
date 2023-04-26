@@ -31,8 +31,6 @@ class MneRequest
   
   static mkParam(parameter = {} )
   {
-    var param = "";
-    var sep = "";
     var p;
 
     if ( parameter instanceof FormData ) return parameter;

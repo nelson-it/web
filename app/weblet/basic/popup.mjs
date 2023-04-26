@@ -90,18 +90,16 @@ class MnePopupWeblet
           
           if ( this.obj.container.content)
           {
-            this.obj.observer.popup = new MutationObserver( (muts) => 
+            this.obj.observer.popup = new ResizeObserver( (_rs) => 
             {
-              if ( ! this.obj.container.weblet || ! this.initpar.popup) return;
-        
               if ( (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getRight(pw.popup.frame)) < 0 )
-                pw.popup.frame.style.left = (MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getWidth(pw.popup.frame)) + 'px';
+                pw.popup.frame.style.left = Math.max(MneElement.getWidth(pw.popup.frame.parentNode) - MneElement.getWidth(pw.popup.frame)) + 'px';
               
               if ( (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getBottom(pw.popup.frame)) < 0 )
-                pw.popup.frame.style.left = (MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getHeight(pw.popup.frame)) + 'px';
+                pw.popup.frame.style.top = Math.max(0, MneElement.getHeight(pw.popup.frame.parentNode) - MneElement.getHeight(pw.popup.frame)) + 'px';
               
             });
-            this.obj.observer.popup.observe(this.obj.container.content, {subtree : true, attributes : true, attributeFilter : ['class'] });
+            this.obj.observer.popup.observe(pw.popup.frame);
           }
           
           return this.loadready();
@@ -123,6 +121,7 @@ class MnePopupWeblet
         async close(auto = false)
         {
           await pw.close(auto);
+          await super.close();
         }
       }
       

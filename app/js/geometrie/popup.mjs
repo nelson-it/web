@@ -8,8 +8,8 @@
 //================================================================================
 'use strict';
 
-import MneText       from '/js/basic/text.mjs'
-import MneLog        from '/js/basic/log.mjs'
+// import MneText       from '/js/basic/text.mjs'
+// import MneLog        from '/js/basic/log.mjs'
 import MneElement from '/weblet/basic/element.mjs'
 import MneTheme      from '/js/basic/theme.mjs'
 import MneFullscreen from '/js/geometrie/fullscreen.mjs'
@@ -47,10 +47,10 @@ export class MnePopupFrame
                            + '</div></div><div id="content" class="popupcontent"></div><div id="resize" class="popupresize"></div>';
 
       this.frame.querySelector('#content').appendChild(this.container);
-      this.frame.querySelector('#querybutton').onclick = (evt) => { self.query() };
-      this.frame.querySelector('#reloadbutton').onclick = (evt) => { self.reload() };
-      this.frame.querySelector('#closebutton').onclick = (evt) => { self.close() };
-      ( this.fullscreenbutton = this.frame.querySelector('#fullscreenbutton')).onclick = (evt) => { self.fullscreen() };
+      this.frame.querySelector('#querybutton').onclick = (_evt) => { self.query() };
+      this.frame.querySelector('#reloadbutton').onclick = (_evt) => { self.reload() };
+      this.frame.querySelector('#closebutton').onclick = (_evt) => { self.close() };
+      ( this.fullscreenbutton = this.frame.querySelector('#fullscreenbutton')).onclick = (_evt) => { self.fullscreen() };
 
       if ( this.istouch )
       {
@@ -133,8 +133,8 @@ export class MnePopupFrame
     var hm = document.body.offsetHeight;
     var hs = this.frame.scrollHeight;
 
-    this.frame.style.left = ((( wm - ws ) / 2 ) + document.body.parentNode.scrollLeft + document.body.scrollLeft ) + "px";
-    this.frame.style.top = ((( hm - hs ) / 2 ) +  document.body.parentNode.scrollTop + document.body.scrollTop ) + "px";
+    this.frame.style.left = Math.max(0, ((( wm - ws ) / 2 ) + document.body.parentNode.scrollLeft + document.body.scrollLeft )) + "px";
+    this.frame.style.top  = Math.max(0, ((( hm - hs ) / 2 ) +  document.body.parentNode.scrollTop + document.body.scrollTop )) + "px";
   }
 
   close ()
@@ -150,12 +150,12 @@ export class MnePopupFrame
     MneFullscreen.fullscreen(this.fullscreenbutton, this.frame)
   }
 
-  click (evt)
+  click (_evt)
   {
     this.frame.style.zIndex = MnePopupFrame.zindex++;
   }
 
-  dblclick (evt)
+  dblclick (_evt)
   {
     MneElement.clearClass(this.frame, 'popupisresize' );
     MneElement.clearClass(this.frame, 'popupdoresize' );
@@ -171,7 +171,7 @@ export class MnePopupFrame
 
   }
 
-  startmouse (evt)
+  startmouse (_evt)
   {
     this.frame.style.zIndex = MnePopupFrame.zindex++;
     if ( this.istouch )
@@ -261,7 +261,7 @@ export class MnePopupFrame
     return true;
   };
 
-  mouseup (evt)
+  mouseup (_evt)
   {
     document.removeEventListener('mousemove', this.mmove );
     document.removeEventListener('mouseup',   this.mend  );
@@ -270,7 +270,7 @@ export class MnePopupFrame
     return true;
   }
 
-  touchend (evt)
+  touchend (_evt)
   {
     document.removeEventListener('touchmove', this.tmove, false);
     document.removeEventListener('touchend',  this.tend,  false);

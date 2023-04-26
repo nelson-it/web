@@ -85,13 +85,13 @@ class MneAdminWebletDetail extends MneDbViewWeblet
       }
 
       p.table = 'htmlcomposetab';
-      p.cols = "createdate,createuser,modifydate,modifyuser,htmlcomposeid,htmlcomposetabid,path,id,subposition,position,initpar,owner,depend,loadpos,ugroup,custom";
+      p.cols = "createdate,createuser,modifydate,modifyuser,htmlcomposeid,htmlcomposetabid,path,id,subposition,position,initpar,depend,loadpos,ugroup,custom";
       res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
-        if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetab( createdate, createuser, modifydate, modifyuser, htmlcomposeid, htmlcomposetabid, path, id, subposition, position, initpar, owner, depend, loadpos, ugroup, custom) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', '$9', $10, '$11', '$12', '$13', '$14', $15, $16);";
-        else format = "INSERT INTO mne_application.htmlcomposetab( createdate, createuser, modifydate, modifyuser, htmlcomposeid, htmlcomposetabid, path, id, subposition, \"position\", initpar, owner, depend, loadpos, ugroup, custom) VALUES ($1, E'$2', $3, E'$4', E'$5', E'$6', E'$7', E'$8', E'$9', $10, E'$11', E'$12', E'$13', E'$14', $15, $16);";
-        str += MneText.sprintf(format, MneText.mascarade_single(res.values[i][0],"'", "\\'"), MneText.mascarade_single(res.values[i][1],"'", "\\'"), MneText.mascarade_single(res.values[i][2],"'", "\\'"), MneText.mascarade_single(res.values[i][3],"'", "\\'"), MneText.mascarade_single(res.values[i][4],"'", "\\'"), MneText.mascarade_single(res.values[i][5],"'", "\\'"), MneText.mascarade_single(res.values[i][6],"'", "\\'"), MneText.mascarade_single(res.values[i][7],"'", "\\'"), MneText.mascarade_single(res.values[i][8],"'", "\\'"), MneText.mascarade_single(res.values[i][9],"'", "\\'"), MneText.mascarade_single(res.values[i][10],"'","\\'"), MneText.mascarade_single(res.values[i][11],"'","\\'"), MneText.mascarade_single(res.values[i][12],"'","\\'"), MneText.mascarade_single(res.values[i][13],"'","\\'"), MneText.mascarade_single(res.values[i][14],"'","\\'"), (res.values[i][15])[0] != 'f') + '\n';
+        if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetab( createdate, createuser, modifydate, modifyuser, htmlcomposeid, htmlcomposetabid, path, id, subposition, position, initpar, depend, loadpos, ugroup, custom) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', '$9', $10, '$11', '$12', '$13', '$14', $15, $16);";
+        else format = "INSERT INTO mne_application.htmlcomposetab( createdate, createuser, modifydate, modifyuser, htmlcomposeid, htmlcomposetabid, path, id, subposition, \"position\", initpar, depend, loadpos, ugroup, custom) VALUES ($1, E'$2', $3, E'$4', E'$5', E'$6', E'$7', E'$8', E'$9', $10, E'$11', E'$12', E'$13', E'$14', $15, $16);";
+        str += MneText.sprintf(format, MneText.mascarade_single(res.values[i][0],"'", "\\'"), MneText.mascarade_single(res.values[i][1],"'", "\\'"), MneText.mascarade_single(res.values[i][2],"'", "\\'"), MneText.mascarade_single(res.values[i][3],"'", "\\'"), MneText.mascarade_single(res.values[i][4],"'", "\\'"), MneText.mascarade_single(res.values[i][5],"'", "\\'"), MneText.mascarade_single(res.values[i][6],"'", "\\'"), MneText.mascarade_single(res.values[i][7],"'", "\\'"), MneText.mascarade_single(res.values[i][8],"'", "\\'"), MneText.mascarade_single(res.values[i][9],"'", "\\'"), MneText.mascarade_single(res.values[i][10],"'","\\'"), MneText.mascarade_single(res.values[i][11],"'","\\'"), MneText.mascarade_single(res.values[i][12],"'","\\'"), MneText.mascarade_single(res.values[i][13],"'","\\'"), (res.values[i][14])[0] != 'f') + '\n';
       }
 
       p.table = 'htmlcomposetabnames';
@@ -105,12 +105,12 @@ class MneAdminWebletDetail extends MneDbViewWeblet
       }
 
       p.table = 'htmlcomposetabselect';
-      p.cols = "createdate,createuser,modifydate,modifyuser,id,element,htmlcomposeid,htmlcomposetabid,htmlcomposetabselectid,schema,query,tab,wop,wcol,wval,scols,showcols,cols,weblet,showdynpar,custom,selval";
+      p.cols = "createdate,createuser,modifydate,modifyuser,id,element,htmlcomposeid,htmlcomposetabselectid,schema,query,tab,wop,wcol,wval,scols,showcols,cols,weblet,custom,selval";
       res = await MneRequest.fetch("db/utils/table/data.json", p );
       for ( i = 0; i < res.values.length; i++ )
       {
-        if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetabselect( createdate, createuser, modifydate, modifyuser, id, element, htmlcomposeid, htmlcomposetabid, htmlcomposetabselectid, schema, query, tab, wop, wcol, wval, scols, showcols, cols, weblet, showdynpar, custom, selval) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', '$9', '$10', '$11', '$12', '$13', '$14', '$15', '$16', '$17', '$18', $19, '$20', $21, E'$22');";
-        else format = "INSERT INTO mne_application.htmlcomposetabselect( createdate, createuser, modifydate, modifyuser, id, element, htmlcomposeid, htmlcomposetabid, htmlcomposetabselectid, schema, query, tab, wop, wcol, wval, scols, showcols, cols, weblet, showdynpar, custom, selval) VALUES ($1, E'$2', $3, E'$4', E'$5', E'$6', E'$7', E'$8', E'$9', E'$10', E'$11', E'$12', E'$13', E'$14', E'$15', E'$16', E'$17', E'$18', E'$19', E'$20', $21, E'$22');";
+        if ( mysql ) format = "INSERT INTO mne_application_htmlcomposetabselect( createdate, createuser, modifydate, modifyuser, id, element, htmlcomposeid, htmlcomposetabselectid, schema, query, tab, wop, wcol, wval, scols, showcols, cols, weblet, custom, selval) VALUES ($1, '$2', $3, '$4', '$5', '$6', '$7', '$8', '$9', '$10', '$11', '$12', '$13', '$14', '$15', '$16', '$17', '$18', $19, '$20', $21, E'$22');";
+        else format = "INSERT INTO mne_application.htmlcomposetabselect( createdate, createuser, modifydate, modifyuser, id, element, htmlcomposeid, htmlcomposetabselectid, schema, query, tab, wop, wcol, wval, scols, showcols, cols, weblet, custom, selval) VALUES ($1, E'$2', $3, E'$4', E'$5', E'$6', E'$7', E'$8', E'$9', E'$10', E'$11', E'$12', E'$13', E'$14', E'$15', E'$16', E'$17', E'$18', E'$19', E'$20', $21, E'$22');";
         str += MneText.sprintf(format, MneText.mascarade_single(res.values[i][0],"'", "\\'"),
             MneText.mascarade_single(res.values[i][1],"'", "\\'"),
             MneText.mascarade_single(res.values[i][2],"'", "\\'"),
@@ -129,10 +129,8 @@ class MneAdminWebletDetail extends MneDbViewWeblet
             MneText.mascarade_single(res.values[i][15],"'","\\'"),
             MneText.mascarade_single(res.values[i][16],"'","\\'"),
             MneText.mascarade_single(res.values[i][17],"'","\\'"),
-            MneText.mascarade_single(res.values[i][18],"'","\\'"),
-            MneText.mascarade_single(res.values[i][19],"'","\\'"),
-            res.values[i][20],
-            MneText.mascarade_single(res.values[i][21],"'","\\'") ) + '\n';
+            res.values[i][18],
+            MneText.mascarade_single(res.values[i][19],"'","\\'") ) + '\n';
       }
 
       p.table = 'htmlcomposetabslider';
