@@ -263,12 +263,12 @@ class MneFilesystemView extends MneView
     switch( true )
     {
       case p.mime.indexOf('image') == 0 :
-        img = '<div class="filesystem-list-img" style="background-image: url(\'file/images/mk_icon.php?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
+        img = '<div class="filesystem-list-img" style="background-image: url(\'file/icon.jpg?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
         fclass = 'image';
         break;
 
       case p.mime.indexOf('video') == 0 :
-        img = '<div class="filesystem-list-img" style="background-image: url(\'file/images/mk_icon.php?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
+        img = '<div class="filesystem-list-img" style="background-image: url(\'file/icon.jpg?rootInput.old=' + this.initpar.root + '&dirInput.old=' + this.obj.run.dir + '&name=' + p.name + '&y=300&mtime=' + p.modifytime + '\')"></div>';
         fclass = 'video';
         break;
         

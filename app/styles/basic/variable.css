@@ -1,131 +1,107 @@
 @font-face {
-  font-family: 'SymbolFont1';
-  src: url('#mne_base#/fonts/fa-solid-900.woff2') format('woff2'), url('#mne_base#/fonts/fa-solid-900.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
+	font-family: 'SymbolFont1';
+	src: url('#mne_base#/fonts/fa-solid-900.woff2') format('woff2'),
+		url('#mne_base#/fonts/fa-solid-900.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
 }
 
 @font-face {
-  font-family: 'SymbolFont2';
-  src: url('#mne_base#/fonts/fa-regular-400.woff2') format('woff2'), url('#mne_base#/fonts/fa-regular-400.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
+	font-family: 'SymbolFont2';
+	src: url('#mne_base#/fonts/fa-regular-400.woff2') format('woff2'),
+		url('#mne_base#/fonts/fa-regular-400.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
 }
 
 :root {
-	--font-family: Arial,Helvetica,sans-serif;
-
-    --font_tiny: 8px;
-    --font_footnote: 9px;
-    --font_small: 10px;
-    --font_normal: 13px;
-    --font_large: 15px;
-    --font_Large: 18px;
-    --font_LARGE: 22px;
-    --font_Huge: 27px;
-	
+	--font-family: Arial, Helvetica, sans-serif;
+	--font_tiny: 8px;
+	--font_footnote: 9px;
+	--font_small: 10px;
+	--font_normal: 13px;
+	--font_large: 15px;
+	--font_Large: 18px;
+	--font_LARGE: 22px;
+	--font_Huge: 27px;
 	--lineheight_normal: 26px;
-    --select_lineheight: 18px;
-    --icon_lineheight: 26px;
-    --tablineheight_normal: 22px;
-
-	--select_padright:   20px;
-	
+	--select_lineheight: 18px;
+	--icon_lineheight: 26px;
+	--tablineheight_normal: 22px;
+	--select_padright: 20px;
 	--background: #fdfdfd;
-	--background_transparent: rgba(253,253,253,0.5);
+	--background_transparent: rgba(253, 253, 253, 0.5);
 
 	--color: #404040;
 	--inputcolor: #404040;
 	--inputcolorlight: #a0a0a0;
-	
 	--darkcolor1: #729fcf;
 	--rdarkcolor1: #fff;
-
 	--lightcolor1: #aaccff;
 	--lightcolor2: #eaeaff;
 	--grayoutcolor: #a0a0a0;
-	
-	--errorcolor:  rgba(255,0,0,0.5);
-	--warningcolor: rgba(255,255,0,0.5);
+
+	--rdonlycolor: #a0a0a0;
+	--rdonlybackground: transparent;
+
+	--errorcolor: rgba(255, 0, 0, 0.5);
+	--warningcolor: rgba(255, 255, 0, 0.5);
 	--messagecolor: transparent;
-	
+
 	--modifyokcolor: #000;
 	--modifywrongcolor: #fff;
 	--modifywarningcolor: #000;
 	--modifywaitcolor: #a0a0a0;
-	
 	--modifyokbackgroundcolor: #a0ffa0;
 	--modifywrongbackgroundcolor: #FFA0A0;
 	--modifywarningbackgroundcolor: #FFFFA0;
-    --modifywaitbackgroundcolor: #f0f0f0;
-    
-    --titleactivecolor: #d2691e;
+	--modifywaitbackgroundcolor: #f0f0f0;
 
-    --rdonlycolor: #a0a0a0;
-    --rdonlybackground: transparent;
-    
-    --placeholdercolor: #a0a0a0;
-    
-    --dragcolor: #a0a0a0;
-	
+	--titleactivecolor: #d2691e;
+	--placeholdercolor: #a0a0a0;
+	--dragcolor: #a0a0a0;
+
 	--button_color: #404040;
 	--button_background: #FDFDFD;
-	--button_boxshadow:  #e0e0e0 0px 0px 3px;
+	--button_boxshadow: #e0e0e0 0px 0px 3px;
 	--button_border: 1px solid #e0e0e0;
-
 	--button_background_active: #e0e0e0;
-	--button_boxshadow_active:  #E0e0e0 -1px -1px 2px;
+	--button_boxshadow_active: #E0e0e0 -1px -1px 2px;
 	--button_border_active: 1px inset #E0E0E0;
-
 	--checkbox_border: 1px solid #c0c0c0;
-
 	--border: 1px solid #d0d0d0;
 	--bordercolor: #d0d0d0;
 	--bordersize: 1px;
 	--borderstyle: solid;
-
 	--lightborder: 1px solid #c0c0c0;
 	--lightbordercolor: #c0c0c0;
-
 	--darkborder: 1px solid #404040;
 	--darkbordercolor: #404040;
-
 	--borderradius: 4px;
-
 	--input_boxshadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.3);
 	--popup_boxshadow: 0px 0px 10px 1px #ccc;
-	
-	--margin:  2px;
+	--margin: 2px;
 	--dmargin: 4px;
 	--qmargin: 8px;
 	--selectlistmargin: 20px;
-	
-	--nmargin:  -2px;
+	--nmargin: -2px;
 	--ndmargin: -4px;
 	--nqmargin: -8px;
-	
 	--iconsize: 24px;
 	--iconpicsize: 20px;
 	--iconfontsize: 16px;
-
 	--niconsize: -24px;
 	--niconpicsize: -20px;
 	--niconfontsize: -16px;
-	
 	--slider_border_color: #bbb8a9;
 	--slider_active_boxshadow: 0px 0px 4px 1px #0077cc;
-
 	--titleheight: 36px;
-	
 	--table_enablecolor0: #808080;
-	
 	--mneajaxmonthtable_monthtdwidth: 32px;
 	--mneajaxmonthtable_sa_color: background-color: #b0b0b0;
 	--mneajaxmonthtable_so_color: background-color: #a0a0a0;
-	
 	--gecko-two-ajust: 0px;
 	--webkit-two-ajust: 8px;
-	
 	--ariabaserelwidth: 0.48em;
 	--ariaheight: 1;
 }
@@ -134,14 +110,12 @@
 body[aria-view-mode="tablet"] {
 }
 */
-
 body[aria-view-mode="mobile"] {
 	--font_normal: 16px;
 	--font_large: 19px;
 	--font_Large: 23px;
 	--font_huge: 28px;
 	--font_Huge: 33px;
-	
 	--lineheight_normal: 32px;
 	--select_lineheight: 24px;
 }

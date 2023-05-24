@@ -10,9 +10,9 @@
 
 import MneConfig  from '/js/basic/config.mjs'
 import MneText    from '/js/basic/text.mjs'
-import MneLog     from '/js/basic/log.mjs'
+//import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
-import MneTheme   from '/js/basic/theme.mjs'
+//import MneTheme   from '/js/basic/theme.mjs'
 import MneElement from '/weblet/basic/element.mjs'
 import MneInput   from '/js/basic/input.mjs'
 import MneRte     from '/js/editor/editor.mjs'
@@ -115,7 +115,7 @@ export class MneViewContainer extends MneWeblet
 
     obj = frame.querySelectorAll("[id$='Container']");
     for ( i = 0; i< obj.length; i++)
-      saveobj.container[obj[i].id.substr(0, obj[i].id.indexOf("Container"))] = obj[i];
+      saveobj.container[obj[i].id.substring(0, obj[i].id.indexOf("Container"))] = obj[i];
    
     if ( saveobj.container.title )
     {
@@ -133,7 +133,7 @@ export class MneViewContainer extends MneWeblet
     if ( this.initpar.nobuttonframe )
       saveobj.container.button = undefined;
     else if ( saveobj.buttonframe != null && saveobj.container.button != undefined )
-      ( saveobj.observer.buttonframe = new MutationObserver((mut) => 
+      ( saveobj.observer.buttonframe = new MutationObserver((_mut) => 
       {
         MneElement.mkClass(saveobj.buttonframe, 'scroll', saveobj.buttonframe.scrollHeight > saveobj.buttonframe.offsetHeight); 
       })).observe(saveobj.container.button, { childList: true, subtree: true, attributes : true } );
@@ -141,8 +141,8 @@ export class MneViewContainer extends MneWeblet
     obj = frame.querySelectorAll("[id$='Button']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.buttons[obj[i].id.substr(0, obj[i].id.indexOf("Button"))] = obj[i];
-      p.push(this.mkButton(obj[i].id.substr(0, obj[i].id.indexOf("Button")), obj[i], {}));
+      saveobj.buttons[obj[i].id.substring(0, obj[i].id.indexOf("Button"))] = obj[i];
+      p.push(this.mkButton(obj[i].id.substring(0, obj[i].id.indexOf("Button")), obj[i], {}));
     }
     
     return Promise.all(p);
@@ -182,6 +182,9 @@ export class MneViewContainer extends MneWeblet
     return this.findIO();
   }
   
+  /**
+   * @param {any} title
+   */
   set title(title)
   {
     if ( this.obj.title.text ) this.obj.title.text.textContent = title;
@@ -255,8 +258,6 @@ export class MneView extends MneViewContainer
 
   async mkLabel (id, obj )
   {
-    var self = this;
-
     if ( this.initpar.hinput && obj.style.display == 'none') { obj.style.display = 'inline';}
 
     MneElement.mkClass(obj, 'label');
@@ -275,7 +276,7 @@ export class MneView extends MneViewContainer
       switch(this.dpytype )
       {
         case "email":
-          this.observer = new MutationObserver( (muts) => 
+          this.observer = new MutationObserver( (_muts) => 
           {
             this.firstChild.href = 'mailto:' + this.vobject.getValue(false);
           });
@@ -283,7 +284,7 @@ export class MneView extends MneViewContainer
           break;
           
         case "http":
-          this.observer = new MutationObserver( (muts) => 
+          this.observer = new MutationObserver( (_muts) => 
           {
             this.firstChild.href ='http://' + this.vobject.getValue(false);
           });
@@ -409,7 +410,7 @@ export class MneView extends MneViewContainer
       }
     }
     
-    obj.observer = new MutationObserver((mut) => { obj.checkInput() });
+    obj.observer = new MutationObserver((_mut) => { obj.checkInput() });
     obj.observer.observe(obj, { childList: true, subtree: true, attributes : true, attributeFilter: [ 'oldvalue',  'newvalue' ] } );
   }
   
@@ -513,11 +514,9 @@ export class MneView extends MneViewContainer
       {
         case "checkbox":
           return ( this.checked ) ? 1 : 0;
-          break;
 
         default:
           return MneInput.getValue(this.getAttribute('newvalue'), this.dpytype, true );
-        break;
       }
     }
 
@@ -652,14 +651,14 @@ export class MneView extends MneViewContainer
       }, false);
     }
 
-    obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
+    obj.observer = new MutationObserver((_mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { characterData: true, attributes: true, childList: false, subtree: false, characterDataOldValue : false, attributeFilter: [ 'newvalue', 'oldvalue' ] } );
 
     obj.addEventListener('paste', (evt, _data) =>
     {
       var node;
       
-      let paste = (evt.clipboardData || window.clipboardData).getData('text');
+      let paste = evt.clipboardData.getData('text');
       paste = ( obj.getAttribute('aria-multiline') != undefined ) ? paste : paste.replace(/[\n\r]/g, '');
       paste = paste.split('\n');
       
@@ -690,14 +689,14 @@ export class MneView extends MneViewContainer
 
     });
 
-    obj.addEventListener('input', function (evt)
+    obj.addEventListener('input', function (_evt)
     {
       this.setAttribute('newvalue', MneInput.getValue(this.innerText.replace(/\n$/,''), this.dpytype));
     });
 
     obj.addEventListener('keypress', (evt) => 
     {
-      if ( ! obj.getAttribute('aria-multiline') && evt.key == 'Enter') evt.preventDefault();
+      if ( ! obj.getAttribute('aria-multiline') && evt.key == 'Enter' || evt.shiftKey == true && evt.key == 'Enter' ) evt.preventDefault();
     });
   }
 
@@ -760,7 +759,7 @@ export class MneView extends MneViewContainer
 
     obj.addEventListener('input', function() { this.setAttribute('newvalue', MneInput.getValue(this.value, this.dpytype)); })
 
-    obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
+    obj.observer = new MutationObserver((_mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { childList: false, subtree: false, attributeOldValue: true, attributes : true, attributeFilter: [ (( obj.type == 'checkbox' ) ? 'checked' : 'newvalue' ), 'oldvalue' ] } );
 
   }
@@ -813,7 +812,7 @@ export class MneView extends MneViewContainer
     obj.addEventListener('change', function() { this.setAttribute('newvalue', this.value); })
   }
 
-  async mkFile (id, obj )
+  async mkFile (_id, obj )
   {
     obj.addEventListener('change', () => { MneElement.mkClass(obj.closest('.ele-wrapper'), 'modifyok', true, 'modify') });
     obj.getModify = function()
@@ -904,7 +903,7 @@ export class MneView extends MneViewContainer
       return ( this.getAttribute('newvalue') != this.getAttribute('oldvalue') );
     }
     
-    obj.observer = new MutationObserver((mut) => { obj.setAttribute('newvalue', obj.editor.getValue(true)); MneElement.mkClass(obj, ( obj.getModify() ) ? 'modifyok' : 'modifyno', true, 'modify' ) });
+    obj.observer = new MutationObserver((_mut) => { obj.setAttribute('newvalue', obj.editor.getValue(true)); MneElement.mkClass(obj, ( obj.getModify() ) ? 'modifyok' : 'modifyno', true, 'modify' ) });
     obj.observer.observe(obj.editor.editarea, { childList: true, subtree: true, attributes : true } );
 
   }
@@ -931,7 +930,7 @@ export class MneView extends MneViewContainer
         obj.setAttribute('newvalue', pos);
       }
       
-      var touchend = (evt) =>
+      var touchend = (_evt) =>
       {
         document.removeEventListener('touchmove', touchmove );
         document.removeEventListener('touchend',  touchend   );
@@ -961,7 +960,7 @@ export class MneView extends MneViewContainer
         obj.setAttribute('newvalue', pos);
       }
 
-      var mouseup = (evt) =>
+      var mouseup = (_evt) =>
       {
         document.removeEventListener('mousemove', mousemove );
         document.removeEventListener('mouseup',   mouseup   );
@@ -1036,7 +1035,7 @@ export class MneView extends MneViewContainer
         slider.style.left = this.getAttribute('newvalue') + "px";
     }
 
-    obj.observer = new MutationObserver((mut) => { obj.checkInput(); });
+    obj.observer = new MutationObserver((_mut) => { obj.checkInput(); });
     obj.observer.observe(obj, { childList: false, subtree: false, attributeOldValue: true, attributes : true, attributeFilter: [ 'newvalue' , 'oldvalue' ] } );
   }
 
@@ -1057,7 +1056,6 @@ export class MneView extends MneViewContainer
   {
     var i;
     var obj;
-    var self = this;
     var p = [];
 
     frame   = frame   ?? this.frame;
@@ -1068,62 +1066,62 @@ export class MneView extends MneViewContainer
     obj = frame.querySelectorAll("[id$='Label']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.labels[obj[i].id.substr(0, obj[i].id.indexOf("Label"))] = obj[i];
-      p.push(this.mkLabel(obj[i].id.substr(0, obj[i].id.indexOf("Label")), obj[i]));
+      saveobj.labels[obj[i].id.substring(0, obj[i].id.indexOf("Label"))] = obj[i];
+      p.push(this.mkLabel(obj[i].id.substring(0, obj[i].id.indexOf("Label")), obj[i]));
     }
 
     obj = frame.querySelectorAll("[id$='Link']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.labels[obj[i].id.substr(0, obj[i].id.indexOf("Link"))] = obj[i];
-      p.push(this.mkLink(obj[i].id.substr(0, obj[i].id.indexOf("Link")), obj[i], {} ));
+      saveobj.labels[obj[i].id.substring(0, obj[i].id.indexOf("Link"))] = obj[i];
+      p.push(this.mkLink(obj[i].id.substring(0, obj[i].id.indexOf("Link")), obj[i], {} ));
     }
     
     obj = frame.querySelectorAll("[id$='Output']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.outputs[obj[i].id.substr(0, obj[i].id.indexOf("Output"))] = obj[i];
-      p.push(this.mkOutput(obj[i].id.substr(0, obj[i].id.indexOf("Output")), obj[i]));
+      saveobj.outputs[obj[i].id.substring(0, obj[i].id.indexOf("Output"))] = obj[i];
+      p.push(this.mkOutput(obj[i].id.substring(0, obj[i].id.indexOf("Output")), obj[i]));
     }
     
     obj = frame.querySelectorAll("[id$='Input']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.inputs[obj[i].id.substr(0, obj[i].id.indexOf("Input"))] = obj[i];
-      p.push(this.mkInput(obj[i].id.substr(0, obj[i].id.indexOf("Input")), obj[i]));
+      saveobj.inputs[obj[i].id.substring(0, obj[i].id.indexOf("Input"))] = obj[i];
+      p.push(this.mkInput(obj[i].id.substring(0, obj[i].id.indexOf("Input")), obj[i]));
     }
     
     obj = frame.querySelectorAll("[id$='File']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.files[obj[i].id.substr(0, obj[i].id.indexOf("File"))] = obj[i];
-      p.push(this.mkFile(obj[i].id.substr(0, obj[i].id.indexOf("File")), obj[i]));
+      saveobj.files[obj[i].id.substring(0, obj[i].id.indexOf("File"))] = obj[i];
+      p.push(this.mkFile(obj[i].id.substring(0, obj[i].id.indexOf("File")), obj[i]));
     }
     
     obj = frame.querySelectorAll("[id$='Editor']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.inputs[obj[i].id.substr(0, obj[i].id.indexOf("Editor"))] = obj[i];
-      p.push(this.mkEditor(obj[i].id.substr(0, obj[i].id.indexOf("Editor")), obj[i]));
+      saveobj.inputs[obj[i].id.substring(0, obj[i].id.indexOf("Editor"))] = obj[i];
+      p.push(this.mkEditor(obj[i].id.substring(0, obj[i].id.indexOf("Editor")), obj[i]));
     }
     
     obj = frame.querySelectorAll("[id$='Slider']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.sliders[obj[i].id.substr(0, obj[i].id.indexOf("Slider"))] = obj[i];
-      p.push(this.mkSlider(obj[i].id.substr(0, obj[i].id.indexOf("Slider")), obj[i]));
+      saveobj.sliders[obj[i].id.substring(0, obj[i].id.indexOf("Slider"))] = obj[i];
+      p.push(this.mkSlider(obj[i].id.substring(0, obj[i].id.indexOf("Slider")), obj[i]));
     }
     
     obj = frame.querySelectorAll("[id$='Checkbox']");
     for ( i = 0; i< obj.length; i++)
     {
-      saveobj.checkboxs[obj[i].id.substr(0, obj[i].id.indexOf("Checkbox"))] = obj[i];
-      p.push(this.mkCheckbox(obj[i].id.substr(0, obj[i].id.indexOf("Checkbox")), obj[i]));
+      saveobj.checkboxs[obj[i].id.substring(0, obj[i].id.indexOf("Checkbox"))] = obj[i];
+      p.push(this.mkCheckbox(obj[i].id.substring(0, obj[i].id.indexOf("Checkbox")), obj[i]));
     }
     
     obj = frame.querySelectorAll("[id$='Table']");
     for ( i = 0; i< obj.length; i++)
-      saveobj.tables[obj[i].id.substr(0, obj[i].id.indexOf("Table"))] = obj[i];
+      saveobj.tables[obj[i].id.substring(0, obj[i].id.indexOf("Table"))] = obj[i];
 
     await Promise.all(p);
   }
@@ -1240,8 +1238,6 @@ export class MneView extends MneViewContainer
 
   enable( id, enable = true )
   {
-    var i;
-
     var self = this;
 
     var all     = this.obj.enablebuttons.buttons;
@@ -1272,23 +1268,67 @@ export class MneView extends MneViewContainer
     await super.load();
 
     var self = this;
-    this.obj.container.content.addEventListener('keydown',  (evt) =>
+    
+    var save_range = (e) =>
+    {
+      if (e.selectionStart)
+      {
+        return { startOffset: e.selectionStart, endOffset: e.selectionEnd }
+      }
+      else
+      {
+        var r = window.getSelection().getRangeAt(0).cloneRange();
+        return { start: Array.from(r.startContainer.parentNode.childNodes).indexOf(r.startContainer), startOffset: r.startOffset, end: Array.from(r.endContainer.parentNode.childNodes).indexOf(r.endContainer), endOffset: r.endOffset }
+      }
+    }
+
+    var cursor_end = (e, r) => 
+    {
+      if (!e) return;
+
+      e.focus();
+      if (e.setSelectionRange)
+      {
+        e.setSelectionRange(r.startOffset, r.endOffset);
+      }
+      else
+      {
+        var range, selection;
+        range = document.createRange();
+        range.selectNodeContents(e);
+        range.collapse(false);
+        range.setStart(e.childNodes[r.start], r.startOffset);
+        range.setEnd(e.childNodes[r.end], r.endOffset);
+
+        selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
+
+    this.obj.container.content.addEventListener('keydown',  async (evt) =>
     {
       if ( ! evt.target.getAttribute('aria-multiline') &&  evt.key == 'Tab')
         self.btnClick('tab',   {}, self.obj.container.content, evt );
       else if ( evt.ctrlKey && evt.key == 's' )
       {
         evt.preventDefault();
-        self.btnClick('ctrl_s', {}, self.obj.container.content, evt );
+        var r = save_range(evt.target);
+        await self.btnClick('ctrl_s', {}, self.obj.container.content, evt );
+        cursor_end(this.frame.querySelector('#' + evt.target.id), r);
       }
     });
-    this.obj.container.content.addEventListener('keypress', (evt) =>
+    this.obj.container.content.addEventListener('keypress', async (evt) =>
     {
-      if ( ! evt.target.getAttribute('aria-multiline') &&  evt.key == 'Enter')
-       self.btnClick('enter', {}, self.obj.container.content, evt ); 
+      if (!evt.target.getAttribute('aria-multiline') && evt.key == 'Enter' || evt.shiftKey && evt.key == 'Enter')
+      {
+        var r = save_range(evt.target);
+        await self.btnClick('enter', {}, self.obj.container.content, evt);
+        cursor_end(this.frame.querySelector('#' + evt.target.id), r);
+      }
     });
-    
-    this.obj.observer.content = new MutationObserver( (muts) => 
+
+    this.obj.observer.content = new MutationObserver( (_muts) => 
     {
       if ( ! this.obj.container.weblet ) return;
       
@@ -1374,10 +1414,10 @@ export class MneView extends MneViewContainer
     i = null;
     for ( i in param )
     {
-      if (i.substr(i.length - 9 ) == 'Input.old')
+      if (i.substring(i.length - 9 ) == 'Input.old')
       {
-        param["macro" + n++] = "S" + i.substr(0, i.length - 9 ) + "," + param[i];
-        param["macro" + n++] = "O" + i.substr(0, i.length - 9 ) + ",=";
+        param["macro" + n++] = "S" + i.substring(0, i.length - 9 ) + "," + param[i];
+        param["macro" + n++] = "O" + i.substring(0, i.length - 9 ) + ",=";
       }
     }
 

@@ -153,7 +153,7 @@ export class MneInput
     }
   }
 
-  static modifyValue(value, typ, format)
+  static modifyValue(value, typ, _format)
   {
     switch(MneInput.getTyp(typ))
     {
@@ -317,7 +317,6 @@ export class MneInput
     var error;
     var delimiter;
     var regexp;
-    var offset;
 
     delimiter = ':';
     regexp = /[^0123456789\:]/;
@@ -366,9 +365,9 @@ export class MneInput
     return ( ! error ) ? (  h * 3600 + m * 60 + s ) : undefined;
   }
   
-  static readfile(file, result )
+  static readfile(file, _result )
   {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (evt) => { resolve(evt.target.result.split(',')[1]) };

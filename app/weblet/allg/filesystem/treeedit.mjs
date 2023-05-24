@@ -278,7 +278,9 @@ class MneFilesystemTreeEdit extends MneView
 
     this.obj.run.checkdepend = true;
     this.parent.treeeditok(Object.keys(this.obj.run.btnrequest).find( item => this.obj.run.btnrequest[item] == this.obj.run.action ), this);
-    this.parent.newselect = true;
+    
+    if (this.initpar.noleaf)
+      this.parent.newselect = true;
   }
   
   async cancel()
@@ -309,14 +311,15 @@ class MneFilesystemTreeEdit extends MneView
       if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.outputs.nameold.getValue() )) != true )
           return;
       await MneRequest.fetch(this.initpar.filedelaction, p)
+      this.parent.treeeditok('del', this)  
     }
     else if ( this.obj.outputs.dirold.getValue() != '' )
     {
       if ( this.confirm(MneText.sprintf(MneText.getText("#mne_lang#<$1> wirklich löschen ?"), this.obj.outputs.dirold.getValue() )) != true )
           return;
       
-      this.parent.treeeditok('del', this)  
       await MneRequest.fetch(this.initpar.dirdelaction, p)
+      this.parent.treeeditok('del', this)  
     }
     
     this.obj.run.checkdepend = true;
@@ -325,7 +328,6 @@ class MneFilesystemTreeEdit extends MneView
   
   async values()
   {
-    this.obj.run.values = this.config.dependweblet.obj.run.values;
   }
 
 }
