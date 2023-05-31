@@ -135,7 +135,8 @@ export class MneViewContainer extends MneWeblet
     else if ( saveobj.buttonframe != null && saveobj.container.button != undefined )
       ( saveobj.observer.buttonframe = new MutationObserver((_mut) => 
       {
-        MneElement.mkClass(saveobj.buttonframe, 'scroll', saveobj.buttonframe.scrollHeight > saveobj.buttonframe.offsetHeight); 
+        var f = this.frame.querySelector('#buttonFrame');
+        MneElement.mkClass(f, 'scroll', f.scrollHeight > f.offsetHeight); 
       })).observe(saveobj.container.button, { childList: true, subtree: true, attributes : true } );
     
     obj = frame.querySelectorAll("[id$='Button']");

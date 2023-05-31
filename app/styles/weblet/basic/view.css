@@ -108,7 +108,6 @@ div.weblet div#buttonFrame.scroll:hover {
 	padding-right: var(--qmargin);
 	border-right: inherit;
 }
-}
 
 div.weblet div#buttonContainer {
 	padding-bottom: var(--dmargin);

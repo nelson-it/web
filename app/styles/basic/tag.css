@@ -1,35 +1,29 @@
-
 /* Tag Definitionen */
-
 * {
 	margin: 0px;
 	padding: 0px;
 	-webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html {
-	width:100%;
-	height:100%;
+	width: 100%;
+	height: 100%;
 	margin: 0px;
 	padding: 0px;
-	
 	-webkit-text-size-adjust: 100%;
 }
 
 body {
 	position: relative;
-	width:100%;
-	height:100%;
-
+	width: 100%;
+	height: 100%;
 	background-color: var(--background);
 	color: var(--color);
-
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-
 	font-family: var(--font-family);
 	font-size: var(--font_normal);
 }
@@ -39,17 +33,12 @@ input, button {
 	padding-bottom: var(--margin);
 	padding-left: var(--dmargin);
 	padding-right: var(--dmargin);
-
 	font-family: var(--font-family);
 	font-size: var(--font_normal);
-
 	color: var(--inputcolor);
-	
 	height: var(--select_lineheight);
-	
 	-webkit-appearance: none;
 	-moz-appearance: none;
-	
 	min-width: 5em;
 }
 
@@ -58,18 +47,18 @@ div.container {
 }
 
 input::-moz-focus-inner {
-    border : none;
+	border: none;
 }
 
 input:focus {
-    outline: none;
+	outline: none;
 }
 
 input[type=text].rdonly, input[type=text][readonly].rdonly {
-    border: none;
-    box-shadow: none;
-    background: var(--background);
-    color: var(--color);
+	border: none;
+	box-shadow: none;
+	background: var(--background);
+	color: var(--color);
 }
 
 input.color, input[type="text"].color {
@@ -92,25 +81,27 @@ div.input-wrapper {
 }
 
 input[type=text], input[type=password], div.ehtml {
-    border-radius: var(--borderradius);
+	border-radius: var(--borderradius);
 	box-shadow: var(--input_boxshadow);
 	border: 1px;
 	-webkit-appearance: none;
 }
 
 input[type="text"][disabled] {
-    color : var(--color);
+	color: var(--color);
 }
+
 input[type="text"][disabled].disablehide {
-    color : transparent;
-    background-color: transparent;
+	color: transparent;
+	background-color: transparent;
 }
+
 input[type="text"][readonly] {
-    color : var(--rdonlycolor);
+	color: var(--rdonlycolor);
 }
 
 input[type="text"][readonly].border {
-    border-width : 1px;
+	border-width: 1px;
 }
 
 input[type="file"] {
@@ -121,7 +112,7 @@ input[type="checkbox"], input[type="file"] {
 	display: none;
 }
 
-input[type="checkbox"] + label {
+input[type="checkbox"]+label {
 	color: var(--color);
 	display: inline-block;
 	font-size: var(--font_Large);
@@ -129,30 +120,27 @@ input[type="checkbox"] + label {
 	vertical-align: top;
 }
 
-input[type="checkbox"] + label:hover {
-    color: var(--darkcolor1);
+input[type="checkbox"]+label:hover {
+	color: var(--darkcolor1);
 }
 
-input[type="checkbox"] + label:after {
+input[type="checkbox"]+label:after {
 	content: '\f0c8';
 }
 
-input[type="checkbox"]:checked + label:after {
+input[type="checkbox"]:checked+label:after {
 	content: '\f14a';
 }
 
 div.draginfo {
 	display: none;
-	
-    position: absolute;
-    padding: var(--margin);
-
-    border: var(--border);
-    border-radius: var(--borderradius);
-    box-shadow: var(--poup_boxshadow);
-    
-    background: var(--background);
-    z-index: 1000;
+	position: absolute;
+	padding: var(--margin);
+	border: var(--border);
+	border-radius: var(--borderradius);
+	box-shadow: var(--poup_boxshadow);
+	background: var(--background);
+	z-index: 1000;
 }
 
 div.draginfoshow {
@@ -167,26 +155,21 @@ input[type=radio] {
 	vertical-align: middle;
 }
 
-
 input[type="button"], button, div.button {
-    display:inline-block;
-
+	display: inline-block;
 	box-shadow: var(--button_boxshadow);
-    border-radius:var(--borderradius);
-    border:var(--button_border);
-
-    background: var(--button_background);
-    color:var(--color);
-
-    text-indent:0;
-    text-decoration:none;
-    text-align:center;
-    height: auto;
+	border-radius: var(--borderradius);
+	border: var(--button_border);
+	background: var(--button_background);
+	color: var(--color);
+	text-indent: 0;
+	text-decoration: none;
+	text-align: center;
+	height: auto;
 }
 
-div.button  {
+div.button {
 	font-family: SymbolFont1;
-
 	position: relative;
 	width: var(--iconsize);
 	line-height: var(--iconsize);
@@ -194,24 +177,23 @@ div.button  {
 }
 
 input[type="button"]:hover, button:hover {
-    color: var(--darkcolor1);
+	color: var(--darkcolor1);
 }
 
 input[type="button"]:active, button:active, div.button:active {
-    background: var(--button_background_active);
-    border: var(--button_border_active);
-    box-shadow: var(--button_boxshadow_active);
+	background: var(--button_background_active);
+	border: var(--button_border_active);
+	box-shadow: var(--button_boxshadow_active);
 }
 
-button[disabled], input[type="button"][disabled]
-{
+button[disabled], input[type="button"][disabled] {
 	color: #B0B0B0;
-} 
+}
 
 input[type="button"].upload {
-	    color: #000;
-    font-size: 18px;
-    padding: 0 4px;
+	color: #000;
+	font-size: 18px;
+	padding: 0 4px;
 }
 
 div.button.docprev:after {
@@ -225,87 +207,97 @@ div.button.docnext:after {
 div.button.fileadd:after {
 	content: '\f067';
 }
+
 div.button.filedel:after {
 	content: '\f1f8';
 }
+
 div.button.rotateleft:after {
 	content: '\f3e5';
 }
+
 div.button.rotateright:after {
 	content: '\f064';
 }
+
 div.button.reload:after {
-    content: '\f021';
+	content: '\f021';
 }
+
 div.button.fullscreen:after {
-    content: '\f2d0';
+	content: '\f2d0';
 }
+
 div.button.query:after {
-    content: '\f1c0';
+	content: '\f1c0';
 }
+
 div.button.fullscreen_active::after {
-    content: '\f2d2';
+	content: '\f2d2';
 }
+
 div.button.dirselect::after {
-    content: '\f07c';
+	content: '\f07c';
 }
+
 div.button.dirlist::after {
-    content: '\f0c9';
+	content: '\f0c9';
 }
+
 div.button.dirsymbol::after {
-    content: '\f009';
+	content: '\f009';
 }
 
 input[size="1"] {
-    min-width: 1em;
-    max-width: 1em;
-}
-input[size="2"] {
-    min-width: 2em;
-    max-width: 2em;
-}
-input[size="3"] {
-    min-width: 3em;
-    max-width: 3em;
-}
-input[size="4"] {
-    min-width: 4em;
-    max-width: 4em;
-}
-input[size="5"] {
-    min-width: 5em;
-    max-width: 5em;
+	min-width: 1em;
+	max-width: 1em;
 }
 
-tbody > tr > td[class*="input"] > span {
+input[size="2"] {
+	min-width: 2em;
+	max-width: 2em;
+}
+
+input[size="3"] {
+	min-width: 3em;
+	max-width: 3em;
+}
+
+input[size="4"] {
+	min-width: 4em;
+	max-width: 4em;
+}
+
+input[size="5"] {
+	min-width: 5em;
+	max-width: 5em;
+}
+
+tbody>tr>td[class*="input"]>span {
 	display: inline-block;
 }
-	
+
 div.ehtml {
-    max-height: 10ex;
-    overflow : auto;
+	max-height: 10ex;
+	overflow: auto;
 }
-	
+
 select {
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	-o-appearance: none;
 	appearance: none;
-     
-    border: none;
-    border-radius: var(--borderradius);
-    
+	border: none;
+	border-radius: var(--borderradius);
 	background-color: var(--background);
 	color: var(--color);
-    box-shadow: var(--input_boxshadow);
-    
-    font-size: var(--font_normal);
-    font-family: var(--font-family);
-    line-height: var(--select_lineheight);
-    
-    width: 100%;
-    padding-left: 4px;
-    padding-right: var(--select_padright);
+	box-shadow: var(--input_boxshadow);
+	font-size: var(--font_normal);
+	font-family: var(--font-family);
+	line-height: var(--select_lineheight);
+	width: 100%;
+	padding-left: 4px;
+	padding-right: var(--select_padright);
 }
 
 td select {
@@ -313,19 +305,19 @@ td select {
 }
 
 div.input-wrapper.contain-select {
-    display: inline-block;
-    position: relative;
+	display: inline-block;
+	position: relative;
 	margin-left: var(--margin);
-    margin-right: var(--margin);
-    line-height: var(--lineheight_normal);
+	margin-right: var(--margin);
+	line-height: var(--lineheight_normal);
 }
 
 div.input-wrapper.contain-select:after {
-	  display: inline-block; 
-      pointer-events: none;
-      content: "\25bc";
-      transform: translateX(var(--niconfontsize));
-      color: var(--color);
+	display: inline-block;
+	pointer-events: none;
+	content: "\25bc";
+	transform: translateX(var(--niconfontsize));
+	color: var(--color);
 }
 
 option {
@@ -334,42 +326,41 @@ option {
 
 ul, ol {
 	margin-left: 3em;
-	margin-top:  1.5ex;
+	margin-top: 1.5ex;
 	margin-bottom: 1.5ex;
 }
 
-li + li {
-	margin-top : 1ex;
+li+li {
+	margin-top: 1ex;
 }
 
-table.mne_border, table.mne_border > tbody > tr >td {
+table.mne_border, table.mne_border>tbody>tr>td {
 	border: var(--border);
 	border-collapse: collapse;
 }
-
 
 textarea {
 	font-family: var(--font-family);
 	font-size: var(--font_normal);
 	border: var(--border);
 	background: var(--lightcolor2);
-    padding: 2px;
+	padding: 2px;
 }
 
 textarea.fill {
-    width: 100%;
-    height: 100%;
-    border: 0px;
-    border-left: var(--border);
+	width: 100%;
+	height: 100%;
+	border: 0px;
+	border-left: var(--border);
 }
 
 textarea.single {
-    height: var(--select_lineheight);
-    vertical-align: middle;
+	height: var(--select_lineheight);
+	vertical-align: middle;
 }
 
 textarea.height1 {
-    height: 3ex;
+	height: 3ex;
 }
 
 textarea.multicol {
@@ -377,29 +368,29 @@ textarea.multicol {
 }
 
 textarea.dblclick {
-    border-right-width: 3px;
-    overflow : hidden;
-    resize: none;
+	border-right-width: 3px;
+	overflow: hidden;
+	resize: none;
 }
 
 div.hidden {
-	position : relative;
+	position: relative;
 	width: 0px;
-    height: 0px;
-    overflow : hidden;
-    visibility : hidden;
+	height: 0px;
+	overflow: hidden;
+	visibility: hidden;
 }
 
 span.disabled {
-	color : #808080;
+	color: #808080;
 }
 
 .header span {
-    font-weight: bold;
-    padding-left: var(--dmargin);
+	font-weight: bold;
+	padding-left: var(--dmargin);
 }
 
 a {
-    color: var(--darkcolor1);
-    text-decoration: underline;
+	color: var(--darkcolor1);
+	text-decoration: underline;
 }

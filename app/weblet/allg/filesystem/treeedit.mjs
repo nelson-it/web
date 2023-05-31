@@ -62,8 +62,8 @@ class MneFilesystemTreeEdit extends MneView
     this.obj.mkbuttons.forEach( (item) => { this.obj.enablebuttons.buttons.push(item.id); });
     
     this.obj.enablebuttons.ok   =  [ 'ok', 'cancel' ];
-    this.obj.enablebuttons.root =  [ 'adddir', 'addfile' ];
-    this.obj.enablebuttons.dir  =  [ 'adddir', 'addfile', 'rename', 'del'];
+    this.obj.enablebuttons.root =  ( this.initpar.noleaf ) ? [ 'adddir' ] : [ 'adddir', 'addfile' ];
+    this.obj.enablebuttons.dir  =  ( this.initpar.noleaf ) ? [ 'adddir', 'rename', 'del'] : [ 'adddir', 'addfile', 'rename', 'del'];
     this.obj.enablebuttons.file =  [ 'addfile','rename', 'del'];
     
     this.obj.run.btnrequest = [];
@@ -72,7 +72,7 @@ class MneFilesystemTreeEdit extends MneView
     this.obj.run.btnrequest['addfile'] = this.initpar.fileaddaction;
     this.obj.run.btnrequest['delfile'] = this.initpar.filedelaction;
     this.obj.run.btnrequest['rename']  = this.initpar.renameaction;
-
+    
   }
   
   async load()

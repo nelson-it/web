@@ -85,6 +85,10 @@ class MneFilesystemTree extends MneMenuRecursive
     this.obj.run.readpar = Object.assign({ 'rootInput.old' : this.initpar.root }, this.initpar.readpar );
     this.obj.popups['edit'] = new MnePopup( 'edit', {root : this.initpar.root, rootnew : this.initpar.rootnew, autosave : this.initpar.autosave, noleaf : this.initpar.noleaf }, { nointeractive : true, composeparent : this, htmlcomposetabid : 'edit', id : 'edit', position : 'popup', path : '/weblet/allg/filesystem/treeedit', depend : [], label : MneText.getText('#mne_lang#Bearbeiten') } );
     this.obj.run.values = { parameter : [ "", "", {} ] };
+    
+    this.obj.observer.frame = new IntersectionObserver((is) => { if ( is[0].isIntersecting == 0 && this.obj.popups.edit.popup ) this.obj.popups.edit.close() }, { root : document.body } );
+    this.obj.observer.frame.observe(this.frame);
+
   }
   
   async load()
@@ -187,8 +191,7 @@ class MneFilesystemTree extends MneMenuRecursive
       var action = data.values[rids.action ?? this.initpar.actioncol];
 
       this.obj.run.values = action;
-
-      this.newselect = true;
+      ( this.initpar.selectok && dblclick ) ? this.initpar.selectok(this.obj.run.values.parameter[2]) : this.newselect = true;
     }
   }
 
@@ -214,8 +217,6 @@ class MneFilesystemTree extends MneMenuRecursive
 
   treeeditok(typ, weblet)
   {
-    var d;
-    
     if ( typ == 'adddir' || typ == 'addfile' )
     {
         this.obj.act_refreshmenu = ( weblet.obj.run.act_data ) ? weblet.obj.run.act_data : this.obj.container.content.firstChild.firstChild.mne_data;

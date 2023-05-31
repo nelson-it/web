@@ -8,8 +8,6 @@
 //================================================================================
 'use strict';
 
-import MneConfig    from '/js/basic/config.mjs'
-import MneRequest   from '/js/basic/request.mjs'
 import MneGeometrie from '/weblet/basic/geometrie.mjs'
 
 export class MneMainDetail extends MneGeometrie
@@ -39,7 +37,7 @@ export class MneMainDetail extends MneGeometrie
         this.obj.historyname = this.obj.name;
         
         window.sessionStorage.setItem(window.mne_application + ':' + this.obj.name, val); 
-        if ( ! window.inpopstate ) window.history.pushState({ menu : window.mne_application, name : this.obj.name, values : this.obj.weblets[this.obj.mainweblet].obj.run.values}, document.title);
+        if ( ! window.mne_inpopstate ) window.history.pushState({ menu : window.mne_application, name : this.obj.name, values : this.obj.weblets[this.obj.mainweblet].obj.run.values}, document.title);
       }
     }
   }

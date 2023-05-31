@@ -140,6 +140,11 @@ div.weblet.weblet-allg-filesystem-view #iconContainer #trashIcon:after {
     content: '\f1f8';
 }
   
+div.weblet.weblet-allg-filesystem-tree > .webletmain {
+  min-height: 20em;
+  min-width: 20em;
+}
+
 div.weblet.weblet-allg-filesystem-treeedit > .webletmain {
   border: var(--border);
 }

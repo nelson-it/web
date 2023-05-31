@@ -11,9 +11,7 @@
 import MneText    from '/js/basic/text.mjs'
 import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
-import MneTheme   from '/js/basic/theme.mjs'
 import MneInput   from '/js/basic/input.mjs'
-import MneMutex   from '/js/basic/mutex.mjs'
 import MneElement from '/weblet/basic/element.mjs'
 
 import MneWeblet from '../basic/weblet.mjs'
@@ -28,6 +26,9 @@ class MnePopupSelectFrame extends MnePopup
     
     class MyWeblet extends Weblet
     {
+      /**
+       * @param {any} matchobj
+       */
       set matchobj(matchobj)
       {
         this.obj.weblets.table.initpar.matchobj = matchobj;
@@ -383,7 +384,6 @@ export class MneDbView extends MneView
     var vals = list.values;
     var rids = list.rids;
     var self = this;
-    var i;
     var path = { 'table' : 'table/select', 'fmenu' : 'menu/fselect', 'rmenu' : 'menu/rselect', frame : 'table/frame' }
     var config;
     var isselect = (vals[rids['element']].indexOf('?') != -1 );
@@ -492,7 +492,7 @@ export class MneDbView extends MneView
     {
       MneElement.mkClass(obj.closest('.ele-wrapper'), ( isselect ) ? 'selectlistfs' : 'selectlistfi');
       
-      var showselect = async (evt, obj) =>
+      var showselect = async (_evt, obj) =>
       {
         try
         {
@@ -520,7 +520,7 @@ export class MneDbView extends MneView
       obj.closest('.ele-wrapper').addEventListener('click', (evt) => { if ( evt.target != obj ) { if ( MneElement.hasClass(obj, 'contain-input') ) MneElement.moveCursor(obj); else showselect(evt, obj) } });
       obj.addEventListener('focus', async (evt) => { let unlock = await MneWeblet.click_mutex.lock(); await showselect(evt, obj); unlock(); });
       
-      obj.addEventListener('tabblur', (evt) =>
+      obj.addEventListener('tabblur', (_evt) =>
       {
         var w = this.initpar.popupparent.obj.weblets[id + 'select'];
         if( w && this.obj.popups[id + 'select'].popup.frame.parentNode == obj.offsetParent )
@@ -556,8 +556,6 @@ export class MneDbView extends MneView
         obj.checkInputSelect = obj.checkInput;
         obj.checkInput = () =>
         {
-          var r = obj.textContent.match(obj.regexp.reg);
-
           if ( ! this.initpar.popupparent.obj.weblets[id + 'select'] )
           {
             obj.checkInputSelect();
@@ -594,7 +592,7 @@ export class MneDbView extends MneView
       }
       else
       {
-        obj.addEventListener('input', (evt) =>
+        obj.addEventListener('input', (_evt) =>
         {
           var res = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.run.result;
           var rows = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.tbody.rows;
@@ -784,7 +782,7 @@ export class MneDbView extends MneView
     return p;
   }
 
-  getParamShowOp(w, showops, i )
+  getParamShowOp(_w, showops, i )
   {
     return  showops[i];
   }
@@ -996,7 +994,7 @@ export class MneDbView extends MneView
     this.obj.run.values = {};
     this.links();
 
-    this.initpar.okids.forEach((item, index) =>
+    this.initpar.okids.forEach((item) =>
     {
       this.obj.run.values[item] = ( this.obj.defvalues[item] != undefined ) ? this.obj.defvalues[item] : '################';
       this.obj.inputs[item].setValue(this.obj.run.values[item]);
@@ -1022,7 +1020,7 @@ export class MneDbView extends MneView
     {
       str += MneInput.format(this.obj.run.values[item], this.obj.run.result.typs[this.obj.run.result.rids[item]] ?? '', this.obj.run.result.formats[this.obj.run.result.rids[item]] ?? '') + ':';
     })
-    str = str.substr(0, str.length-1);
+    str = str.substring(0, str.length-1);
 
     return this.confirm(MneText.sprintf(( str != '' ) ? MneText.getText("#mne_lang#<$1> Wirklich löschen ?") : MneText.getText('#mne_lang#Wirklich löschen ?'), str + ((multi) ? ' ' + '#mne_lang#und andere' : '')));
   }

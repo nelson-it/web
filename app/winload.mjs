@@ -10,7 +10,7 @@
 import Bowser from '/js/bowser/bowser.js';
 import MneMainWeblet from '/weblet/main/main.mjs'
 
-window.addEventListener('load', function(evt)
+window.addEventListener('load', function(_evt)
 {
     const browser = Bowser.getParser(window.navigator.userAgent);
     document.body.setAttribute("aria-view-mode",browser.parsedResult.platform.type);

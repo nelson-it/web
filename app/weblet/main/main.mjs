@@ -8,7 +8,6 @@
 //================================================================================
 'use strict';
 
-import MneText    from '/js/basic/text.mjs'
 import MneLog     from '/js/basic/log.mjs'
 import MneTheme   from '/js/basic/theme.mjs'
 import MneConfig  from '/js/basic/config.mjs'
@@ -23,6 +22,7 @@ import MneWeblet    from '/weblet/basic/weblet.mjs'
 MneTheme.loadCss('variable.css');
 MneTheme.loadCss('tag.css');
 MneTheme.loadCss('class.css');
+MneTheme.loadCss('debug.css');
 MneTheme.loadCss('db/table/month.css', MneWeblet.stylePath);
 
 class MneMain extends MneGeometrie
@@ -40,7 +40,7 @@ class MneMain extends MneGeometrie
 
     async check_values()
     {
-      var observer = new MutationObserver( async (mut) =>
+      var observer = new MutationObserver( async (_mut) =>
       {
         observer.disconnect();
         var startweblet = window.sessionStorage.getItem(window.mne_application + ':startweblet');
@@ -75,7 +75,7 @@ class MneMain extends MneGeometrie
       await this.obj.popups.message.create(this);
       await this.obj.weblets.message.load();
 
-      window.addEventListener('popstate', async (evt) => 
+      window.addEventListener('popstate', async (_evt) => 
       {
         let unlock = await MneMain.history_mutex.lock();
         if ( history.state == null )
@@ -85,11 +85,11 @@ class MneMain extends MneGeometrie
         }
         else
         {
-          window.inpopstate = true;
+          window.mne_inpopstate = true;
           window.sessionStorage.setItem(window.mne_application + ':' + history.state.name[0], JSON.stringify(history.state.values)); 
           window.menu_weblet.action_menu({ res : { rids : { action : 0 } }, values : [ { parameter : [history.state.menu] } ] });
-          await this.obj.weblets.detail.show( history.state.name ).catch( (e) => { window.inpopstate = false; unlock(); MneLog.exception('Main History', e) });
-          window.inpopstate = false;
+          await this.obj.weblets.detail.show( history.state.name ).catch( (e) => { window.mne_inpopstate = false; unlock(); MneLog.exception('Main History', e) });
+          window.mne_inpopstate = false;
         }
         unlock()
       });
@@ -98,7 +98,7 @@ class MneMain extends MneGeometrie
       this.frame.addEventListener('drop', async (evt) => { if ( evt.dataTransfer.types.includes('Files')) evt.preventDefault(); })
 
       document.addEventListener('keyup', (evt) => { if ( evt.key == 'Escape') { this.obj.weblets.message.clear(); this.obj.popups.message.popup.close();} });
-      this.obj.observer.hide = ( new MutationObserver( (mut) => { if ( ! this.obj.weblets.message.visible ) this.obj.weblets.message.clear(); })).observe(this.obj.popups.message.popup.frame, { childList: false, subtree: false, attributes : true, attributeFilter: [ 'style' ] });
+      this.obj.observer.hide = ( new MutationObserver( (_mut) => { if ( ! this.obj.weblets.message.visible ) this.obj.weblets.message.clear(); })).observe(this.obj.popups.message.popup.frame, { childList: false, subtree: false, attributes : true, attributeFilter: [ 'style' ] });
 
 
     }

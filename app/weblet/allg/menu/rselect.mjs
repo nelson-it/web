@@ -220,7 +220,7 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
     return retval;
   }
   
-  async add(data)
+  async add(_data)
   {
     var p = {};
     
