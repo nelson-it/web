@@ -38,9 +38,15 @@ input, button {
 	color: var(--inputcolor);
 	height: var(--select_lineheight);
 	-webkit-appearance: none;
-	-moz-appearance: none;
+	appearance: none;
 	min-width: 5em;
 }
+
+input[type=range] {
+	-webkit-appearance: auto;
+	appearance: auto;
+}
+
 
 div.container {
 	position: relative;

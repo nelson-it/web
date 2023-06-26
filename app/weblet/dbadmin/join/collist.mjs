@@ -8,11 +8,6 @@
 //================================================================================
 'use strict';
 
-import MneElement from '/weblet/basic/element.mjs'
-import MneText     from '/js/basic/text.mjs'
-import MneLog      from '/js/basic/log.mjs'
-import MneRequest  from '/js/basic/request.mjs'
-
 import MneTable from '/weblet/allg/table/fix.mjs'
 
 class MneAdminJoinCollist extends MneTable
@@ -49,7 +44,7 @@ class MneAdminJoinCollist extends MneTable
     async values()
     {
       await super.values();
-      this.obj.title = ( this.obj.run.values.schema ) ? this.obj.run.values['tabnum'] + ' ' + this.obj.run.values['schema'] + '.' + this.obj.run.values['table'] : this.config.label;
+      this.title = ( this.obj.run.values.schema ) ? this.obj.run.values['schema'] + '.' + this.obj.run.values['table'] : this.config.label;
     }
 }
 

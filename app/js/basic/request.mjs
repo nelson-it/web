@@ -119,7 +119,7 @@ class MneRequest
         {
           typ = 'error';
           error_found = true;
-          str = MneText.getText('#mne_lang#Es ist ein Fehler aufgetreten\n' + par);
+          str = MneText.getText('#mne_lang#Es ist ein Fehler aufgetreten') + '\n' + par;
         }
 
         if ( str )

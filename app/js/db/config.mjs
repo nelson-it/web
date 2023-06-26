@@ -111,6 +111,22 @@ class MneDbConfig extends MneConfig
           thousands_sep : res.values[0][res.rids['thousands_sep']]
       };
 
+      switch(MneConfig.region)
+      {
+        case 'US':
+          MneConfig.locale.lcode = 'en-US';
+          break;
+        case 'GB':
+          MneConfig.locale.lcode = 'en-GB';
+          break;
+        case 'CH':
+          MneConfig.locale.lcode = 'de-CH';
+          break;
+        default:
+          MneConfig.locale.lcode = 'de-DE';
+          break;
+      }
+
       MneConfig.hostname = res.values[0][res.rids['hostname']];
 
       var d = res.values[0][res.rids['decimal_point']]; if ( d == '.' ) d = "\\" + d;

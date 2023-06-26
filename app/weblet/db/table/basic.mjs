@@ -229,7 +229,7 @@ class MneDbTableBasic extends MneDbView
     var index;
     var obj = this.obj.tbody.children;
 
-    while( row != null && ( row.style.display == 'none' || row.values == undefined ) ) row = row.nextSibling;
+    while( row != null && ( getComputedStyle(row).display == 'none' || row.values == undefined ) ) row = ( data.type == 'arrowup' ) ? row.previousSibling : row.nextSibling;
 
     if ( data.force != true && (row == null || this.obj.run.act_row == row) )
     {
@@ -324,9 +324,11 @@ class MneDbTableBasic extends MneDbView
   {
     evt.preventDefault();
     if ( ! this.initpar.selectsingle && evt.ctrlKey && this.obj.lastkey == "ArrowUp" )
-      this.selectRow({type : 'arrow'}, this.obj.tbody.children[this.obj.lastselect], evt);
+      this.selectRow({type : 'arrowdown'}, this.obj.tbody.children[this.obj.lastselect], evt);
     else if ( this.obj.lastselect < ( this.obj.tbody.children.length - 1 ) ) 
-      this.selectRow({type : 'arrow'}, this.obj.tbody.children[this.obj.lastselect + 1], evt);
+      this.selectRow({type : 'arrowdown'}, this.obj.tbody.children[this.obj.lastselect + 1], evt);
+    else if ( this.obj.lastselect == undefined ) 
+      this.selectRow({type : 'arrowdown'}, this.obj.tbody.children[0], evt);
 
     this.obj.lastkey = evt.key;
   }
@@ -335,9 +337,11 @@ class MneDbTableBasic extends MneDbView
   {
     evt.preventDefault();
     if ( ! this.initpar.selectsingle && evt.ctrlKey && this.obj.lastkey == "ArrowDown" )
-      this.selectRow({type : 'arrow'}, this.obj.tbody.children[this.obj.lastselect], evt);
+      this.selectRow({type : 'arrowup'}, this.obj.tbody.children[this.obj.lastselect], evt);
     else if ( this.obj.lastselect > 0 ) 
-      this.selectRow({type : 'arrow'}, this.obj.tbody.children[this.obj.lastselect - 1], evt);
+      this.selectRow({type : 'arrowup'}, this.obj.tbody.children[this.obj.lastselect - 1], evt);
+    else if ( this.obj.lastselect == undefined )
+      this.selectRow({type : 'arrowup'}, this.obj.tbody.children[this.obj.tbody.children.length - 1], evt);
 
     this.obj.lastkey = evt.key;
   }

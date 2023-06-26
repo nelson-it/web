@@ -8,12 +8,6 @@
 //================================================================================
 'use strict';
 
-import MneConfig    from '/js/basic/config.mjs'
-import MneText      from '/js/basic/text.mjs'
-import MneLog       from '/js/basic/log.mjs'
-import MneRequest   from '/js/basic/request.mjs'
-import MneElement from '/weblet/basic/element.mjs'
-
 import MneTableWeblet from '/weblet/allg/table/fix.mjs'
 
 class MneAdminTabletContentWeblet extends MneTableWeblet

@@ -14,7 +14,7 @@ export class MneConfig
   {
     MneConfig.language = 'de';
     MneConfig.region = 'DE';
-    MneConfig.locale = { language : 'de', region : 'DE' };
+    MneConfig.locale = { language : 'de', region : 'DE', lcode : 'de-DE' };
     MneConfig.group = {};
   }
   

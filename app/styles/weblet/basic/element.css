@@ -197,7 +197,7 @@ td span.selectlisti:after, td span.selectlistfi:after  {
     margin-right: var(--dmargin);
 }
 
-tr.active td span.selectlisti:after, tr.active td span.selectlistfi:after, tr.active td .selectlistfi span.input:after, tr.active div.selectlistfs::after, tr.active span.selectlistfs::after, tr.active .contain-file label:after
+tr.active td span.selectlisti:after, tr.active td .selectlistfi span.input:after, tr.active div.selectlistfs::after, tr.active span.selectlistfs::after, tr.active .contain-file label:after
 {
 	color: var(--background);
 }

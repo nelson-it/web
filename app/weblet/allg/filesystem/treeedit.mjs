@@ -272,7 +272,9 @@ class MneFilesystemTreeEdit extends MneView
     
     if (this.obj.files.name.files.length )
       data.append('dataInput', this.obj.files.name.files[0], this.obj.files.name.files[0].name);
-    
+    else if ( this.initpar.emptyfile )
+      data.append('dataInput', new Blob([''], {type : 'text/plain'}), this.obj.inputs.name.getValue());
+      
     this.close();
     await MneRequest.fetch(this.obj.run.action, data);
 

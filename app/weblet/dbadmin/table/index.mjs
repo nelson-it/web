@@ -11,7 +11,6 @@
 import MneInput    from '/js/basic/input.mjs'
 import MneElement from '/weblet/basic/element.mjs'
 import MneText     from '/js/basic/text.mjs'
-import MneLog      from '/js/basic/log.mjs'
 import MneRequest  from '/js/basic/request.mjs'
 
 import MneDbViewWeblet     from '/weblet/db/view.mjs'
@@ -140,7 +139,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
     
     async values()
     {
-      var i,j;
+      var i
 
       await super.values();
       
@@ -155,7 +154,7 @@ class MneAdminTableIndexWeblet extends MneDbViewWeblet
       });
 
       str += '</tr></thead><tbody>';
-      res.values.forEach((item, index) =>
+      res.values.forEach((item) =>
       {
         str += '<tr><td>' + item[res.rids['column']] + '</td><td><span id="positionInput"></span></td></tr>';
       });

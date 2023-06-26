@@ -8,11 +8,7 @@
 //================================================================================
 'use strict';
 
-import MneText     from '/js/basic/text.mjs'
-import MneLog      from '/js/basic/log.mjs'
-import MneRequest  from '/js/basic/request.mjs'
-
-import MneElement from '/weblet/basic/element.mjs'
+import MneInput   from '/js/basic/input.mjs'
 import MneDbView  from '/weblet/db/view.mjs'
 
 class MneColor extends MneDbView
@@ -47,6 +43,8 @@ class MneColor extends MneDbView
       container.insertBefore(ele, container.firstChild);
     });
     await super.findIO();
+    
+    this.obj.inputs.color.setTyp('color', MneInput.checktype.color)
   }
   
   async findIOParam()
@@ -163,7 +161,7 @@ class MneColor extends MneDbView
         this.obj.inputs.blue[func](parseInt(rgb[3], 16));
       }
 
-      this.obj.outputs.color[func](val);
+      this.obj.inputs.color[func](val);
     }
     else
     {
@@ -178,7 +176,7 @@ class MneColor extends MneDbView
         this.obj.inputs.blue[func](0);
       }
 
-      this.obj.outputs.color[func]('000');
+      this.obj.inputs.color[func]('000');
     }
   }
   
@@ -207,11 +205,16 @@ class MneColor extends MneDbView
 
   async values()
   {
-    await super.values({cols : 'color'});
-    this.initpar.showids.forEach ( (item) =>
+    if (this.initpar.read_color == undefined)
     {
-      this.obj.inputs[item].setValue(this.config.dependweblet.obj.run.values[item]);
-    });
+      await super.values({ cols: 'color' });
+      this.initpar.showids.forEach((item) =>
+      {
+        this.obj.inputs[item].setValue(this.config.dependweblet.obj.run.values[item]);
+      });
+    }
+    else
+      this.obj.run.values.color = await this.initpar.read_color();
     
     this.setColor( this.obj.run.values.color, false);
   }

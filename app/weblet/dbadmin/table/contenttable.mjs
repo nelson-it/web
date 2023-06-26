@@ -8,11 +8,7 @@
 //================================================================================
 'use strict';
 
-import MneConfig    from '/js/basic/config.mjs'
-import MneText      from '/js/basic/text.mjs'
-import MneLog       from '/js/basic/log.mjs'
 import MneRequest   from '/js/basic/request.mjs'
-import MneElement from '/weblet/basic/element.mjs'
 import MneInput     from '/js/basic/input.mjs'
 
 import MneDbTableViewWeblet from '/weblet/db/table/view.mjs'
@@ -32,7 +28,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
     this.initpar.modcols = [];
     this.obj.cols.forEach((item, index) => { if (MneInput.getTyp(res.typs[index]) != 'binary' ) this.initpar.modcols.push(item)} );
     
-    res.typs.forEach( (item,index) => 
+    res.typs.forEach( (_item,index) => 
     {
       var t;
       switch(MneInput.getTyp(res.typs[index]))
@@ -87,7 +83,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
       }
 
       var res = await MneRequest.fetch('db/utils/table/data.json', p);
-      res.values.forEach((item, index) => { okids.push(item[res.rids['column']]); });
+      res.values.forEach( item  => { okids.push(item[res.rids['column']]); });
 
       this.initpar.okids = okids;
       this.initpar.delids = okids;
@@ -118,6 +114,7 @@ class MneAdminTabletContentTableWeblet extends MneDbTableViewWeblet
       }
 
       this.obj.where.viewpar = { ids : ids, typs : typs, labels : labels };
+      this.obj.run.readpar.scols = '';
 
     }
 

@@ -10,7 +10,7 @@
 
 class MneTheme
 {
-  static cssPath(href, root)
+  static cssPath(_href, _root)
   {
   }
   
@@ -68,7 +68,6 @@ class MneTheme
     var style;
     
     style = document.createElement("style");
-    style.type="text/css";
     style.id='style' + MneTheme.stylenum++;
     document.head.appendChild(style);
     

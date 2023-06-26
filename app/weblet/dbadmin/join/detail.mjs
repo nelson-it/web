@@ -11,8 +11,6 @@
 import MneElement from '/weblet/basic/element.mjs'
 import MneInput    from '/js/basic/input.mjs'
 import MneText     from '/js/basic/text.mjs'
-import MneLog      from '/js/basic/log.mjs'
-import MneRequest  from '/js/basic/request.mjs'
 
 import MneDbView   from '/weblet/db/view.mjs'
 
@@ -119,7 +117,7 @@ class MneDbadminJoin extends MneDbView
         await this.addrow( ( data.dropfrom == 'firsttab') ? { firstcolumn : data.column, operator : '=', secondcolumn : '' } : { firstcolumn : '', operator : '=', secondcolumn : data.column } );
     }
 
-    async rowclick(data, row, evt = {} )
+    async rowclick(_data, row, _evt = {} )
     {
       this.obj.run.act_row = ( this.obj.run.act_row == undefined || row != this.obj.run.act_row ) ? row : undefined;
       Array.from(this.obj.tbody.children).forEach((item) => { MneElement.mkClass(item, 'active', item == this.obj.run.act_row )})
@@ -150,7 +148,7 @@ class MneDbadminJoin extends MneDbView
         this.obj.inputs.fschema.modValue(schema);
         this.obj.inputs.ftab.modValue(table);
         this.obj.inputs.op.setValue('');
-        Array.from(this.obj.tbody.children).forEach((item) => { item.inputs.firstcolumn.setValue('') })
+        Array.from(this.obj.tbody.children).forEach((item) => { item.obj.inputs.firstcolumn.setValue('') })
       }
 
       schema = this.config.composeparent.obj.weblets.secondtab.obj.run.values.schema  ?? '';
@@ -162,6 +160,7 @@ class MneDbadminJoin extends MneDbView
         this.obj.inputs.op.setValue('');
         Array.from(this.obj.tbody.children).forEach((item) => { item.obj.inputs.secondcolumn.setValue('') })
       }
+      this.obj.inputs.typ.setValue(1)
     }
     
     async ok()
@@ -219,10 +218,9 @@ class MneDbadminJoin extends MneDbView
     
     async selectok(res)
     {
-      var w = this.obj.weblets.table;
       var values = {};
 
-      res.ids.forEach((item, index) => { values[item] = res.values[0][res.rids[item]];  });
+      res.ids.forEach((item, _index) => { values[item] = res.values[0][res.rids[item]];  });
       
       if ( ! this.obj.run.act_row )
         await this.addrow( ( values.selectid == 'firsttab') ? { firstcolumn : values.column, operator : '=', secondcolumn : '' } : { firstcolumn : '', operator : '=', secondcolumn : values.column } );
