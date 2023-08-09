@@ -8,12 +8,6 @@
 //================================================================================
 'use strict';
 
-import MneConfig     from '/js/basic/config.mjs'
-import MneText       from '/js/basic/text.mjs'
-import MneLog        from '/js/basic/log.mjs'
-import MneElement    from '/weblet/basic/element.mjs'
-import MneRequest    from '/js/basic/request.mjs'
-
 import MneWeblet        from '/weblet/basic/weblet.mjs'
 import MnePopupWeblet   from '/weblet/basic/popup.mjs'
 import MneDbTableBasic  from './basic.mjs'
@@ -31,7 +25,7 @@ class MnePopupDetail extends MnePopupWeblet
     
     class MyWeblet extends Weblet
     {
-      async add(data, obj, evt)
+      async add(data, obj, _evt)
       {
         if ( obj == this.obj.buttons.add ) this.config.tableweblet.unselectRows();
         return super.add(data);
@@ -63,7 +57,7 @@ class MneDbTableView extends MneDbTableBasic
     return super.check_values();
   }
   
-  async add(data)
+  async add(_data)
   {
      var row = this.obj.tbody.insertRow(( this.obj.lastselect ?? -2) + 1);
      var str = '';
@@ -112,7 +106,7 @@ class MneDbTableView extends MneDbTableBasic
   {
     if ( this.obj.buttons.ok ) 
     {
-      var i,j;
+      var i;
       var rows = this.obj.tbody.children;
       var retval = false;
       

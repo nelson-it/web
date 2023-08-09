@@ -34,9 +34,9 @@ class MneDbAdminProcedure extends MneDbView
         oktyps  : { 'asowner' : 'bool' },
         
         delfunction : 'pgplsql_proc_del',
-        delcols : [ 'schema', 'fullname' ],
+        delcols : [ 'schema', 'idname' ],
         
-        hinput : false 
+        hinput : false
       };
            
       super(parent, frame, id, Object.assign(ivalues, initpar), config );

@@ -66,7 +66,20 @@ class MneDbConfig extends MneConfig
     // =======
     p.push ( MneRequest.fetch("utils/locale.json"));
     
+    // Translate
+    // =========
+    
+    param =
+    {
+        "schema" : "mne_application",
+        "table"  : "translate",
+        "cols"   : "id,text_de,text_en",
+        "sqlstart" : 1,
+        "sqlend" : 1
+    };
 
+    p.push(MneRequest.fetch("db/utils/table/data.json", param));
+    
     resall = await Promise.all(p);
 
     res = resall[0];
@@ -194,6 +207,9 @@ class MneDbConfig extends MneConfig
       MneInput.checktype.timenotempty = { reg : new RegExp('\\s*(\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2})\\s*$|\\s*(\\d{1,2}:\\d{1,2}:\\d{1,2})\\s*$'), help : MneText.sprintf(MneText.getText("Bitte ein Zeit in der Form $1 eingeben"), MneText.toTime(new Date().getTime() / 1000 )) };
       
     }
+    
+    res = resall[4];
+    res.values.forEach( item => MneText.values[item[0]] = { de : item[1], en : item[2] });
     
     console.log(MneInput.checktype)
     console.log(MneConfig)

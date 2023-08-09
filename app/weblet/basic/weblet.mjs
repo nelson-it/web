@@ -14,7 +14,6 @@ import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
 import MneTheme   from '/js/basic/theme.mjs'
 import MneElement from '/weblet/basic/element.mjs'
-import MneConfig  from '/js/basic/config.mjs'
 import MneFullscreen  from '/js/geometrie/fullscreen.mjs'
 
 MneTheme.loadCss('basic/weblet.css', 'styles/weblet');
@@ -95,7 +94,6 @@ export class MneWebletEmpty
   {
     if ( val )
     {
-      var i;
       if ( this.obj.run.newvalues == true ) return;
       
       this.obj.run.newvalues = true;
@@ -125,6 +123,9 @@ export class MneWebletEmpty
     }
   }
 
+  /**
+   * @param {boolean} val
+   */
   set newselect(val)
   {
     this.newvalues = val;
@@ -137,6 +138,9 @@ export class MneWebletEmpty
     this.obj.run.mustcheckvalues = ( this.visible ) ?  val : false;
   }
 
+  /**
+   * @param {any} weblet
+   */
   set dependweblet(weblet)
   {
     this.obj.run.dependweblet = weblet;
@@ -259,7 +263,7 @@ export class MneWebletEmpty
   {
   }
   
-  async drop (data)
+  async drop (_data)
   {
   }
   
@@ -354,8 +358,6 @@ export class MneWeblet extends MneWebletEmpty
   
   async openpopup(name, config = {}, initpar = {} )
   {
-    var self = this;
-
     var w = await this.createpopup(name, config, initpar );
     
     await w.show( config.popuphide );
@@ -372,7 +374,6 @@ export class MneWeblet extends MneWebletEmpty
   {
     var i;
     var depend = this.config.depend;
-    var self = this;
 
     depend.forEach( (item, index ) => { if ( item == oldweblet ) depend[index] = weblet; })
     if ( this.config.dependweblet == oldweblet ) this.config.dependweblet = weblet;
@@ -384,7 +385,6 @@ export class MneWeblet extends MneWebletEmpty
   find_parent ( weblet )
   {
     var i,w;
-    var weblets = this.obj.weblets
 
     for ( i in this.obj.weblets )
     {
@@ -395,7 +395,7 @@ export class MneWeblet extends MneWebletEmpty
 
   list_weblets ()
   {
-    var i,w;
+    var i;
     var weblets = this.obj.weblets
 
     //console.info(this.fullid + ' ' + this.newvalues )
@@ -451,7 +451,7 @@ export class MneWeblet extends MneWebletEmpty
       MneTheme.loadCss(this.initpar.css, MneWeblet.stylePath);
   }
 
-  async show( hide = false )
+  async show( _hide = false )
   {
     if ( this.obj.loaded == false )
       await this.load();

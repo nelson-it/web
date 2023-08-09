@@ -223,12 +223,16 @@ export class MneSelectRecursiveMenu extends MneRecursiveMenu
   async add(_data)
   {
     var p = {};
+    var i;
     
     if ( this.initpar.schema ) p.schema = this.initpar.schema;
     if ( this.initpar.table )  p.table = this.initpar.table;
     p.parentidInput = ( this.obj.selectdata ) ? this.obj.selectdata.values[this.obj.selectdata.res.rids.menuid] : '';
     p.treeidInput = '################';
     p.treenameInput = this.obj.inputs.name.getValue();
+    if ( ( i = this.initpar.showids.indexOf('menuname')) >= 0 )
+     p.menunameInput = ( this.initpar.showalias[i] ) ?  this.initpar.showalias[i]() : this.config.dependweblet.obj.run.values['menuname'];
+      
     p.sqlstart = 1;
     p.sqlend = 1;
     

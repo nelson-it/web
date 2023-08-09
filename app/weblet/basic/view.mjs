@@ -67,7 +67,7 @@ export class MneViewContainer extends MneWeblet
           if (val[0] == '#')
             fval = () => { return val.substring(1); };
           else if (val[0] == '?')
-            fval = () => { return dw().obj.inputs[val].getValue(); };
+            fval = () => { return dw().obj.inputs[val.substring(1)].getValue(); };
           else
             fval = () => { return dw().obj.run.values[val]; };
 

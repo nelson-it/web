@@ -9,9 +9,7 @@
 'use strict';
 
 import MneText    from '/js/basic/text.mjs'
-//import MneLog     from '/js/basic/log.mjs'
 import MneRequest from '/js/basic/request.mjs'
-import MneFile    from '/js/basic/file.mjs'
 
 import MneElement from '/weblet/basic/element.mjs'
 import MnePopup   from '/weblet/basic/popup.mjs'

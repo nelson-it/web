@@ -8,10 +8,8 @@
 //================================================================================
 'use strict';
 
-import MneConfig from '/js/basic/config.mjs'
 import MneText   from '/js/basic/text.mjs'
 import MneLog    from '/js/basic/log.mjs'
-
 
 import MneView     from '/weblet/basic/view.mjs'
 
@@ -54,6 +52,9 @@ class MneWhereSelectWeblet extends MneView
     delete this.obj.observer.content;
   }
 
+  /**
+   * @param {any} par
+   */
   set viewpar(par)
   {
     var i;

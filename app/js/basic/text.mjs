@@ -11,9 +11,17 @@ import MneConfig from '/js/basic/config.mjs'
 
 export class MneText
 {
+  static values = {};
+  
   static getText(str)
   {
     return ( str.indexOf('#mne_lang') == 0 ) ? str.substring(10) : str;
+  }
+  
+  static translate(str)
+  {
+     if ( values[str] && values[str][MneConfig.language] ) return  values[str][MneConfig.language];
+     return str; 
   }
 
   static sprintf(str)

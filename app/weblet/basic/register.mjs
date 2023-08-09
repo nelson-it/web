@@ -8,10 +8,8 @@
 //================================================================================
 'use strict';
 
-import MneText        from '/js/basic/text.mjs'
 import MneLog         from '/js/basic/log.mjs'
 import MneRequest     from '/js/basic/request.mjs'
-import MneTheme       from '/js/basic/theme.mjs'
 import MneElement from '/weblet/basic/element.mjs'
 import { MneHSlider } from '/js/geometrie/slider.mjs'
 
@@ -32,6 +30,9 @@ export class MneRegister extends MneWeblet
     
     getCssPath() { return (( super.getCssPath() ) ?  super.getCssPath() + ',' : '') + this.getCss(import.meta.url); }
 
+    /**
+   * @param {boolean} val
+   */
     set newvalues(val)
     {
       if ( val == true )
@@ -48,7 +49,6 @@ export class MneRegister extends MneWeblet
     {
       var i;
       var bf;
-      var ele;
       var self = this;
 
       await super.load();
@@ -83,18 +83,16 @@ export class MneRegister extends MneWeblet
       }
       
       this.obj.container.menu.innerHTML = str;
-      this.obj.container.menu.querySelectorAll('.registerlink').forEach( ( item ) => { item.addEventListener('click', function(evt) { self.btnClick('register', this.id); }); });
+      this.obj.container.menu.querySelectorAll('.registerlink').forEach( ( item ) => { item.addEventListener('click', function(evt) { self.btnClick('register', this.id, evt); }); });
     }
 
     async register( id )
     {
       var data = this.obj.webletdata[id];
-      var depend = [...data.depend];
 
       if ( this.config.composeparent.obj.weblets[id] == undefined )
       {
           var composeparent = this.config.composeparent;
-          var self = this;
 
           var weblet;
           var config;
