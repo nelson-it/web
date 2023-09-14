@@ -23,7 +23,15 @@ if ( isset($_GET['filenameInput_old']) && $_GET ['filenameInput_old'] != 'null' 
         {
             foreach ( $section as $name => $val )
             {
-                $val = @iconv ( mb_detect_encoding ( $val, mb_detect_order (), true ), "UTF-8", $val );
+                try
+                {
+                    $val = @iconv ( mb_detect_encoding ( $val, mb_detect_order (), true ), "UTF-8", $val );
+                }
+                catch(Error $e)
+                {
+                    $val = false;
+                }
+                
                 if ($needkey == '' || $needkey == $key . "." . $name)
                 {
                     array_push ( $data, array (

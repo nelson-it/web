@@ -230,7 +230,11 @@ class MneFilesystemView extends MneView
     	this.dependweblet = this; 
     }
     else
+    {
+      this.obj.scrollTop  = this.obj.container.list.scrollTop;
+      this.obj.scrollLeft = this.obj.container.list.scrollLeft;
       this.newselect = true;
+    }
   }
 
   getReadParam(values, ignore_error)
@@ -335,6 +339,12 @@ class MneFilesystemView extends MneView
       obj.addEventListener('click', async function(evt) { await self.btnClick('eleClick', index, obj, evt) } );
       obj.mne_data = { res : res, values : res.values[parseInt(obj.id.substring(23))] };
     });
+    
+    this.obj.container.list.scrollTop  = this.obj.scrollTop ?? 0;
+    this.obj.container.list.scrollLeft = this.obj.scrollLeft ?? 0;
+ 
+    this.obj.scrollTop = 0;
+    this.obj.scrollLeft = 0;
     
     res.values = undefined;
   }
