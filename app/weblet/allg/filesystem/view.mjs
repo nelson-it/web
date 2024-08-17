@@ -78,6 +78,9 @@ class MneFilesystemView extends MneView
     {
        evt.dataTransfer.setData('text/json', JSON.stringify(evt.target.mne_data));
        evt.dataTransfer.setData('text/plain', 'mne_filesystem: ' + this.fullid);
+       
+       this.obj.scrollTop  = this.obj.container.list.scrollTop;
+       this.obj.scrollLeft = this.obj.container.list.scrollLeft;
     };
     
     this.obj.evt.list.dragover = async (evt) =>
