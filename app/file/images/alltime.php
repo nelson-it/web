@@ -3,8 +3,6 @@ header ( "Content-type: text/plain" );
 
 date_default_timezone_set ( 'Europe/Zurich' );
 
-require 'mne_errorhandler.php';
-
 function my_touch($file, $time)
 {
     if ($time < 0) $time = 1;
@@ -20,7 +18,7 @@ function my_touch($file, $time)
 
 function set_time($file)
 {
-    $exif = @exif_read_data ( $file, 0, true );
+    $exif = exif_read_data ( $file, 0, true );
     if (ISSET ( $exif ["IFD0"] ) && ISSET ( $exif ["IFD0"] ["DateTime"] ))
     {
         $t = strtotime ( $exif ["IFD0"] ["DateTime"] );
