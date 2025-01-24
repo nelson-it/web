@@ -133,9 +133,18 @@ input[type="checkbox"]+label:hover {
 input[type="checkbox"]+label:after {
 	content: '\f0c8';
 }
+input[type="checkbox"][readonly]+label:after {
+	content: ' ';
+}
 
 input[type="checkbox"]:checked+label:after {
 	content: '\f14a';
+}
+
+input[type="checkbox"][readonly]:checked+label:after {
+	font-family: SymbolFont1;
+	content: '\f00c';
+	font-size: small;
 }
 
 div.draginfo {

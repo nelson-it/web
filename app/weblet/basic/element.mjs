@@ -80,12 +80,14 @@ export class MneElementWeblet extends MneElement
 
       case 'checkbox':
         var wrapper = document.createElement('div');
-        wrapper.className = 'ele-wrapper input-wrapper contain-checkbox';
+        var rdonly = ele.readOnly;
+        wrapper.className = 'ele-wrapper input-wrapper contain-checkbox' + ( ( rdonly ) ? '' : ' rdolny');
         if (ele.parentNode) ele.parentNode.insertBefore(wrapper, ele.nextSibling);
         wrapper.appendChild(ele)
         wrapper.appendChild(document.createElement('label'))
         MneElement.mkClass(wrapper.lastChild, 'eventelement');
-        wrapper.lastChild.addEventListener('click', function() { var ele = this.previousSibling; ele.checked = !ele.checked; ele.setAttribute('checked', ele.checked) })
+        if ( ! rdonly )
+          wrapper.lastChild.addEventListener('click', function() { var ele = this.previousSibling; ele.checked = !ele.checked; ele.setAttribute('checked', ele.checked) })
         break;
 
       case 'file':
