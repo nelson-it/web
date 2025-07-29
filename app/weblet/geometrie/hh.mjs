@@ -12,12 +12,12 @@ import MneElement from '/weblet/basic/element.mjs'
 
 class MneTemplateHH
 {
-  static mkTemplate( weblet )
+  static mkTemplate( weblet, slider )
   {
     weblet.obj.container = {};
     weblet.obj.slider = {};
 
-    var s0 = weblet.obj.slider.slider0 = new MneHSlider(weblet.frame, '50%', 'move');
+    var s0 = weblet.obj.slider.slider0 = new MneHSlider(weblet.frame, ( slider['s0'] ) ? slider['s0'] : '50%', 'move');
 
     weblet.obj.container['detail']  = s0.container0
     weblet.obj.container['bottom']  = s0.container1
