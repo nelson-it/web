@@ -91,8 +91,9 @@ if (file_exists ( $filename ))
     }
     elseif (strpos ( $mime, 'video' ) === 0)
     {
-        $str = 'ffmpeg -i "' . $filename . '" -frames 1 -q:v 3 -vf "scale=' . $xsize . ':' . $ysize . ':force_original_aspect_ratio=decrease" -f singlejpeg "' . $fullname . '"';
+        $str = 'ffmpeg -i "' . $filename . '" -frames 1 -q:v 3 -vf "scale=' . $xsize . ':' . $ysize . ':force_original_aspect_ratio=decrease" "' . $fullname . '.jpg"';
         exec($str, $output );
+        rename($fullname . '.jpg', $fullname);
     }
     else
     {
