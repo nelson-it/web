@@ -515,6 +515,14 @@ export class MneDbView extends MneView
           this.obj.popups[id + 'select'].popup.frame.style.left = obj.offsetLeft + 'px';
           this.obj.popups[id + 'select'].popup.frame.style.top = obj.offsetTop + obj.offsetHeight + 'px';
           
+          var res = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.run.result;
+          var rows = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.tbody.rows;
+          var num = res.rids[vals[list.rids['cols']] || vals[list.rids['showcols']].split(',')[0]];
+          var index;
+
+          for (index = 0; index < rows.length; index++)
+             MneElement.mkClass(rows[index], 'match' + ((rows[index].values[num].toString().indexOf(obj.getValue(false)) == 0) ? 'ok' : 'no'), true, 'match');
+ 
         }
         catch (e)
         {
@@ -569,16 +577,20 @@ export class MneDbView extends MneView
 
           var res = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.run.result;
           var rows = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.tbody.rows;
-          var num = res.rids[vals[list.rids['cols']].split(',')[0]];
-          var index;
+          var num = res.rids[vals[list.rids['cols']] || vals[list.rids['showcols']].split(',')[0]];
+          var index, exact;
 
+          exact = 0;
           for (index = 0; index < rows.length; index++)
-            MneElement.mkClass(rows[index], 'match' + ((rows[index].values[num].toString().indexOf(obj.getValue(false)) == 0) ? 'ok' : 'no'), true, 'match');
+          {
+             MneElement.mkClass(rows[index], 'match' + ((rows[index].values[num].toString().indexOf(obj.getValue(false)) == 0) ? 'ok' : 'no'), true, 'match');
+             if  ( rows[index].values[num].toString() == obj.getValue(false) ) exact = 1;
+          }
 
           var modify;
           var match = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.tbody.querySelectorAll('.matchok').length;
           if (obj.getAttribute('newvalue') == obj.getAttribute('oldvalue') || obj.getAttribute('newvalue') == '') modify = 'modifyno';
-          else modify = 'modify' + ((match == 0) ? 'wrong' : ((match == 1) ? 'ok' : 'warning'));
+          else modify = 'modify' + ((match == 0) ? 'wrong' : ((match == 1 || exact == 1 ) ? 'ok' : 'warning'));
 
           MneElement.mkClass(obj.closest('.ele-wrapper'), modify, true, 'modify');
 
@@ -608,7 +620,7 @@ export class MneDbView extends MneView
           }
           var res = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.run.result;
           var rows = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.obj.tbody.rows;
-          var num = res.rids[vals[list.rids['cols']].split(',')[0]];
+          var num = res.rids[vals[list.rids['cols']] || vals[list.rids['showcols']].split(',')[0]];
           var index;
 
           for (index = 0; index < rows.length; index++)
@@ -646,7 +658,7 @@ export class MneDbView extends MneView
             evt.preventDefault();
             this.initpar.popupparent.obj.weblets[id + 'select'].close();
             w = this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table;
-            if (!w.obj.run.act_row) w.selectRow({ force: true }, w.obj.tbody.querySelector('tr[class*=matchok]')).then(() => { this[id + 'selected'](this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.select); });
+            if (!w.obj.run.act_row) w.selectRow({ force: true }, w.obj.tbody.querySelector('tr[class*=matchok]')).then(() => { this[id + 'selected'](this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.select); MneElement.moveCursor(obj)});
             else this[id + 'selected'](this.initpar.popupparent.obj.weblets[id + 'select'].obj.weblets.table.select);
           default:
             break;
